@@ -40,7 +40,7 @@ Spice.stockMarketGoodsCount = function() {
 }
 
 /* Creates the rows that display the deltas for the stock market goods.
- * Each box has the text "Delta: " followed by a div with id `stockMarketDelta-${id}`
+ * Each box has the text "delta: " followed by a div with id `stockMarketDelta-${id}`
  */
 Spice.createStockMarketDeltaRows = function() {
     for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
@@ -53,7 +53,7 @@ Spice.createStockMarketDeltaRows = function() {
             deltaDiv.style[key] = valueDiv.style[key];
         }
 
-        deltaDiv.innerHTML = 'Delta: <div id="stockMarketDelta-' + i + '" ' +
+        deltaDiv.innerHTML = 'delta: <div id="stockMarketDelta-' + i + '" ' +
             'style="display:inline; font-weight:bold;">0</div>';
     }
     Spice.updateStockMarketDeltaRows();
