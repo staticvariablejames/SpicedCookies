@@ -20,9 +20,20 @@ Spice.rewriteCode = function(functionName, pattern, replacement) {
     eval(functionName + " = " + newCode);
 }
 
+/* Both settings and saveGame are stored in the CCSE save,
+ * but the save game is reset on a wipeSave whereas the settings are not.
+ */
 Spice.settings = { // default settings
     displayStockDelta: true,
+    saveStockMarketHistory: true,
 };
+
+Spice.defaultSaveGameObject = function() {
+    return {
+        stockMarketHistory: [],
+    };
+}
+Spice.saveGame = Spice.defaultSaveGameObject();
 
 /************************************************
  * Module: display deltas of stock market goods *
@@ -87,6 +98,26 @@ Spice.disableStockMarketDeltaRows = function() {
     }
 }
 
+/*****************************************
+ * Module: save the stock market history *
+ *****************************************/
+
+Spice.saveStockMarketHistory = function() {
+    // Executed when saving the game
+    Spice.saveGame.stockMarketHistory = [];
+    if(!Spice.settings.saveStockMarketHistory) return;
+    for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
+        Spice.saveGame.stockMarketHistory[i] = Game.Objects['Bank'].minigame.goodsById[i].vals;
+    }
+}
+
+Spice.loadStockMarketHistory = function() {
+    // Executed when loading the save game
+    if(!Spice.settings.saveStockMarketHistory) return;
+    for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
+        Game.Objects['Bank'].minigame.goodsById[i].vals = Spice.saveGame.stockMarketHistory[i];
+    }
+}
 
 /******************
  * User Interface *
@@ -105,6 +136,22 @@ Spice.copySettings = function(settings) {
     }
     for(key of booleanSettings) {
         if(key in settings) Spice.settings[key] = Boolean(settings[key]);
+    }
+}
+
+// Same, but for Spice.saveGame
+Spice.copySaveGame = function(saveGame) {
+    if(!saveGame) return;
+    let numberMatrixSettings = ['stockMarketHistory'];
+
+    for(key of numberMatrixSettings) {
+        if(!(key in saveGame && Array.isArray(saveGame[key]))) continue;
+        Spice.saveGame[key] = [];
+        for(i in saveGame[key]) {
+            Spice.saveGame[key][i] = [];
+            for(j in saveGame[key][i])
+                Spice.saveGame[key][i][j] = Number(saveGame[key][i][j]);
+        }
     }
 }
 
@@ -154,8 +201,13 @@ Spice.launch = function() {
     }
 
     CCSE.customSave.push(function() {
+        // Run the save game functions
+        Spice.saveStockMarketHistory();
+
+        // Push the save to CSSE
         CCSE.save.OtherMods.Spice = {
             settings: Spice.settings,
+            saveGame: Spice.saveGame,
         };
     });
 
@@ -166,16 +218,21 @@ Spice.launch = function() {
         Game.customMinigame['Bank'].tick.push(Spice.updateStockMarketDeltaRows);
     }, 'Bank');
 
-    let loadSettings = function() {
+    let loadSave = function() {
+        // Pull the save from CCSE
         if(CCSE.save.OtherMods.Spice) {
             Spice.copySettings(CCSE.save.OtherMods.Spice.settings);
+            Spice.copySaveGame(CCSE.save.OtherMods.Spice.saveGame);
         }
 
+        // Run the load save functions
         if(Spice.settings.displayStockDelta) Spice.enableStockMarketDeltaRows();
         else Spice.disableStockMarketDeltaRows();
+
+        Spice.loadStockMarketHistory();
     }
-    loadSettings();
-    CCSE.customLoad.push(loadSettings);
+    loadSave();
+    CCSE.customLoad.push(loadSave);
 
     Game.customOptionsMenu.push(Spice.customOptionsMenu);
 

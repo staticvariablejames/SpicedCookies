@@ -33,3 +33,24 @@ function testStockMarketDelta() {
         console.log('Finished testStockMarketDelta()');
     }, 'Bank');
 }
+
+function testStockMarketHistory() {
+    Util.wipeSave();
+    Game.Earn(1e9);
+    Game.harvestLumps(10);
+    Game.Objects.Bank.getFree(1);
+    Game.Objects.Bank.levelUp(); // Unlock the minigame
+
+    // Continue the test after the minigame is unloaded
+    CCSE.MinigameReplacer(function() {
+        // Right now, the stock market has 16 minutes of history
+        let ccseSave = CCSE.WriteSave(1);
+        let vanillaSave = Game.WriteSave(1);
+
+        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
+        Game.LoadSave(vanillaSave);
+        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 2);
+        CCSE.LoadSave(ccseSave);
+        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
+    }, 'Bank');
+}
