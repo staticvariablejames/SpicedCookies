@@ -21,8 +21,72 @@ Spice.rewriteCode = function(functionName, pattern, replacement) {
 }
 
 Spice.settings = { // default settings
-    dummySetting: true,
+    displayStockDelta: true,
 };
+
+/************************************************
+ * Module: display deltas of stock market goods *
+ ************************************************/
+
+Spice.stockMarketGoodsCount = function() {
+    if(Game.Objects['Bank'].minigame)
+        return Game.Objects['Bank'].minigame.goodsById.length;
+    else
+        return 0;
+    /* The functions below iterate through all possible good ids.
+     * If the goods count equals zero, the functions have no effect.
+     * This disable the functions and prevents errors if the market hasn't loaded yet.
+     */
+}
+
+/* Creates the rows that display the deltas for the stock market goods.
+ * Each box has the text "Delta: " followed by a div with id `stockMarketDelta-${id}`
+ */
+Spice.createStockMarketDeltaRows = function() {
+    for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
+        let upperBox = document.getElementById('bankGood-' + i).firstChild;
+        let valueDiv = document.getElementById('bankGood-' + i + '-val').parentNode;
+        let deltaDiv = upperBox.insertBefore(document.createElement("div"), valueDiv.nextSibling);
+
+        // Copy the style from the other div, because assigning quantileDiv.style don't work
+        for(let key in valueDiv.style) {
+            deltaDiv.style[key] = valueDiv.style[key];
+        }
+
+        deltaDiv.innerHTML = 'Delta: <div id="stockMarketDelta-' + i + '" ' +
+            'style="display:inline; font-weight:bold;">0</div>';
+    }
+    Spice.updateStockMarketDeltaRows();
+}
+
+/* Updates the text inside the row created by Spice.createStockMarketDeltaRows.
+ * This is pushed to Game.customMinigame.Bank.tick.
+ */
+Spice.updateStockMarketDeltaRows = function() {
+    for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
+        let div = document.getElementById('stockMarketDelta-' + i);
+        if(div) {
+            div.innerHTML = Math.floor(1000*Game.Objects['Bank'].minigame.goodsById[i].d)/1000;
+        }
+    }
+}
+
+// Show the delta rows
+Spice.enableStockMarketDeltaRows = function() {
+    for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
+        let deltaDiv = document.getElementById('stockMarketDelta-' + i).parentNode;
+        deltaDiv.style.display = "block";
+    }
+}
+
+// Hide the delta rows
+Spice.disableStockMarketDeltaRows = function() {
+    for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
+        let deltaDiv = document.getElementById('stockMarketDelta-' + i).parentNode;
+        deltaDiv.style.display = "none";
+    }
+}
+
 
 /******************
  * User Interface *
@@ -34,7 +98,7 @@ Spice.settings = { // default settings
 Spice.copySettings = function(settings) {
     if(!settings) return;
     let numericSettings = [];
-    let booleanSettings = ['dummySetting'];
+    let booleanSettings = ['displayStockDelta'];
 
     for(key of numericSettings) {
         if(key in settings) Spice.settings[key] = Number(settings[key]);
@@ -75,7 +139,10 @@ Spice.makeButton = function(settingName, onText, offText, onFunctionName, offFun
 Spice.customOptionsMenu = function() {
     let menuStr = "";
     menuStr += '<div class="listing">' + 
-                Spice.makeButton('dummySetting', 'Dummy Setting ON', 'Dummy Setting OFF') +
+                Spice.makeButton('displayStockDelta',
+                    'Display stock market deltas', 'Hide stock market deltas',
+                    'Spice.enableStockMarketDeltaRows', 'Spice.disableStockMarketDeltaRows'
+                ) +
                 '</div>';
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
@@ -92,10 +159,20 @@ Spice.launch = function() {
         };
     });
 
+    // Stock Market
+    CCSE.MinigameReplacer(function() {
+        Spice.createStockMarketDeltaRows();
+
+        Game.customMinigame['Bank'].tick.push(Spice.updateStockMarketDeltaRows);
+    }, 'Bank');
+
     let loadSettings = function() {
         if(CCSE.save.OtherMods.Spice) {
             Spice.copySettings(CCSE.save.OtherMods.Spice.settings);
         }
+
+        if(Spice.settings.displayStockDelta) Spice.enableStockMarketDeltaRows();
+        else Spice.disableStockMarketDeltaRows();
     }
     loadSettings();
     CCSE.customLoad.push(loadSettings);
