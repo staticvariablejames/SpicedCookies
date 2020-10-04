@@ -41,13 +41,51 @@ function testStockMarketHistory() {
     Game.Objects.Bank.getFree(1);
     Game.Objects.Bank.levelUp(); // Unlock the minigame
 
+    let ranOnce = false;
     // Continue the test after the minigame is unloaded
     CCSE.MinigameReplacer(function() {
+        if(ranOnce) return;
+        ranOnce = true; // Work around CCSE calling this function again on ascension
+
         // Right now, the stock market has 16 minutes of history
         let ccseSave = CCSE.WriteSave(1);
         let vanillaSave = Game.WriteSave(1);
 
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
+        Game.LoadSave(vanillaSave);
+        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 2);
+        CCSE.LoadSave(ccseSave);
+        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
+
+        // Tick a few times, we will make sure it resets on ascension
+        for(let i = 0; i < 15; i++) Game.Objects.Bank.minigame.tick();
+        Game.Reincarnate(1); // skips the ascension screen
+
+        Game.Earn(1e9);
+        Game.harvestLumps(10);
+        Game.Objects.Bank.getFree(1);
+        Game.Objects.Bank.levelUp(); // Unlock the minigame
+
+        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
+        ccseSave = CCSE.WriteSave(1);
+        vanillaSave = Game.WriteSave(1);
+        Game.LoadSave(vanillaSave);
+        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 2);
+        CCSE.LoadSave(ccseSave);
+        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
+
+        // Same, but wiping the save this time
+        for(let i = 0; i < 15; i++) Game.Objects.Bank.minigame.tick();
+        Util.wipeSave(); // skips the ascension screen
+
+        Game.Earn(1e9);
+        Game.harvestLumps(10);
+        Game.Objects.Bank.getFree(1);
+        Game.Objects.Bank.levelUp(); // Unlock the minigame
+
+        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
+        ccseSave = CCSE.WriteSave(1);
+        vanillaSave = Game.WriteSave(1);
         Game.LoadSave(vanillaSave);
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 2);
         CCSE.LoadSave(ccseSave);
