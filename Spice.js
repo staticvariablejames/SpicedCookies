@@ -45,22 +45,27 @@ Spice.copySettings = function(settings) {
 }
 
 // Callback for Spice.makeButton
-Spice.toggleSetting = function(buttonId, settingName, onText, offText) {
+Spice.toggleSetting = function(buttonId, settingName, onText, offText, onFunction, offFunction) {
     Spice.settings[settingName] = !Spice.settings[settingName];
     let element = document.getElementById(buttonId);
     if(Spice.settings[settingName]) {
         element.classList.remove("off");
         element.innerHTML = onText;
+        if(onFunction) onFunction();
     } else {
         element.classList.add("off");
         element.innerHTML = offText;
+        if(offFunction) offFunction();
     }
 }
 
-Spice.makeButton = function(settingName, onText, offText) {
+Spice.makeButton = function(settingName, onText, offText, onFunctionName, offFunctionName) {
     let set = Spice.settings[settingName];
     let buttonId = "SpiceButton" + settingName;
-    let onclick = `Spice.toggleSetting('${buttonId}', '${settingName}', '${onText}', '${offText}')`;
+    let onclick = `Spice.toggleSetting('${buttonId}', '${settingName}',
+        '${onText}', '${offText}',
+        ${onFunctionName}, ${offFunctionName}
+    )`;
     return `<a id="${buttonId}" class="option${set? "" : " off"}" 
             onclick="${onclick};PlaySound('snd/tick.mp3');">
             ${set? onText : offText}
