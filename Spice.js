@@ -176,6 +176,8 @@ Spice.toggleSetting = function(buttonId, settingName, onText, offText, onFunctio
 
 Spice.makeButton = function(settingName, onText, offText, onFunctionName, offFunctionName) {
     let set = Spice.settings[settingName];
+    onText = onText.replace(/'/,'\\\''); // escape single quotes
+    offText = offText.replace(/'/,'\\\'');
     let buttonId = "SpiceButton" + settingName;
     let onclick = `Spice.toggleSetting('${buttonId}', '${settingName}',
         '${onText}', '${offText}',
@@ -193,6 +195,10 @@ Spice.customOptionsMenu = function() {
                 Spice.makeButton('displayStockDelta',
                     'Display stock market deltas', 'Hide stock market deltas',
                     'Spice.enableStockMarketDeltaRows', 'Spice.disableStockMarketDeltaRows'
+                ) +
+                '<br />' +
+                Spice.makeButton('saveStockMarketHistory',
+                    'Save the stock market value history', 'Don\'t save stock market value history'
                 ) +
                 '</div>';
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);

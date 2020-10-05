@@ -57,6 +57,17 @@ function testStockMarketHistory() {
         CCSE.LoadSave(ccseSave);
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
 
+        // Test disabling the function
+        document.getElementById('prefsButton').click();
+        document.getElementById('SpiceButtonsaveStockMarketHistory').click();
+        ccseSave = CCSE.WriteSave(1);
+        CCSE.LoadSave(ccseSave);
+        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 2);
+
+        // Enable it again
+        document.getElementById('SpiceButtonsaveStockMarketHistory').click();
+
+
         // Tick a few times, we will make sure it resets on ascension
         for(let i = 0; i < 15; i++) Game.Objects.Bank.minigame.tick();
         Game.Reincarnate(1); // skips the ascension screen
