@@ -54,6 +54,8 @@ up to 65 data points
 Display the delta of stock market goods (enabled by default)
 ============================================================
 
+![Stock market deltas](doc/delta.png "The mod shows the stock market deltas")
+
 Despite saving the current price for stock market goods,
 vanilla Cookie Clicker displays two values when loading a save file.
 The first value is actually the current price minus the delta
