@@ -87,7 +87,7 @@ function testStockMarketHistory() {
 
         // Same, but wiping the save this time
         for(let i = 0; i < 15; i++) Game.Objects.Bank.minigame.tick();
-        Util.wipeSave(); // skips the ascension screen
+        Util.wipeSave();
 
         Game.Earn(1e9);
         Game.harvestLumps(10);
@@ -101,5 +101,12 @@ function testStockMarketHistory() {
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 2);
         CCSE.LoadSave(ccseSave);
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
+
+        // Make sure loading the mod with an existing save does not break it
+        Spice.saveGame = Spice.defaultSaveGame();
+        Spice.loadStockMarketHistory();
+        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
+        Game.Objects.Bank.minigame.tick();
+        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 18);
     }, 'Bank');
 }

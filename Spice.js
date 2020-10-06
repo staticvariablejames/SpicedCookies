@@ -28,12 +28,12 @@ Spice.settings = { // default settings
     saveStockMarketHistory: true,
 };
 
-Spice.defaultSaveGameObject = function() {
+Spice.defaultSaveGame = function() {
     return {
         stockMarketHistory: [],
     };
 }
-Spice.saveGame = Spice.defaultSaveGameObject();
+Spice.saveGame = Spice.defaultSaveGame();
 
 /************************************************
  * Module: display deltas of stock market goods *
@@ -114,6 +114,9 @@ Spice.saveStockMarketHistory = function() {
 Spice.loadStockMarketHistory = function() {
     // Executed when loading the save game
     if(!Spice.settings.saveStockMarketHistory) return;
+    if(!Spice.saveGame.stockMarketHistory) return;
+    if(Spice.saveGame.stockMarketHistory.length === 0) return;
+    if(Spice.saveGame.stockMarketHistory[0].length < 1) return;
     for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
         Game.Objects['Bank'].minigame.goodsById[i].vals = Spice.saveGame.stockMarketHistory[i];
     }
