@@ -45,7 +45,7 @@ function testStockMarketHistory() {
     // Continue the test after the minigame is unloaded
     CCSE.MinigameReplacer(function() {
         if(ranOnce) return;
-        ranOnce = true; // Work around CCSE calling this function again on ascension
+        ranOnce = true; // Work around Cookie Clicker calling launch() again on wipe save
 
         // Right now, the stock market has 16 minutes of history
         let ccseSave = CCSE.WriteSave(1);
