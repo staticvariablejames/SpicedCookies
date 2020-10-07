@@ -228,8 +228,9 @@ Spice.launch = function() {
     CCSE.MinigameReplacer(function() {
         Spice.createStockMarketDeltaRows();
 
-        Game.customMinigame['Bank'].tick.push(Spice.updateStockMarketDeltaRows);
     }, 'Bank');
+    if(!Game.customMinigame['Bank'].tick) Game.customMinigame['Bank'].tick = [];
+    Game.customMinigame['Bank'].tick.push(Spice.updateStockMarketDeltaRows);
 
     let loadSave = function() {
         // Pull the save from CCSE
