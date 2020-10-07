@@ -9,7 +9,7 @@ if(typeof CCSE == 'undefined') Game.LoadMod('https://klattmose.github.io/CookieC
 Spice.name = "Spiced Cookies";
 Spice.version = "0.0.0"; // Semantic versioning
 Spice.GameVersion = "2.029";
-Spice.CCSEVersion = "2.017";
+Spice.CCSEVersion = "2.018";
 
 /* Injects or modifies the function with the given name.
  * `pattern` and `replacement` are the first and second arguments to String.prototype.replace.
