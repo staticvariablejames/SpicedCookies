@@ -31,6 +31,9 @@ Spice.settings = { // default settings
 Spice.defaultSaveGame = function() {
     return {
         stockMarketHistory: [],
+        bigCookieClicksPreviousAscensions: 0,
+        wrinklersPoppedPreviousAscensions: 0,
+        reindeerClickedPreviousAscensions: 0,
     };
 }
 Spice.saveGame = Spice.defaultSaveGame();
@@ -122,6 +125,58 @@ Spice.loadStockMarketHistory = function() {
     }
 }
 
+/***************************************************
+ * Module: track more statistics across ascensions *
+ ***************************************************
+ *
+ * These statistics are already tracked by the vanilla game,
+ * but they get wiped out after ascending.
+ * We store the value of these statistics for the _previous_ ascensions only.
+ * The across-ascension statistics for the current ascension needs to be computed every time.
+ * This guarantees that,
+ * if someone loads the mod after, say, popping 100 wrinklers,
+ * these 100 wrinklers will be accounted for by this mod,
+ * even though the mod was not being used while those wrinklers were popped.
+ */
+
+Spice.updateAcrossAscensionStatistics = function() {
+    // This function is pushed to Game.customAscend
+    Spice.saveGame.bigCookieClicksPreviousAscensions += Game.cookieClicks;
+    Spice.saveGame.wrinklersPoppedPreviousAscensions += Game.wrinklersPopped;
+    Spice.saveGame.reindeerClickedPreviousAscensions += Game.reindeerClicked;
+}
+
+/* Returns the first div of the line (in the status menu) that contains the given text
+ * Returns undefined if no such div is found
+ */
+Spice.locateStatsMenuElement = function(text) {
+    for(div of document.querySelectorAll("#menu div.subsection div.listing")) {
+        if(div.textContent.indexOf(text) !== -1)
+            return div;
+    }
+    return undefined;
+}
+
+Spice.displayAcrossAscensionStatistics = function() {
+    // This is pushed to Game.customStatsMenu
+    let div = undefined;
+    div = Spice.locateStatsMenuElement('Cookie clicks');
+    if(div) div.innerHTML += ' <small>(all time : ' +
+        Beautify(Game.cookieClicks + Spice.saveGame.bigCookieClicksPreviousAscensions) +
+        ')</small>';
+
+    div = Spice.locateStatsMenuElement('Wrinklers popped');
+    if(div) div.innerHTML += ' <small>(all time : ' +
+        Beautify(Game.wrinklersPopped + Spice.saveGame.wrinklersPoppedPreviousAscensions) +
+        ')</small>';
+
+    div = Spice.locateStatsMenuElement('Reindeer found');
+    if(div) div.innerHTML += ' <small>(all time : ' +
+        Beautify(Game.reindeerClicked + Spice.saveGame.reindeerClickedPreviousAscensions) +
+        ')</small>';
+}
+
+
 /* There is no need to do anything when ascending or wiping the save,
  * because Game.Objects.Bank.minigame.goodsById[i].vals gets wiped out by the game itself.
  */
@@ -135,7 +190,11 @@ Spice.loadStockMarketHistory = function() {
  */
 Spice.copySettings = function(settings) {
     if(!settings) return;
-    let numericSettings = [];
+    let numericSettings = [
+        'bigCookieClicksPreviousAscensions',
+        'wrinklersPoppedPreviousAscensions',
+        'reindeerClickedPreviousAscensions',
+    ];
     let booleanSettings = ['displayStockDelta'];
 
     for(key of numericSettings) {
@@ -231,6 +290,12 @@ Spice.launch = function() {
     }, 'Bank');
     if(!Game.customMinigame['Bank'].tick) Game.customMinigame['Bank'].tick = [];
     Game.customMinigame['Bank'].tick.push(Spice.updateStockMarketDeltaRows);
+
+    if(!Game.customAscend) Game.customAscend = [];
+    Game.customAscend.push(Spice.updateAcrossAscensionStatistics);
+
+    if(!Game.customStatsMenu) Game.customStatsMenu = [];
+    Game.customStatsMenu.push(Spice.displayAcrossAscensionStatistics);
 
     let loadSave = function() {
         // Pull the save from CCSE
