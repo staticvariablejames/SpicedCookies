@@ -126,6 +126,12 @@ Spice.loadStockMarketHistory = function() {
     }
 }
 
+/* There is no need to do anything when ascending or wiping the save,
+ * because Game.Objects.Bank.minigame.goodsById[i].vals gets wiped out by the game itself.
+ */
+
+
+
 /***************************************************
  * Module: track more statistics across ascensions *
  ***************************************************
@@ -184,9 +190,6 @@ Spice.displayAcrossAscensionStatistics = function() {
 }
 
 
-/* There is no need to do anything when ascending or wiping the save,
- * because Game.Objects.Bank.minigame.goodsById[i].vals gets wiped out by the game itself.
- */
 
 /******************
  * User Interface *
