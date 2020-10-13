@@ -120,25 +120,30 @@ function testAcrossAscensionsSettings() {
     Game.cookieClicks = 5;
     Game.wrinklersPopped = 7;
     Game.reindeerClicked = 13;
+    Game.handmadeCookies = 19;
     Game.UpdateMenu();
 
     console.assert(document.getElementById('menu').textContent.indexOf("Cookie clicks : 5 (all time : 5)") !== -1);
     console.assert(document.getElementById('menu').textContent.indexOf("Wrinklers popped : 7 (all time : 7)") !== -1);
     console.assert(document.getElementById('menu').textContent.indexOf("Reindeer found : 13 (all time : 13)") !== -1);
+    console.assert(document.getElementById('menu').textContent.indexOf("Hand-made cookies : 19 (all time : 19)") !== -1);
 
     Util.Ascend(); Util.Reincarnate();
 
     console.assert(Spice.saveGame.bigCookieClicksPreviousAscensions === 5);
     console.assert(Spice.saveGame.wrinklersPoppedPreviousAscensions === 7);
     console.assert(Spice.saveGame.reindeerClickedPreviousAscensions === 13);
+    console.assert(Spice.saveGame.handmadeCookiesPreviousAscensions === 19);
 
     Game.cookieClicks = 1000;
     Game.wrinklersPopped = 3000;
     Game.reindeerClicked = 1700;
+    Game.handmadeCookies = 2300;
     Game.UpdateMenu();
     console.assert(document.getElementById('menu').textContent.indexOf("Cookie clicks : 1,000 (all time : 1,005)") !== -1);
     console.assert(document.getElementById('menu').textContent.indexOf("Wrinklers popped : 3,000 (all time : 3,007)") !== -1);
     console.assert(document.getElementById('menu').textContent.indexOf("Reindeer found : 1,700 (all time : 1,713)") !== -1);
+    console.assert(document.getElementById('menu').textContent.indexOf("Hand-made cookies : 2,300 (all time : 2,319)") !== -1);
 
     let save = CCSE.WriteSave(1);
     Util.wipeSave();
@@ -147,4 +152,5 @@ function testAcrossAscensionsSettings() {
     console.assert(document.getElementById('menu').textContent.indexOf("Cookie clicks : 1,000 (all time : 1,005)") !== -1);
     console.assert(document.getElementById('menu').textContent.indexOf("Wrinklers popped : 3,000 (all time : 3,007)") !== -1);
     console.assert(document.getElementById('menu').textContent.indexOf("Reindeer found : 1,700 (all time : 1,713)") !== -1);
+    console.assert(document.getElementById('menu').textContent.indexOf("Hand-made cookies : 2,300 (all time : 2,319)") !== -1);
 }

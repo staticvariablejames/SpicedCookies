@@ -34,6 +34,7 @@ Spice.defaultSaveGame = function() {
         bigCookieClicksPreviousAscensions: 0,
         wrinklersPoppedPreviousAscensions: 0,
         reindeerClickedPreviousAscensions: 0,
+        handmadeCookiesPreviousAscensions: 0,
     };
 }
 Spice.saveGame = Spice.defaultSaveGame();
@@ -144,6 +145,7 @@ Spice.updateAcrossAscensionStatistics = function() {
     Spice.saveGame.bigCookieClicksPreviousAscensions += Game.cookieClicks;
     Spice.saveGame.wrinklersPoppedPreviousAscensions += Game.wrinklersPopped;
     Spice.saveGame.reindeerClickedPreviousAscensions += Game.reindeerClicked;
+    Spice.saveGame.handmadeCookiesPreviousAscensions += Game.handmadeCookies;
 }
 
 /* Returns the first div of the line (in the status menu) that contains the given text
@@ -174,6 +176,11 @@ Spice.displayAcrossAscensionStatistics = function() {
     if(div) div.innerHTML += ' <small>(all time : ' +
         Beautify(Game.reindeerClicked + Spice.saveGame.reindeerClickedPreviousAscensions) +
         ')</small>';
+
+    div = Spice.locateStatsMenuElement('Hand-made cookies');
+    if(div) div.innerHTML += ' <small>(all time : ' +
+        Beautify(Game.handmadeCookies + Spice.saveGame.handmadeCookiesPreviousAscensions) +
+        ')</small>';
 }
 
 
@@ -194,6 +201,7 @@ Spice.copySettings = function(settings) {
         'bigCookieClicksPreviousAscensions',
         'wrinklersPoppedPreviousAscensions',
         'reindeerClickedPreviousAscensions',
+        'handmadeCookiesPreviousAscensions',
     ];
     let booleanSettings = ['displayStockDelta'];
 
