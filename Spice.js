@@ -26,6 +26,7 @@ Spice.rewriteCode = function(functionName, pattern, replacement) {
 Spice.settings = { // default settings
     displayStockDelta: true,
     saveStockMarketHistory: true,
+    tallyOnlyStockMarketProfits: true,
 };
 
 Spice.defaultSaveGame = function() {
@@ -35,6 +36,7 @@ Spice.defaultSaveGame = function() {
         wrinklersPoppedPreviousAscensions: 0,
         reindeerClickedPreviousAscensions: 0,
         handmadeCookiesPreviousAscensions: 0,
+        stockMarketProfitsPreviousAscensions: 0,
     };
 }
 Spice.saveGame = Spice.defaultSaveGame();
@@ -191,6 +193,50 @@ Spice.displayAcrossAscensionStatistics = function() {
 
 
 
+/********************************************************
+ * Module: Tally stock market profits across ascensions *
+ ********************************************************
+ * This module could be merged with the "track statistics across ascensions" one,
+ * but since they share pretty much no common code
+ * (and we need to do more work to honor tallyOnlyStockMarketProfits)
+ * I decided to split them.
+ */
+
+Spice.effectiveStockMarketTally = function() {
+    // across-ascensions profit tally, but respecting settings.tallyOnlyStockMarketProfits
+    if(!Game.Objects['Bank'].minigame) return 0;
+
+    let profit = Game.Objects['Bank'].minigame.profit;
+    if(Spice.settings.tallyOnlyStockMarketProfits)
+        return Spice.saveGame.stockMarketProfitsPreviousAscensions + (profit > 0 ? profit : 0);
+    else
+        return Spice.saveGame.stockMarketProfitsPreviousAscensions + profit;
+}
+
+Spice.updateAcrossAscensionsStockMarketTallying = function() {
+    Spice.saveGame.stockMarketProfitsPreviousAscensions = Spice.effectiveStockMarketTally();
+}
+
+/* Adds the "(all time : $???)" text to the bank minigame.
+ * Executed when the bank minigame loads.
+ */
+Spice.createProfitTallyDiv = function() {
+    document.getElementById('bankBalance').outerHTML +=
+        ' (all time : <span id="bankTally">$-</span>)';
+    Spice.updateProfitTally();
+}
+
+Spice.updateProfitTally = function() {
+    // Executed on every buy/sell good
+    let tally = Spice.effectiveStockMarketTally();
+    let tallyDiv = document.getElementById('bankTally');
+    if(tallyDiv) {
+        tallyDiv.innerHTML = (tally<0 ? '-$' : '$') + Beautify(Math.abs(tally));
+    }
+}
+
+
+
 /******************
  * User Interface *
  ******************/
@@ -204,6 +250,7 @@ Spice.copySettings = function(settings) {
     let booleanSettings = [
         'displayStockDelta',
         'saveStockMarketHistory',
+        'tallyOnlyStockMarketProfits',
     ];
 
     for(key of numericSettings) {
@@ -222,6 +269,7 @@ Spice.copySaveGame = function(saveGame) {
         'wrinklersPoppedPreviousAscensions',
         'reindeerClickedPreviousAscensions',
         'handmadeCookiesPreviousAscensions',
+        'stockMarketProfitsPreviousAscensions',
     ];
     let numberMatrixData = ['stockMarketHistory'];
 
@@ -276,11 +324,16 @@ Spice.customOptionsMenu = function() {
                 Spice.makeButton('displayStockDelta',
                     'Display stock market deltas', 'Hide stock market deltas',
                     'Spice.enableStockMarketDeltaRows', 'Spice.disableStockMarketDeltaRows'
-                ) +
-                '<br />' +
+                ) + '</div>' +
+                '<div class="listing">' +
                 Spice.makeButton('saveStockMarketHistory',
                     'Save the stock market value history', 'Don\'t save stock market value history'
-                ) +
+                ) + '</div>' +
+                '<div class="listing">' +
+                Spice.makeButton('tallyOnlyStockMarketProfits',
+                    'Tally only stock market profits', 'Tally both profits and losses',
+                    'Spice.updateProfitTally', 'Spice.updateProfitTally'
+                ) + '<label>Whether to include or not negative profits in the across-ascensions stock market tally</label></div>' +
                 '</div>';
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
@@ -302,17 +355,42 @@ Spice.launch = function() {
         };
     });
 
+    // Hard reset: replace Spice.saveGame with the default savegame
+    if(!Game.customReset) Game.customReset = [];
+    Game.customReset.push(function(hard) {
+        if(hard) {
+            Spice.saveGame = Spice.defaultSaveGame();
+
+            /* On a hard reset, Game.Objects.Bank.minigame.launch gets executed
+             * before we have the chance to overwrite Spice.saveGame,
+             * so Spice.updateProfitTally is ran with old data by Spice.createProfitTallyDiv.
+             * Hence we have to run it again here.
+             */
+            Spice.updateProfitTally();
+        }
+    });
+
     // Stock Market
     CCSE.MinigameReplacer(function() {
         Spice.createStockMarketDeltaRows();
-
+        Spice.createProfitTallyDiv();
     }, 'Bank');
+
     if(!Game.customMinigame['Bank'].tick) Game.customMinigame['Bank'].tick = [];
     Game.customMinigame['Bank'].tick.push(Spice.updateStockMarketDeltaRows);
 
+    if(!Game.customMinigame['Bank'].buyGood) Game.customMinigame['Bank'].buyGood = [];
+    Game.customMinigame['Bank'].buyGood.push(Spice.updateProfitTally);
+
+    if(!Game.customMinigame['Bank'].sellGood) Game.customMinigame['Bank'].sellGood = [];
+    Game.customMinigame['Bank'].sellGood.push(Spice.updateProfitTally);
+
+    // Ascension
     if(!Game.customAscend) Game.customAscend = [];
     Game.customAscend.push(Spice.updateAcrossAscensionStatistics);
+    Game.customAscend.push(Spice.updateAcrossAscensionsStockMarketTallying);
 
+    // Status
     if(!Game.customStatsMenu) Game.customStatsMenu = [];
     Game.customStatsMenu.push(Spice.displayAcrossAscensionStatistics);
 
@@ -328,6 +406,9 @@ Spice.launch = function() {
         else Spice.disableStockMarketDeltaRows();
 
         Spice.loadStockMarketHistory();
+
+        // Update displays
+        Spice.updateProfitTally();
     }
     loadSave();
     CCSE.customLoad.push(loadSave);

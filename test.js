@@ -9,7 +9,7 @@ function testStockMarketDelta() {
     Game.Objects.Bank.getFree(1);
     Game.Objects.Bank.levelUp(); // Unlock the minigame
 
-    // Continue the test after the minigame is unloaded
+    // Continue the test after the minigame is loaded
     CCSE.MinigameReplacer(function() {
         Game.Objects.Bank.switchMinigame(true); // Show the minigame
         let stockDiv = document.getElementById('bankGood-3');
@@ -153,4 +153,76 @@ function testAcrossAscensionsSettings() {
     console.assert(document.getElementById('menu').textContent.indexOf("Wrinklers popped : 3,000 (all time : 3,007)") !== -1);
     console.assert(document.getElementById('menu').textContent.indexOf("Reindeer found : 1,700 (all time : 1,713)") !== -1);
     console.assert(document.getElementById('menu').textContent.indexOf("Hand-made cookies : 2,300 (all time : 2,319)") !== -1);
+}
+
+function testStockMarketTallying() {
+    Util.wipeSave();
+
+    Game.Earn(1e9);
+    Game.harvestLumps(10);
+    Game.Objects.Bank.getFree(1);
+    Game.Objects.Bank.levelUp(); // Unlock the minigame
+
+    let ranOnce = false;
+    // Continue the test after the minigame is loaded
+    CCSE.MinigameReplacer(function() {
+        if(ranOnce) return;
+        ranOnce = true; // Work around Cookie Clicker calling launch() again on wipe save
+
+        Game.Objects.Bank.switchMinigame(true); // Show the minigame
+        let profitRow = document.getElementById('bankTally').parentNode;
+
+        Game.Objects.Bank.minigame.profit = -10;
+        Spice.updateProfitTally();
+        console.assert(profitRow.textContent.indexOf("all time : $0") !== -1);
+        document.getElementById('prefsButton').click();
+        document.getElementById('SpiceButtontallyOnlyStockMarketProfits').click();
+        document.getElementById('prefsButton').click();
+        console.assert(profitRow.textContent.indexOf("all time : -$10") !== -1);
+
+        Game.Objects.Bank.minigame.profit = 50;
+        Spice.updateProfitTally();
+        console.assert(profitRow.textContent.indexOf("all time : $50") !== -1);
+        document.getElementById('prefsButton').click();
+        document.getElementById('SpiceButtontallyOnlyStockMarketProfits').click();
+        document.getElementById('prefsButton').click();
+        console.assert(profitRow.textContent.indexOf("all time : $50") !== -1);
+
+        Util.Ascend();
+        console.assert(Spice.saveGame.stockMarketProfitsPreviousAscensions === 50);
+        Util.Reincarnate();
+
+        Game.Objects.Bank.getFree(1);
+        Game.Objects.Bank.minigame.profit = -15;
+        Spice.settings.tallyOnlyStockMarketProfits = true; // no need to check toggles anymore
+        Spice.updateProfitTally();
+        console.assert(profitRow.textContent.indexOf("all time : $50") !== -1);
+        Spice.settings.tallyOnlyStockMarketProfits = false;
+        Spice.updateProfitTally();
+        console.assert(profitRow.textContent.indexOf("all time : $35") !== -1);
+
+        Util.Ascend();
+        console.assert(Spice.saveGame.stockMarketProfitsPreviousAscensions === 35);
+        Util.Reincarnate();
+
+        Game.Objects.Bank.minigame.profit = -10;
+        Spice.settings.tallyOnlyStockMarketProfits = true;
+        Spice.updateProfitTally();
+        console.assert(profitRow.textContent.indexOf("all time : $35") !== -1);
+
+        Util.Ascend();
+        console.assert(Spice.saveGame.stockMarketProfitsPreviousAscensions === 35);
+        Util.Reincarnate();
+
+        let saveGame = CCSE.WriteSave(1);
+        Util.wipeSave();
+
+        /* Wiping the save re-runs Game.Objects.Bank.minigame.launch,
+         * which repopulates the bank minigame div.
+         * So we have to run the line below again. */
+        profitRow = document.getElementById('bankTally').parentNode;
+        console.assert(profitRow.textContent.indexOf("all time : $0") !== -1);
+        CCSE.LoadSave(saveGame);
+        console.assert(profitRow.textContent.indexOf("all time : $35") !== -1);
+    }, 'Bank');
 }
