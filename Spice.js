@@ -200,13 +200,11 @@ Spice.displayAcrossAscensionStatistics = function() {
  */
 Spice.copySettings = function(settings) {
     if(!settings) return;
-    let numericSettings = [
-        'bigCookieClicksPreviousAscensions',
-        'wrinklersPoppedPreviousAscensions',
-        'reindeerClickedPreviousAscensions',
-        'handmadeCookiesPreviousAscensions',
+    let numericSettings = [];
+    let booleanSettings = [
+        'displayStockDelta',
+        'saveStockMarketHistory',
     ];
-    let booleanSettings = ['displayStockDelta'];
 
     for(key of numericSettings) {
         if(key in settings) Spice.settings[key] = Number(settings[key]);
@@ -219,9 +217,19 @@ Spice.copySettings = function(settings) {
 // Same, but for Spice.saveGame
 Spice.copySaveGame = function(saveGame) {
     if(!saveGame) return;
-    let numberMatrixSettings = ['stockMarketHistory'];
+    let numericData = [
+        'bigCookieClicksPreviousAscensions',
+        'wrinklersPoppedPreviousAscensions',
+        'reindeerClickedPreviousAscensions',
+        'handmadeCookiesPreviousAscensions',
+    ];
+    let numberMatrixData = ['stockMarketHistory'];
 
-    for(key of numberMatrixSettings) {
+    for(key of numericData) {
+        if(key in saveGame) Spice.saveGame[key] = Number(saveGame[key]);
+    }
+
+    for(key of numberMatrixData) {
         if(!(key in saveGame && Array.isArray(saveGame[key]))) continue;
         Spice.saveGame[key] = [];
         for(i in saveGame[key]) {
