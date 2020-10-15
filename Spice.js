@@ -390,6 +390,10 @@ Spice.launch = function() {
     Game.customAscend.push(Spice.updateAcrossAscensionStatistics);
     Game.customAscend.push(Spice.updateAcrossAscensionsStockMarketTallying);
 
+    // Reincarnate
+    if(!Game.customReincarnate) Game.customReincarnate = [];
+    Game.customReincarnate.push(Spice.updateProfitTallyDisplay)
+
     // Status
     if(!Game.customStatsMenu) Game.customStatsMenu = [];
     Game.customStatsMenu.push(Spice.displayAcrossAscensionStatistics);

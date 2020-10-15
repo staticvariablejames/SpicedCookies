@@ -111,7 +111,7 @@ function testStockMarketHistory() {
     }, 'Bank');
 }
 
-function testAcrossAscensionsSettings() {
+function testAcrossAscensionsStatistics() {
     Util.wipeSave();
     Game.Earn(1e9); // Unlock sugar lumps, which unlocks the 'Special' section of the stats menu
     document.getElementById('statsButton').click();
@@ -146,7 +146,16 @@ function testAcrossAscensionsSettings() {
     console.assert(document.getElementById('menu').textContent.indexOf("Hand-made cookies : 2,300 (all time : 2,319)") !== -1);
 
     let save = CCSE.WriteSave(1);
+    Spice.saveGame = Spice.defaultSaveGame(); // Wipe save data
+    Spice.saveGame.bigCookieClicksPreviousAscensions = 55;
+    Spice.saveGame.wrinklersPoppedPreviousAscensions = 77;
+    Spice.saveGame.reindeerClickedPreviousAscensions = 133;
+    Spice.saveGame.handmadeCookiesPreviousAscensions = 199;
     Util.wipeSave();
+    console.assert(Spice.saveGame.bigCookieClicksPreviousAscensions === 0);
+    console.assert(Spice.saveGame.wrinklersPoppedPreviousAscensions === 0);
+    console.assert(Spice.saveGame.reindeerClickedPreviousAscensions === 0);
+    console.assert(Spice.saveGame.handmadeCookiesPreviousAscensions === 0);
     CCSE.LoadSave(save);
     Game.UpdateMenu();
     console.assert(document.getElementById('menu').textContent.indexOf("Cookie clicks : 1,000 (all time : 1,005)") !== -1);
@@ -224,5 +233,14 @@ function testStockMarketTallying() {
         console.assert(profitRow.textContent.indexOf("all time : $0") !== -1);
         CCSE.LoadSave(saveGame);
         console.assert(profitRow.textContent.indexOf("all time : $35") !== -1);
+
+        /* I don't think the situation below will ever happen,
+         * because Spice.updateProfitTallyDisplay should be called every time the profit changes,
+         * but just in case.
+         */
+        Game.Objects.Bank.minigame.profit = 30;
+        Util.Ascend(); Util.Reincarnate();
+        console.assert(Spice.saveGame.stockMarketProfitsPreviousAscensions === 65);
+        console.assert(profitRow.textContent.indexOf("all time : $65") !== -1);
     }, 'Bank');
 }
