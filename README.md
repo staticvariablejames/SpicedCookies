@@ -63,3 +63,31 @@ instead of the previous value;
 so actually the delta _is_ available for players,
 just not in a straightforward way.
 This mod shows the delta below the value of each stock.
+
+
+Track more statistics across ascensions (non-disableable)
+=========================================================
+
+![All-time profits](doc/profits.png "The mod tallies your profits across ascensions")
+
+This mod records five statistics across all ascensions
+which the vanilla game only records for a single ascension:
+- Cookie clicks
+- Hand-made cookies
+- Wrinklers popped
+- Reindeer found
+- Stock market profits
+
+The latter is displayed directly on the stock market minigame!
+
+
+Merciful Market Profit Tallying (enabled by default)
+====================================================
+
+Of the five statistics which are now tracked,
+the stock market profits is the only one of them that can go negative,
+so it would be the only statistic in which progress can be undone.
+To prevent this,
+by default,
+the mod only adds the stock market profits to the across-ascensions tally
+if the profits are positive.
