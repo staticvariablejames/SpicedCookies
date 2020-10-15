@@ -173,7 +173,7 @@ function testStockMarketTallying() {
         let profitRow = document.getElementById('bankTally').parentNode;
 
         Game.Objects.Bank.minigame.profit = -10;
-        Spice.updateProfitTally();
+        Spice.updateProfitTallyDisplay();
         console.assert(profitRow.textContent.indexOf("all time : $0") !== -1);
         document.getElementById('prefsButton').click();
         document.getElementById('SpiceButtontallyOnlyStockMarketProfits').click();
@@ -181,7 +181,7 @@ function testStockMarketTallying() {
         console.assert(profitRow.textContent.indexOf("all time : -$10") !== -1);
 
         Game.Objects.Bank.minigame.profit = 50;
-        Spice.updateProfitTally();
+        Spice.updateProfitTallyDisplay();
         console.assert(profitRow.textContent.indexOf("all time : $50") !== -1);
         document.getElementById('prefsButton').click();
         document.getElementById('SpiceButtontallyOnlyStockMarketProfits').click();
@@ -195,10 +195,10 @@ function testStockMarketTallying() {
         Game.Objects.Bank.getFree(1);
         Game.Objects.Bank.minigame.profit = -15;
         Spice.settings.tallyOnlyStockMarketProfits = true; // no need to check toggles anymore
-        Spice.updateProfitTally();
+        Spice.updateProfitTallyDisplay();
         console.assert(profitRow.textContent.indexOf("all time : $50") !== -1);
         Spice.settings.tallyOnlyStockMarketProfits = false;
-        Spice.updateProfitTally();
+        Spice.updateProfitTallyDisplay();
         console.assert(profitRow.textContent.indexOf("all time : $35") !== -1);
 
         Util.Ascend();
@@ -207,7 +207,7 @@ function testStockMarketTallying() {
 
         Game.Objects.Bank.minigame.profit = -10;
         Spice.settings.tallyOnlyStockMarketProfits = true;
-        Spice.updateProfitTally();
+        Spice.updateProfitTallyDisplay();
         console.assert(profitRow.textContent.indexOf("all time : $35") !== -1);
 
         Util.Ascend();

@@ -223,10 +223,10 @@ Spice.updateAcrossAscensionsStockMarketTallying = function() {
 Spice.createProfitTallyDiv = function() {
     document.getElementById('bankBalance').outerHTML +=
         ' (all time : <span id="bankTally">$-</span>)';
-    Spice.updateProfitTally();
+    Spice.updateProfitTallyDisplay();
 }
 
-Spice.updateProfitTally = function() {
+Spice.updateProfitTallyDisplay = function() {
     // Executed on every buy/sell good
     let tally = Spice.effectiveStockMarketTally();
     let tallyDiv = document.getElementById('bankTally');
@@ -332,7 +332,7 @@ Spice.customOptionsMenu = function() {
                 '<div class="listing">' +
                 Spice.makeButton('tallyOnlyStockMarketProfits',
                     'Tally only stock market profits', 'Tally both profits and losses',
-                    'Spice.updateProfitTally', 'Spice.updateProfitTally'
+                    'Spice.updateProfitTallyDisplay', 'Spice.updateProfitTallyDisplay'
                 ) + '<label>Whether to include or not negative profits in the across-ascensions stock market tally</label></div>' +
                 '</div>';
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
@@ -363,10 +363,10 @@ Spice.launch = function() {
 
             /* On a hard reset, Game.Objects.Bank.minigame.launch gets executed
              * before we have the chance to overwrite Spice.saveGame,
-             * so Spice.updateProfitTally is ran with old data by Spice.createProfitTallyDiv.
+             * so Spice.updateProfitTallyDisplay is ran with old data by Spice.createProfitTallyDiv.
              * Hence we have to run it again here.
              */
-            Spice.updateProfitTally();
+            Spice.updateProfitTallyDisplay();
         }
     });
 
@@ -380,10 +380,10 @@ Spice.launch = function() {
     Game.customMinigame['Bank'].tick.push(Spice.updateStockMarketDeltaRows);
 
     if(!Game.customMinigame['Bank'].buyGood) Game.customMinigame['Bank'].buyGood = [];
-    Game.customMinigame['Bank'].buyGood.push(Spice.updateProfitTally);
+    Game.customMinigame['Bank'].buyGood.push(Spice.updateProfitTallyDisplay);
 
     if(!Game.customMinigame['Bank'].sellGood) Game.customMinigame['Bank'].sellGood = [];
-    Game.customMinigame['Bank'].sellGood.push(Spice.updateProfitTally);
+    Game.customMinigame['Bank'].sellGood.push(Spice.updateProfitTallyDisplay);
 
     // Ascension
     if(!Game.customAscend) Game.customAscend = [];
@@ -408,7 +408,7 @@ Spice.launch = function() {
         Spice.loadStockMarketHistory();
 
         // Update displays
-        Spice.updateProfitTally();
+        Spice.updateProfitTallyDisplay();
     }
     loadSave();
     CCSE.customLoad.push(loadSave);
