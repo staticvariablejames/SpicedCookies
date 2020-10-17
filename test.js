@@ -2,12 +2,7 @@
 // See https://github.com/staticvariablejames/CCtest
 
 function testStockMarketDelta() {
-    Util.wipeSave();
-
-    Game.Earn(1e9);
-    Game.harvestLumps(10);
-    Game.Objects.Bank.getFree(1);
-    Game.Objects.Bank.levelUp(); // Unlock the minigame
+    Util.wipeSave("with minigames");
 
     // Continue the test after the minigame is loaded
     CCSE.MinigameReplacer(function() {
@@ -35,11 +30,7 @@ function testStockMarketDelta() {
 }
 
 function testStockMarketHistory() {
-    Util.wipeSave();
-    Game.Earn(1e9);
-    Game.harvestLumps(10);
-    Game.Objects.Bank.getFree(1);
-    Game.Objects.Bank.levelUp(); // Unlock the minigame
+    Util.wipeSave("with minigames");
 
     let ranOnce = false;
     // Continue the test after the minigame is unloaded
@@ -70,12 +61,9 @@ function testStockMarketHistory() {
 
         // Tick a few times, we will make sure it resets on ascension
         for(let i = 0; i < 15; i++) Game.Objects.Bank.minigame.tick();
-        Game.Reincarnate(1); // skips the ascension screen
+        Util.Reincarnate();
 
-        Game.Earn(1e9);
-        Game.harvestLumps(10);
-        Game.Objects.Bank.getFree(1);
-        Game.Objects.Bank.levelUp(); // Unlock the minigame
+        Game.Objects.Bank.getFree(1); // Unlock the minigame
 
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
         ccseSave = CCSE.WriteSave(1);
@@ -87,12 +75,7 @@ function testStockMarketHistory() {
 
         // Same, but wiping the save this time
         for(let i = 0; i < 15; i++) Game.Objects.Bank.minigame.tick();
-        Util.wipeSave();
-
-        Game.Earn(1e9);
-        Game.harvestLumps(10);
-        Game.Objects.Bank.getFree(1);
-        Game.Objects.Bank.levelUp(); // Unlock the minigame
+        Util.wipeSave("with minigames");
 
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
         ccseSave = CCSE.WriteSave(1);
@@ -165,12 +148,7 @@ function testAcrossAscensionsStatistics() {
 }
 
 function testStockMarketTallying() {
-    Util.wipeSave();
-
-    Game.Earn(1e9);
-    Game.harvestLumps(10);
-    Game.Objects.Bank.getFree(1);
-    Game.Objects.Bank.levelUp(); // Unlock the minigame
+    Util.wipeSave("with minigames");
 
     let ranOnce = false;
     // Continue the test after the minigame is loaded
