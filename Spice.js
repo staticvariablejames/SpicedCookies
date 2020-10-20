@@ -27,6 +27,7 @@ Spice.settings = { // default settings
     displayStockDelta: true,
     saveStockMarketHistory: true,
     tallyOnlyStockMarketProfits: true,
+    awardAchievementsAcrossAscensions: true,
 };
 
 Spice.defaultSaveGame = function() {
@@ -241,6 +242,69 @@ Spice.updateProfitTallyDisplay = function() {
 
 
 
+/*************************************************************
+ * Module: Award achievements for across-ascensions progress *
+ *************************************************************
+ * The hard-work of this module is pushing the following function to the appropriate places.
+ */
+
+Spice.checkWrinklersPoppedAcrossAscensionsAchievements = function() {
+    // Pushed to Game.customWrinklerPop
+    let wrinklersPopped = Game.wrinklersPopped + Spice.saveGame.wrinklersPoppedPreviousAscensions;
+    if(Spice.settings.awardAchievementsAcrossAscensions) {
+        if(wrinklersPopped>=1) Game.Win('Itchscratcher');
+        if(wrinklersPopped>=50) Game.Win('Wrinklesquisher');
+        if(wrinklersPopped>=200) Game.Win('Moistburster');
+    }
+}
+
+Spice.checkReindeerClickedAcrossAscensionsAchievements = function() {
+    // Pushed to Game.customShimmerTypes.reindeer.popFunc
+    let reindeerClicked = Game.reindeerClicked + Spice.saveGame.reindeerClickedPreviousAscensions;
+    if(Spice.settings.awardAchievementsAcrossAscensions) {
+        if(reindeerClicked>=1) Game.Win('Oh deer');
+        if(reindeerClicked>=50) Game.Win('Sleigh of hand');
+        if(reindeerClicked>=200) Game.Win('Reindeer sleigher');
+    }
+}
+
+Spice.checkHandmadeCookiesAcrossAscensionsAchievements = function() {
+    // Pushed to Game.customCookieClicks, which (surprisingly) is a vanilla hook
+    let handmadeCookies = Game.handmadeCookies + Spice.saveGame.handmadeCookiesPreviousAscensions;
+
+    if(Spice.settings.awardAchievementsAcrossAscensions) {
+        if(handmadeCookies>=1000) Game.Win('Clicktastic');
+        if(handmadeCookies>=100000) Game.Win('Clickathlon');
+        if(handmadeCookies>=10000000) Game.Win('Clickolympics');
+        if(handmadeCookies>=1000000000) Game.Win('Clickorama');
+        if(handmadeCookies>=100000000000) Game.Win('Clickasmic');
+        if(handmadeCookies>=10000000000000) Game.Win('Clickageddon');
+        if(handmadeCookies>=1000000000000000) Game.Win('Clicknarok');
+        if(handmadeCookies>=100000000000000000) Game.Win('Clickastrophe');
+        if(handmadeCookies>=10000000000000000000) Game.Win('Clickataclysm');
+        if(handmadeCookies>=1000000000000000000000) Game.Win('The ultimate clickdown');
+        if(handmadeCookies>=100000000000000000000000) Game.Win('All the other kids with the pumped up clicks');
+        if(handmadeCookies>=10000000000000000000000000) Game.Win('One...more...click...');
+        if(handmadeCookies>=1000000000000000000000000000) Game.Win('Clickety split');
+    }
+}
+
+Spice.checkStockMarketTallyAcrossAscensionAchievements = function() {
+    // Pushed to Game.customMinigame['Bank'].sellGood
+    if(Spice.settings.awardAchievementsAcrossAscensions) {
+        if(Spice.effectiveStockMarketTally() >= 3600*24*365) Game.Win('Liquid assets');
+    }
+}
+
+Spice.checkAcrossAscensionsAchievements = function() {
+    // Invoked when toggling the option
+    Spice.checkWrinklersPoppedAcrossAscensionsAchievements();
+    Spice.checkReindeerClickedAcrossAscensionsAchievements();
+    Spice.checkHandmadeCookiesAcrossAscensionsAchievements();
+    Spice.checkStockMarketTallyAcrossAscensionAchievements();
+}
+
+
 /******************
  * User Interface *
  ******************/
@@ -255,6 +319,7 @@ Spice.copySettings = function(settings) {
         'displayStockDelta',
         'saveStockMarketHistory',
         'tallyOnlyStockMarketProfits',
+        'awardAchievementsAcrossAscensions',
     ];
 
     for(key of numericSettings) {
@@ -338,6 +403,11 @@ Spice.customOptionsMenu = function() {
                     'Tally only stock market profits', 'Tally both profits and losses',
                     'Spice.updateProfitTallyDisplay', 'Spice.updateProfitTallyDisplay'
                 ) + '<label>Whether to include or not negative profits in the across-ascensions stock market tally</label></div>' +
+                '<div class="listing">' +
+                Spice.makeButton('awardAchievementsAcrossAscensions',
+                    'Award achievements based on all-time statistics', 'Award achievements based on current ascension statistics only',
+                    'Spice.checkAcrossAscensionsAchievements'
+                ) + '<label>Whether to award achievements related to popping wrinklers, finding reindeer, hand-making cookies, and stock market profits based on the statistics amassed across ascensions, or on the statistics of this ascension only</label></div>' +
                 '</div>';
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
@@ -403,6 +473,15 @@ Spice.launch = function() {
     // Reincarnate
     Game.customReincarnate.push(Spice.updateProfitTallyDisplay)
 
+    // Wrinklers
+    Game.customWrinklerPop.push(Spice.checkWrinklersPoppedAcrossAscensionsAchievements);
+
+    // Reindeer
+    Game.customShimmerTypes['reindeer'].popFunc.push(Spice.checkReindeerClickedAcrossAscensionsAchievements);
+
+    // Big cookie clicks
+    Game.customCookieClicks.push(Spice.checkHandmadeCookiesAcrossAscensionsAchievements);
+
     // Stock Market
     CCSE.MinigameReplacer(function() {
         Spice.updateStockMarketDeltaRows();
@@ -423,6 +502,7 @@ Spice.launch = function() {
 
     if(!Game.customMinigame['Bank'].sellGood) Game.customMinigame['Bank'].sellGood = [];
     Game.customMinigame['Bank'].sellGood.push(Spice.updateProfitTallyDisplay);
+    Game.customMinigame['Bank'].sellGood.push(Spice.checkStockMarketTallyAcrossAscensionAchievements);
 
     // Statistics
     Game.customStatsMenu.push(Spice.displayAcrossAscensionStatistics);

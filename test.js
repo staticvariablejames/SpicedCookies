@@ -222,3 +222,70 @@ function testStockMarketTallying() {
         console.assert(profitRow.textContent.indexOf("all time : $65") !== -1);
     }, 'Bank');
 }
+
+function testAcrossAscensionsAchievements() {
+    Util.wipeSave('with minigames'); Util.startGrandmapocalypse();
+    Spice.settings.awardAchievementsAcrossAscensions = false;
+
+    Spice.saveGame.wrinklersPoppedPreviousAscensions = 49;
+    Spice.saveGame.reindeerClickedPreviousAscensions = 49;
+    Spice.saveGame.handmadeCookiesPreviousAscensions = 999;
+    Spice.saveGame.stockMarketProfitsPreviousAscensions = 16e6;
+
+    let ranOnce = false;
+    CCSE.MinigameReplacer(function() { // Needs banks
+        if(ranOnce) return;
+        ranOnce = true;
+
+        Util.spawnAndPopWrinkler();
+        console.assert(!Game.HasAchiev('Wrinklesquisher'));
+
+        Util.spawnReindeer().pop();
+        console.assert(!Game.HasAchiev('Sleigh of hand'));
+
+        Util.clickBigCookie();
+        console.assert(!Game.HasAchiev('Clicktastic'));
+
+        Game.Objects['Bank'].minigame.goodsById[3].stock = 1;
+        Game.Objects['Bank'].minigame.goodsById[3].val = 16e6;
+        Game.Objects['Bank'].minigame.sellGood(3, 1)
+        console.assert(!Game.HasAchiev('Liquid assets'));
+
+        document.getElementById('prefsButton').click();
+        document.getElementById('SpiceButtonawardAchievementsAcrossAscensions').click();
+        document.getElementById('prefsButton').click();
+
+        console.assert(Game.HasAchiev('Wrinklesquisher'));
+        console.assert(Game.HasAchiev('Sleigh of hand'));
+        console.assert(Game.HasAchiev('Clicktastic'));
+        console.assert(Game.HasAchiev('Liquid assets'));
+
+        // Now try again, but with the setting being true
+        Util.wipeSave('with minigames'); Util.startGrandmapocalypse();
+        Spice.settings.awardAchievementsAcrossAscensions = true;
+
+        Spice.saveGame.wrinklersPoppedPreviousAscensions = 49;
+        Spice.saveGame.reindeerClickedPreviousAscensions = 49;
+        Spice.saveGame.handmadeCookiesPreviousAscensions = 999;
+        Spice.saveGame.stockMarketProfitsPreviousAscensions = 16e6;
+
+        console.assert(!Game.HasAchiev('Wrinklesquisher'));
+        console.assert(!Game.HasAchiev('Sleigh of hand'));
+        console.assert(!Game.HasAchiev('Clicktastic'));
+        console.assert(!Game.HasAchiev('Liquid assets'));
+
+        Util.spawnAndPopWrinkler();
+        console.assert(Game.HasAchiev('Wrinklesquisher'));
+
+        Util.spawnReindeer().pop();
+        console.assert(Game.HasAchiev('Sleigh of hand'));
+
+        Util.clickBigCookie();
+        console.assert(Game.HasAchiev('Clicktastic'));
+
+        Game.Objects['Bank'].minigame.goodsById[3].stock = 1;
+        Game.Objects['Bank'].minigame.goodsById[3].val = 16e6;
+        Game.Objects['Bank'].minigame.sellGood(3, 1)
+        console.assert(Game.HasAchiev('Liquid assets'));
+    }, 'Bank');
+}
