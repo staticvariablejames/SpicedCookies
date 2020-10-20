@@ -91,3 +91,17 @@ To prevent this,
 by default,
 the mod only adds the stock market profits to the across-ascensions tally
 if the profits are positive.
+
+
+Across-ascensions progress unlock achievements (enabled by default)
+===================================================================
+
+Achievements for popping wrinklers,
+clicking reindeer,
+baking cookies by hand,
+and Liquid Assets
+are awarded based on the all-time progress,
+rather than based only on the progress in the current ascension.
+
+Note that the upgrades unlocked by baking cookies by hand
+still require cookies baked in a single ascension to be unlocked.
