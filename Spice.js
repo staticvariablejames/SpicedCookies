@@ -56,24 +56,28 @@ Spice.stockMarketGoodsCount = function() {
      */
 }
 
-/* Creates the rows that display the deltas for the stock market goods.
- * Each box has the text "delta: " followed by a div with id `stockMarketDelta-${id}`
+/* The first time this function is called with a given ID,
+ * it creates a row with the text "delta: --" below the row with the value of the good,
+ * and returns the div that points to the "--" part of the row.
+ * Subsequent calls only returns the created div.
  */
-Spice.createStockMarketDeltaRows = function() {
-    for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
-        let upperBox = document.getElementById('bankGood-' + i).firstChild;
-        let valueDiv = document.getElementById('bankGood-' + i + '-val').parentNode;
-        let deltaDiv = upperBox.insertBefore(document.createElement("div"), valueDiv.nextSibling);
+Spice.stockMarketDeltaRow = function(stockId) {
+    let div = document.getElementById('stockMarketDelta-' + stockId);
+    if(div) return div;
 
-        // Copy the style from the other div, because assigning quantileDiv.style don't work
-        for(let key in valueDiv.style) {
-            deltaDiv.style[key] = valueDiv.style[key];
-        }
+    let upperBox = document.getElementById('bankGood-' + stockId).firstChild;
+    let valueDiv = document.getElementById('bankGood-' + stockId + '-val').parentNode;
+    let deltaDiv = upperBox.insertBefore(document.createElement("div"), valueDiv.nextSibling);
 
-        deltaDiv.innerHTML = 'delta: <div id="stockMarketDelta-' + i + '" ' +
-            'style="display:inline; font-weight:bold;">0</div>';
+    // Copy the style from the other div, because assigning quantileDiv.style don't work
+    for(let key in valueDiv.style) {
+        deltaDiv.style[key] = valueDiv.style[key];
     }
-    Spice.updateStockMarketDeltaRows();
+
+    deltaDiv.innerHTML = 'delta: <div id="stockMarketDelta-' + stockId + '" ' +
+        'style="display:inline; font-weight:bold;">0</div>';
+
+    return document.getElementById('stockMarketDelta-' + stockId);
 }
 
 /* Updates the text inside the row created by Spice.createStockMarketDeltaRows.
@@ -81,7 +85,7 @@ Spice.createStockMarketDeltaRows = function() {
  */
 Spice.updateStockMarketDeltaRows = function() {
     for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
-        let div = document.getElementById('stockMarketDelta-' + i);
+        let div = Spice.stockMarketDeltaRow(i);
         if(div) {
             div.innerHTML = Math.floor(1000*Game.Objects['Bank'].minigame.goodsById[i].d)/1000;
         }
@@ -91,7 +95,7 @@ Spice.updateStockMarketDeltaRows = function() {
 // Show the delta rows
 Spice.enableStockMarketDeltaRows = function() {
     for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
-        let deltaDiv = document.getElementById('stockMarketDelta-' + i).parentNode;
+        let deltaDiv = Spice.stockMarketDeltaRow(i).parentNode;
         deltaDiv.style.display = "block";
     }
 }
@@ -99,7 +103,7 @@ Spice.enableStockMarketDeltaRows = function() {
 // Hide the delta rows
 Spice.disableStockMarketDeltaRows = function() {
     for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
-        let deltaDiv = document.getElementById('stockMarketDelta-' + i).parentNode;
+        let deltaDiv = Spice.stockMarketDeltaRow(i).parentNode;
         deltaDiv.style.display = "none";
     }
 }
@@ -375,8 +379,8 @@ Spice.launch = function() {
         // Update displays
         Spice.updateProfitTallyDisplay();
     }
-    loadSave();
     CCSE.customLoad.push(loadSave);
+    // We manually call loadSave() at the end of initialization
 
     // Hard reset: replace Spice.saveGame with the default savegame
     Game.customReset.push(function(hard) {
@@ -401,7 +405,7 @@ Spice.launch = function() {
 
     // Stock Market
     CCSE.MinigameReplacer(function() {
-        Spice.createStockMarketDeltaRows();
+        Spice.updateStockMarketDeltaRows();
         Spice.createProfitTallyDiv();
     }, 'Bank');
 
@@ -426,6 +430,7 @@ Spice.launch = function() {
         CCSE.AppendStatsVersionNumber(Spice.name, Spice.version);
     });
 
+    loadSave();
     Spice.isLoaded = true;
 }
 
