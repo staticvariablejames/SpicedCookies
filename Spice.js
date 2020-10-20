@@ -379,7 +379,6 @@ Spice.launch = function() {
     CCSE.customLoad.push(loadSave);
 
     // Hard reset: replace Spice.saveGame with the default savegame
-    if(!Game.customReset) Game.customReset = [];
     Game.customReset.push(function(hard) {
         if(hard) {
             Spice.saveGame = Spice.defaultSaveGame();
@@ -394,12 +393,10 @@ Spice.launch = function() {
     });
 
     // Ascension
-    if(!Game.customAscend) Game.customAscend = [];
     Game.customAscend.push(Spice.updateAcrossAscensionStatistics);
     Game.customAscend.push(Spice.updateAcrossAscensionsStockMarketTallying);
 
     // Reincarnate
-    if(!Game.customReincarnate) Game.customReincarnate = [];
     Game.customReincarnate.push(Spice.updateProfitTallyDisplay)
 
     // Stock Market
@@ -407,6 +404,12 @@ Spice.launch = function() {
         Spice.createStockMarketDeltaRows();
         Spice.createProfitTallyDiv();
     }, 'Bank');
+
+    /* The functions inside Game.customMinigame['Bank']
+     * are only created by CCSE when the minigame launches,
+     * so there is no guarantee they will exist right now.
+     * We thus have to create them ourselves.
+     */
 
     if(!Game.customMinigame['Bank'].tick) Game.customMinigame['Bank'].tick = [];
     Game.customMinigame['Bank'].tick.push(Spice.updateStockMarketDeltaRows);
@@ -418,7 +421,6 @@ Spice.launch = function() {
     Game.customMinigame['Bank'].sellGood.push(Spice.updateProfitTallyDisplay);
 
     // Statistics
-    if(!Game.customStatsMenu) Game.customStatsMenu = [];
     Game.customStatsMenu.push(Spice.displayAcrossAscensionStatistics);
     Game.customStatsMenu.push(function() {
         CCSE.AppendStatsVersionNumber(Spice.name, Spice.version);
