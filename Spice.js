@@ -344,6 +344,10 @@ Spice.launch = function() {
         return;
     }
 
+    // Options menu
+    Game.customOptionsMenu.push(Spice.customOptionsMenu);
+
+    // Save/reload
     CCSE.customSave.push(function() {
         // Run the save game functions
         Spice.saveStockMarketHistory();
@@ -354,49 +358,6 @@ Spice.launch = function() {
             saveGame: Spice.saveGame,
         };
     });
-
-    // Hard reset: replace Spice.saveGame with the default savegame
-    if(!Game.customReset) Game.customReset = [];
-    Game.customReset.push(function(hard) {
-        if(hard) {
-            Spice.saveGame = Spice.defaultSaveGame();
-
-            /* On a hard reset, Game.Objects.Bank.minigame.launch gets executed
-             * before we have the chance to overwrite Spice.saveGame,
-             * so Spice.updateProfitTallyDisplay is ran with old data by Spice.createProfitTallyDiv.
-             * Hence we have to run it again here.
-             */
-            Spice.updateProfitTallyDisplay();
-        }
-    });
-
-    // Stock Market
-    CCSE.MinigameReplacer(function() {
-        Spice.createStockMarketDeltaRows();
-        Spice.createProfitTallyDiv();
-    }, 'Bank');
-
-    if(!Game.customMinigame['Bank'].tick) Game.customMinigame['Bank'].tick = [];
-    Game.customMinigame['Bank'].tick.push(Spice.updateStockMarketDeltaRows);
-
-    if(!Game.customMinigame['Bank'].buyGood) Game.customMinigame['Bank'].buyGood = [];
-    Game.customMinigame['Bank'].buyGood.push(Spice.updateProfitTallyDisplay);
-
-    if(!Game.customMinigame['Bank'].sellGood) Game.customMinigame['Bank'].sellGood = [];
-    Game.customMinigame['Bank'].sellGood.push(Spice.updateProfitTallyDisplay);
-
-    // Ascension
-    if(!Game.customAscend) Game.customAscend = [];
-    Game.customAscend.push(Spice.updateAcrossAscensionStatistics);
-    Game.customAscend.push(Spice.updateAcrossAscensionsStockMarketTallying);
-
-    // Reincarnate
-    if(!Game.customReincarnate) Game.customReincarnate = [];
-    Game.customReincarnate.push(Spice.updateProfitTallyDisplay)
-
-    // Status
-    if(!Game.customStatsMenu) Game.customStatsMenu = [];
-    Game.customStatsMenu.push(Spice.displayAcrossAscensionStatistics);
 
     let loadSave = function() {
         // Pull the save from CCSE
@@ -417,11 +378,52 @@ Spice.launch = function() {
     loadSave();
     CCSE.customLoad.push(loadSave);
 
-    Game.customOptionsMenu.push(Spice.customOptionsMenu);
+    // Hard reset: replace Spice.saveGame with the default savegame
+    if(!Game.customReset) Game.customReset = [];
+    Game.customReset.push(function(hard) {
+        if(hard) {
+            Spice.saveGame = Spice.defaultSaveGame();
 
+            /* On a hard reset, Game.Objects.Bank.minigame.launch gets executed
+             * before we have the chance to overwrite Spice.saveGame,
+             * so Spice.updateProfitTallyDisplay is ran with old data by Spice.createProfitTallyDiv.
+             * Hence we have to run it again here.
+             */
+            Spice.updateProfitTallyDisplay();
+        }
+    });
+
+    // Ascension
+    if(!Game.customAscend) Game.customAscend = [];
+    Game.customAscend.push(Spice.updateAcrossAscensionStatistics);
+    Game.customAscend.push(Spice.updateAcrossAscensionsStockMarketTallying);
+
+    // Reincarnate
+    if(!Game.customReincarnate) Game.customReincarnate = [];
+    Game.customReincarnate.push(Spice.updateProfitTallyDisplay)
+
+    // Stock Market
+    CCSE.MinigameReplacer(function() {
+        Spice.createStockMarketDeltaRows();
+        Spice.createProfitTallyDiv();
+    }, 'Bank');
+
+    if(!Game.customMinigame['Bank'].tick) Game.customMinigame['Bank'].tick = [];
+    Game.customMinigame['Bank'].tick.push(Spice.updateStockMarketDeltaRows);
+
+    if(!Game.customMinigame['Bank'].buyGood) Game.customMinigame['Bank'].buyGood = [];
+    Game.customMinigame['Bank'].buyGood.push(Spice.updateProfitTallyDisplay);
+
+    if(!Game.customMinigame['Bank'].sellGood) Game.customMinigame['Bank'].sellGood = [];
+    Game.customMinigame['Bank'].sellGood.push(Spice.updateProfitTallyDisplay);
+
+    // Statistics
+    if(!Game.customStatsMenu) Game.customStatsMenu = [];
+    Game.customStatsMenu.push(Spice.displayAcrossAscensionStatistics);
     Game.customStatsMenu.push(function() {
         CCSE.AppendStatsVersionNumber(Spice.name, Spice.version);
     });
+
     Spice.isLoaded = true;
 }
 
