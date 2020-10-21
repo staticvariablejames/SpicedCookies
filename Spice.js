@@ -28,6 +28,7 @@ Spice.settings = { // default settings
     saveStockMarketHistory: true,
     tallyOnlyStockMarketProfits: true,
     awardAchievementsAcrossAscensions: true,
+    extraAchievementsAcrossAscensions: false,
 };
 
 Spice.defaultSaveGame = function() {
@@ -256,6 +257,10 @@ Spice.checkWrinklersPoppedAcrossAscensionsAchievements = function() {
         if(wrinklersPopped>=50) Game.Win('Wrinklesquisher');
         if(wrinklersPopped>=200) Game.Win('Moistburster');
     }
+
+    if(Spice.settings.extraAchievementsAcrossAscensions) { // next module
+        if(wrinklersPopped>=1000) Game.Win('Parasitesmasher');
+    }
 }
 
 Spice.checkReindeerClickedAcrossAscensionsAchievements = function() {
@@ -265,6 +270,10 @@ Spice.checkReindeerClickedAcrossAscensionsAchievements = function() {
         if(reindeerClicked>=1) Game.Win('Oh deer');
         if(reindeerClicked>=50) Game.Win('Sleigh of hand');
         if(reindeerClicked>=200) Game.Win('Reindeer sleigher');
+    }
+
+    if(Spice.settings.extraAchievementsAcrossAscensions) {
+        if(reindeerClicked>=1000) Game.Win('A sleightly longer grind');
     }
 }
 
@@ -303,6 +312,35 @@ Spice.checkAcrossAscensionsAchievements = function() {
     Spice.checkHandmadeCookiesAcrossAscensionsAchievements();
     Spice.checkStockMarketTallyAcrossAscensionAchievements();
 }
+
+
+
+/******************************
+ * Module: extra achievements *
+ ******************************/
+
+Spice.createAchievementsForProgressAcrossAscensions = function() {
+    let last, adjacent;
+
+    if(!('Parasitesmasher' in Game.Achievements)) { // Makes this function idempotent
+        adjacent = Game.Achievements['Moistburster'];
+        last = CCSE.NewAchievement('Parasitesmasher',
+            'Burst <b>1000 wrinklers</b> in total.',
+            adjacent.icon);
+        last.order = adjacent.order + 1e-5;
+    }
+    Spice.checkWrinklersPoppedAcrossAscensionsAchievements();
+
+    if(!('A sleightly longer grind' in Game.Achievements)) {
+        adjacent = Game.Achievements['Reindeer sleigher'];
+        last = CCSE.NewAchievement('A sleightly longer grind',
+            'Pop <b>1000 reindeer</b> in total.',
+            adjacent.icon);
+        last.order = adjacent.order + 1e-5;
+    }
+    Spice.checkReindeerClickedAcrossAscensionsAchievements();
+}
+
 
 
 /******************
@@ -408,6 +446,12 @@ Spice.customOptionsMenu = function() {
                     'Award achievements based on all-time statistics', 'Award achievements based on current ascension statistics only',
                     'Spice.checkAcrossAscensionsAchievements'
                 ) + '<label>Whether to award achievements related to popping wrinklers, finding reindeer, hand-making cookies, and stock market profits based on the statistics amassed across ascensions, or on the statistics of this ascension only</label></div>' +
+                '<div class="listing">' +
+                Spice.makeButton('extraAchievementsAcrossAscensions',
+                    'Create new achievements related to across-ascensions progress',
+                    'Don\'t create new achievements related to across-ascensions progress',
+                    'Spice.createAchievementsForProgressAcrossAscensions',
+                ) + '<label>Whether to create two achievements for popping wrinklers and clicking reindeers (NOTE: you must refresh your page after disabling this option)</label></div>' +
                 '</div>';
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
