@@ -93,8 +93,8 @@ the mod only adds the stock market profits to the across-ascensions tally
 if the profits are positive.
 
 
-Across-ascensions progress unlock achievements (enabled by default)
-===================================================================
+Across-ascensions progress unlocks achievements (enabled by default)
+====================================================================
 
 Achievements for popping wrinklers,
 clicking reindeer,
