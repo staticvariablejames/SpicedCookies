@@ -298,7 +298,7 @@ Spice.checkHandmadeCookiesAcrossAscensionsAchievements = function() {
     }
 }
 
-Spice.checkStockMarketTallyAcrossAscensionAchievements = function() {
+Spice.checkStockMarketTallyAcrossAscensionsAchievements = function() {
     // Pushed to Game.customMinigame['Bank'].sellGood
     if(Spice.settings.awardAchievementsAcrossAscensions) {
         if(Spice.effectiveStockMarketTally() >= 3600*24*365) Game.Win('Liquid assets');
@@ -310,7 +310,7 @@ Spice.checkAcrossAscensionsAchievements = function() {
     Spice.checkWrinklersPoppedAcrossAscensionsAchievements();
     Spice.checkReindeerClickedAcrossAscensionsAchievements();
     Spice.checkHandmadeCookiesAcrossAscensionsAchievements();
-    Spice.checkStockMarketTallyAcrossAscensionAchievements();
+    Spice.checkStockMarketTallyAcrossAscensionsAchievements();
 }
 
 
@@ -546,7 +546,7 @@ Spice.launch = function() {
 
     if(!Game.customMinigame['Bank'].sellGood) Game.customMinigame['Bank'].sellGood = [];
     Game.customMinigame['Bank'].sellGood.push(Spice.updateProfitTallyDisplay);
-    Game.customMinigame['Bank'].sellGood.push(Spice.checkStockMarketTallyAcrossAscensionAchievements);
+    Game.customMinigame['Bank'].sellGood.push(Spice.checkStockMarketTallyAcrossAscensionsAchievements);
 
     // Statistics
     Game.customStatsMenu.push(Spice.displayAcrossAscensionStatistics);
