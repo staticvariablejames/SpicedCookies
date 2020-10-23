@@ -105,3 +105,17 @@ rather than based only on the progress in the current ascension.
 
 Note that the upgrades unlocked by baking cookies by hand
 still require cookies baked in a single ascension to be unlocked.
+
+
+Two extra achievements for popping wrinklers and clicking reindeer (disabled by default)
+========================================================================================
+
+Adds one achievement for bursting 1000 wrinklers
+and another for popping 1000 reindeer.
+These are regular achievements that give milk (if they are enabled).
+
+These achievements are awarded according to progress through all ascensions
+regardless of the previous setting.
+
+Note: if you disable this feature after having enabled it once,
+you must refresh your browser for the change to take place.
