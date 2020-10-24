@@ -523,6 +523,7 @@ Spice.launch = function() {
         CCSE.save.OtherMods.Spice = {
             settings: Spice.settings,
             saveGame: Spice.saveGame,
+            version: Spice.version,
         };
     });
 
