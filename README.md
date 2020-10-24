@@ -28,7 +28,7 @@ _and_ the CCSE save
 Similarly,
 to fully restore your save file,
 you need to load the vanilla save and the CCSE save,
-_in this order_.
+**in this order**.
 Failure to do so may cause both save games to be out of sync,
 so that you will have e.g. stock market values from your current save file
 but delta values from the backed up save file.
