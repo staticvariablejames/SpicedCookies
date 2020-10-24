@@ -161,6 +161,30 @@ Note: if you disable this feature after having enabled it once,
 you must refresh your browser for the change to take place.
 
 
+Numerically stable formula for heavenly chip gains (disabled by default)
+------------------------------------------------------------------------
+
+Because Javascript numbers are all floating-point,
+prestige levels can only be gained in increments of `p/2^52`,
+where `p` is the current prestige level.
+This is harmless in the beginning of the game,
+but as soon as `p` becomes larger than `2^53` (about 9 quadrillion)
+achievements like Endless Cycle become significantly harder,
+because instead of getting a single prestige level
+now we need to get `p/2^52` prestige levels
+before being able to ascend and have that run count towards the achievement.
+
+This mod adds a numerically stable formula for computing the new prestige level,
+so that the achievements like Endless Cycle are less painful to get at high prestige levels.
+
+Due to truncation the stable approximate formula may actually be off by one prestige level,
+but the computed value always underestimates the theoretical number
+(so the mod never makes it easier to get the achievements).
+To prevent issues with low prestige values,
+if the number given by the vanilla formula would be higher,
+then that number is used instead.
+
+
 Changelog
 =========
 
