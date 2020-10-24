@@ -369,3 +369,32 @@ function testStockMarketAchievements() {
         console.assert(Game.HasAchiev('Solid assets')); // even while having stock
     }, 'Bank');
 }
+
+function testHeavenlyChipsNumericalPrecision() {
+    Spice.settings.numericallyStableHeavenlyChipGains = false;
+    Util.wipeSave();
+    Game.Earn(1e75); // One sextillion (1e21) heavenly chips
+    Util.Ascend(); Util.Reincarnate();
+
+    // Next prestige level happens at (1e63 + 3e42 + 3e21 + 1)*1e12
+    Game.Earn(7e42*1e12); // Enough for two heavenly chips
+    let saveGame = CCSE.WriteSave(1);
+
+    Util.Ascend(); Util.Reincarnate();
+    console.assert(Game.resets == 1);
+
+    CCSE.LoadSave(saveGame);
+    Spice.settings.numericallyStableHeavenlyChipGains = true;
+    Util.Ascend(); Util.Reincarnate();
+    console.assert(Game.resets == 2); // No precision loss here
+
+    // Make sure we didn't mess up regular ascension
+    Util.wipeSave();
+    Game.Earn(1e12);
+    Util.Ascend(); Util.Reincarnate();
+    console.assert(Game.resets == 1);
+
+    Game.Earn(6.9e12); // Not enough for another chip
+    Util.Ascend(); Util.Reincarnate();
+    console.assert(Game.resets == 1);
+}

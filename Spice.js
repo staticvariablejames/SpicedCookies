@@ -31,6 +31,7 @@ Spice.settings = { // default settings
     awardAchievementsAcrossAscensions: true,
     extraAchievementsAcrossAscensions: false,
     extraStockMarketAchievements: false,
+    numericallyStableHeavenlyChipGains: false,
 };
 
 Spice.defaultSaveGame = function() {
@@ -385,6 +386,56 @@ Spice.createStockMarketAchievements = function() {
 
 
 
+/*******************************
+ * Module: numerical stability *
+ *******************************/
+
+/* Computes a numerically stable lower bound for the number of heavenly chips gained by ascending.
+ *
+ * Let f be the number of cookies forfeited by ascending so far,
+ * and c be the number of cookies baked in this ascension.
+ * The the vanilla formula for the number of heavenly chips that will be gained is
+ *      floor(cbrt(f+c)/1000) - floor(cbrt(f)/1000))
+ * This function computes
+ *      cbrt(f+c)/1000 - cbrt(f)/1000 - 1
+ * which is a lower bound for the formula above
+ * (but can be computed with significantly less loss due to numerical imprecision)
+ * and returns the maximum between it and the vanilla formula.
+ */
+Spice.additionalHeavenlyChips = function() {
+    let f = Game.cookiesReset;
+    let c = Game.cookiesEarned;
+    let a = Math.cbrt((f+c)/1e12);
+    let b = Math.cbrt(f/1e12);
+    let approximation = c/1e12/(a*a + a*b + b*b); // numerically stable
+    let correctFormula = Math.floor(a) - Math.floor(b); // numerically unstable
+    return Math.max(Math.floor(approximation - 1), correctFormula);
+}
+
+Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains = function() {
+    Game.Logic = Spice.rewriteCode(Game.Logic,
+        'var ascendNowToGet=ascendNowToOwn-Math.floor(chipsOwned);',
+        `$&
+        // Spiced Cookies modification
+        if(Spice.settings.numericallyStableHeavenlyChipGains) {
+            ascendNowToGet = Spice.additionalHeavenlyChips();
+        }`
+    );
+    Game.EarnHeavenlyChips = Spice.rewriteCode(Game.EarnHeavenlyChips,
+        'prestige>Game.prestige',
+        `prestige>Game.prestige || (Spice.settings.numericallyStableHeavenlyChipGains && Spice.additionalHeavenlyChips() > 0)`
+    );
+    Game.EarnHeavenlyChips = Spice.rewriteCode(Game.EarnHeavenlyChips,
+        'var prestigeDifference=prestige-Game.prestige;',
+        `$&
+        // Spiced Cookies modification
+        if(Spice.settings.numericallyStableHeavenlyChipGains) {
+            prestigeDifference = Spice.additionalHeavenlyChips();
+        }`
+    );
+}
+
+
 /******************
  * User Interface *
  ******************/
@@ -502,6 +553,11 @@ Spice.customOptionsMenu = function() {
                     'Don\'t create new achievements for the stock market',
                     'Spice.createStockMarketAchievements',
                 ) + '<label>Whether to create two achievements for popping wrinklers and clicking reindeers (NOTE: you must refresh your page after disabling this option)</label></div>' +
+                '<div class="listing">' +
+                Spice.makeButton('numericallyStableHeavenlyChipGains',
+                    'Use numerically stable formula for heavenly chip gains',
+                    'Use vanilla formula for heavenly chip gains',
+                ) + '</div>' +
                 '</div>';
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
@@ -605,6 +661,9 @@ Spice.launch = function() {
     Game.customStatsMenu.push(function() {
         CCSE.AppendStatsVersionNumber(Spice.name, Spice.version);
     });
+
+    // Code injections
+    Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains();
 
     loadSave();
     Spice.isLoaded = true;
