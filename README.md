@@ -119,3 +119,17 @@ regardless of the previous setting.
 
 Note: if you disable this feature after having enabled it once,
 you must refresh your browser for the change to take place.
+
+
+Three extra stock market achievements (disabled by default)
+===========================================================
+
+Adds three stock market achievements:
+one for getting $1 million in profits a single ascension,
+one for having -$1 million in profits and no goods in stock in a single ascension,
+and a shadow one for getting to -$31.536 million in profits in a single ascension.
+
+The first two achievements do give milk.
+
+Note: if you disable this feature after having enabled it once,
+you must refresh your browser for the change to take place.
