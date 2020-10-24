@@ -133,3 +133,13 @@ The first two achievements do give milk.
 
 Note: if you disable this feature after having enabled it once,
 you must refresh your browser for the change to take place.
+
+
+Changelog
+=========
+
+0.1.0
+-----
+
+Alpha release,
+mostly with just a few features for the stock market.
