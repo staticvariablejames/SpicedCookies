@@ -11,13 +11,14 @@ Spice.version = "0.1.0"; // Semantic versioning
 Spice.GameVersion = "2.029";
 Spice.CCSEVersion = "2.018";
 
-/* Injects or modifies the function with the given name.
+/* Injects or modifies the given function.
  * `pattern` and `replacement` are the first and second arguments to String.prototype.replace.
+ * The altered function is returned.
  */
-Spice.rewriteCode = function(functionName, pattern, replacement) {
-    let code = eval(functionName + ".toString()");
+Spice.rewriteCode = function(targetFunction, pattern, replacement) {
+    let code = targetFunction.toString();
     let newCode = code.replace(pattern, replacement);
-    eval(functionName + " = " + newCode);
+    return (new Function('return ' + newCode))();
 }
 
 /* Both settings and saveGame are stored in the CCSE save,
