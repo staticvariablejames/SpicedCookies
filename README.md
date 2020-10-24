@@ -42,6 +42,29 @@ that were earned while this mod was being used
 will be kept.
 
 
+Using the mod
+=============
+
+**NOTE:** this mod is still in its alpha phase,
+so there will be bugs and crashes.
+**Backup your save**.
+
+The best solution is adding
+<https://staticvariablejames.github.io/SpicedCookies/Spice.js>
+to [Cookie Clicker Mod Manager](https://github.com/klattmose/CookieClickerModManager).
+
+Alternatively,
+run
+```javascript
+    Game.LoadMod('https://staticvariablejames.github.io/SpicedCookies/Spice.js');
+```
+on your browser Javascript console,
+or create a bookmarklet with the code
+```javascript
+    javascript:(function(){Game.LoadMod('https://staticvariablejames.github.io/SpicedCookies/Spice.js');}());
+```
+
+
 Save the history of stock market prices (enabled by default)
 ============================================================
 
