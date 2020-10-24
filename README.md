@@ -65,8 +65,11 @@ or create a bookmarklet with the code
 ```
 
 
+Features
+========
+
 Save the history of stock market prices (enabled by default)
-============================================================
+------------------------------------------------------------
 
 Vanilla Cookie Clicker only saves the current price of the stock in the save file.
 This mod saves the entire history for all stocks,
@@ -75,7 +78,7 @@ up to 65 data points
 
 
 Display the delta of stock market goods (enabled by default)
-============================================================
+------------------------------------------------------------
 
 ![Stock market deltas](doc/delta.png "The mod shows the stock market deltas")
 
@@ -89,7 +92,7 @@ This mod shows the delta below the value of each stock.
 
 
 Track more statistics across ascensions (non-disableable)
-=========================================================
+---------------------------------------------------------
 
 ![All-time profits](doc/profits.png "The mod tallies your profits across ascensions")
 
@@ -105,7 +108,7 @@ The latter is displayed directly on the stock market minigame!
 
 
 Merciful Market Profit Tallying (enabled by default)
-====================================================
+----------------------------------------------------
 
 Of the five statistics which are now tracked,
 the stock market profits is the only one of them that can go negative,
@@ -117,7 +120,7 @@ if the profits are positive.
 
 
 Across-ascensions progress unlocks achievements (enabled by default)
-====================================================================
+--------------------------------------------------------------------
 
 Achievements for popping wrinklers,
 clicking reindeer,
@@ -131,7 +134,7 @@ still require cookies baked in a single ascension to be unlocked.
 
 
 Two extra achievements for popping wrinklers and clicking reindeer (disabled by default)
-========================================================================================
+----------------------------------------------------------------------------------------
 
 Adds one achievement for bursting 1000 wrinklers
 and another for popping 1000 reindeer.
@@ -145,7 +148,7 @@ you must refresh your browser for the change to take place.
 
 
 Three extra stock market achievements (disabled by default)
-===========================================================
+-----------------------------------------------------------
 
 Adds three stock market achievements:
 one for getting $1 million in profits a single ascension,
