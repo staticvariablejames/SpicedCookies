@@ -326,3 +326,46 @@ function testAcrossAscensionsExtraAchievements() {
     Util.spawnReindeer().pop();
     console.assert(Game.HasAchiev('A sleightly longer grind'));
 }
+
+function testStockMarketAchievements() {
+    Util.wipeSave("with minigames");
+
+    let ranOnce = false;
+    // Continue the test after the minigame is unloaded
+    CCSE.MinigameReplacer(function() {
+        if(ranOnce) return;
+        ranOnce = true;
+
+        Game.Objects['Bank'].minigame.profit = 1e6 + 1;
+        Game.Objects['Bank'].minigame.goodsById[3].stock = 1;
+        Game.Objects['Bank'].minigame.sellGood(3, 1)
+        console.assert(!Game.HasAchiev('Who wants to be a millionaire?'));
+
+        document.getElementById('prefsButton').click();
+        document.getElementById('SpiceButtonextraStockMarketAchievements').click();
+        document.getElementById('prefsButton').click();
+        console.assert(Game.HasAchiev('Who wants to be a millionaire?'));
+
+        Util.wipeSave('with minigames');
+        console.assert(!Game.HasAchiev('Who wants to be a millionaire?'));
+        Game.Objects['Bank'].minigame.profit = 1e6 + 1;
+        Game.Objects['Bank'].minigame.goodsById[3].stock = 1;
+        Game.Objects['Bank'].minigame.sellGood(3, 1);
+        console.assert(Game.HasAchiev('Who wants to be a millionaire?'));
+
+        Game.Objects['Bank'].minigame.goodsById[3].stock = 3;
+        Game.Objects['Bank'].minigame.sellGood(3, 1);
+        console.assert(!Game.HasAchiev('Failing on purpose'));
+        Game.Objects['Bank'].minigame.goodsById[3].val = 50; // for definiteness
+        Game.Objects['Bank'].minigame.profit = -2e6;
+        Game.Objects['Bank'].minigame.sellGood(3, 1);
+        console.assert(!Game.HasAchiev('Failing on purpose'));
+        Game.Objects['Bank'].minigame.sellGood(3, 1);
+        console.assert(Game.HasAchiev('Failing on purpose'));
+
+        console.assert(!Game.HasAchiev('Solid assets'));
+        Game.Objects['Bank'].minigame.profit = -32e6;
+        Game.Objects['Bank'].minigame.buyGood(4, 1);
+        console.assert(Game.HasAchiev('Solid assets')); // even while having stock
+    }, 'Bank');
+}

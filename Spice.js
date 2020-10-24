@@ -29,6 +29,7 @@ Spice.settings = { // default settings
     tallyOnlyStockMarketProfits: true,
     awardAchievementsAcrossAscensions: true,
     extraAchievementsAcrossAscensions: false,
+    extraStockMarketAchievements: false,
 };
 
 Spice.defaultSaveGame = function() {
@@ -298,10 +299,25 @@ Spice.checkHandmadeCookiesAcrossAscensionsAchievements = function() {
     }
 }
 
-Spice.checkStockMarketTallyAcrossAscensionsAchievements = function() {
-    // Pushed to Game.customMinigame['Bank'].sellGood
+Spice.checkStockMarketTallyAchievements = function() {
+    // Pushed to Game.customMinigame['Bank'].buyGood and sellGood
+    if(!Game.Objects['Bank'].minigame) return; // safeguarding
+
     if(Spice.settings.awardAchievementsAcrossAscensions) {
         if(Spice.effectiveStockMarketTally() >= 3600*24*365) Game.Win('Liquid assets');
+    }
+
+    if(Spice.settings.extraStockMarketAchievements) {
+        profit = Game.Objects['Bank'].minigame.profit;
+        if(profit >= 1e6) Game.Win('Who wants to be a millionaire?');
+
+        let noStocks = true;
+        for(good of Game.Objects['Bank'].minigame.goodsById) {
+            if(good.stock > 0) noStocks = false;
+        }
+        if(noStocks && profit <= -1e6) Game.Win('Failing on purpose');
+
+        if(profit <= -3600*24*365) Game.Win('Solid assets');
     }
 }
 
@@ -310,7 +326,7 @@ Spice.checkAcrossAscensionsAchievements = function() {
     Spice.checkWrinklersPoppedAcrossAscensionsAchievements();
     Spice.checkReindeerClickedAcrossAscensionsAchievements();
     Spice.checkHandmadeCookiesAcrossAscensionsAchievements();
-    Spice.checkStockMarketTallyAcrossAscensionsAchievements();
+    Spice.checkStockMarketTallyAchievements();
 }
 
 
@@ -341,6 +357,31 @@ Spice.createAchievementsForProgressAcrossAscensions = function() {
     Spice.checkReindeerClickedAcrossAscensionsAchievements();
 }
 
+Spice.createStockMarketAchievements = function() {
+    let last, adjacent;
+
+    if(!('Who wants to be a millionaire?' in Game.Achievements)) {
+        adjacent = Game.Achievements['Buy buy buy'];
+        last = CCSE.NewAchievement('Who wants to be a millionaire?',
+            'Have your stock market profits surpass <b>$1 million</b> in a single ascension.',
+            adjacent.icon);
+        last.order = adjacent.order + 1e-5;
+
+        last = CCSE.NewAchievement('Failing on purpose',
+            '<b>Go below -$1 million</b> in stock market profits and have no goods in stock during an ascension.<q>I did not burn a thousand cookies, I simply discovered a thousand ways of how not to bake cookies!<br />[Thomas Edison\'s grandmother, probably]</q>',
+            adjacent.icon);
+        last.order = adjacent.order + 2e-5;
+
+        last = CCSE.NewAchievement('Solid assets',
+            '<b>Go below -$31.536 million</b> in stock market profits in a single ascension.',
+            Game.Achievements['Liquid assets'].icon);
+        last.order = adjacent.order + 3e-5; // just for definiteness; they aren't sorted together
+        last.pool = 'shadow';
+    }
+
+    Spice.checkStockMarketTallyAchievements();
+}
+
 
 
 /******************
@@ -358,6 +399,8 @@ Spice.copySettings = function(settings) {
         'saveStockMarketHistory',
         'tallyOnlyStockMarketProfits',
         'awardAchievementsAcrossAscensions',
+        'extraAchievementsAcrossAscensions',
+        'extraStockMarketAchievements',
     ];
 
     for(key of numericSettings) {
@@ -452,6 +495,12 @@ Spice.customOptionsMenu = function() {
                     'Don\'t create new achievements related to across-ascensions progress',
                     'Spice.createAchievementsForProgressAcrossAscensions',
                 ) + '<label>Whether to create two achievements for popping wrinklers and clicking reindeers (NOTE: you must refresh your page after disabling this option)</label></div>' +
+                '<div class="listing">' +
+                Spice.makeButton('extraStockMarketAchievements',
+                    'Create three new achievements for the stock market',
+                    'Don\'t create new achievements for the stock market',
+                    'Spice.createStockMarketAchievements',
+                ) + '<label>Whether to create two achievements for popping wrinklers and clicking reindeers (NOTE: you must refresh your page after disabling this option)</label></div>' +
                 '</div>';
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
@@ -543,10 +592,11 @@ Spice.launch = function() {
 
     if(!Game.customMinigame['Bank'].buyGood) Game.customMinigame['Bank'].buyGood = [];
     Game.customMinigame['Bank'].buyGood.push(Spice.updateProfitTallyDisplay);
+    Game.customMinigame['Bank'].buyGood.push(Spice.checkStockMarketTallyAchievements);
 
     if(!Game.customMinigame['Bank'].sellGood) Game.customMinigame['Bank'].sellGood = [];
     Game.customMinigame['Bank'].sellGood.push(Spice.updateProfitTallyDisplay);
-    Game.customMinigame['Bank'].sellGood.push(Spice.checkStockMarketTallyAcrossAscensionsAchievements);
+    Game.customMinigame['Bank'].sellGood.push(Spice.checkStockMarketTallyAchievements);
 
     // Statistics
     Game.customStatsMenu.push(Spice.displayAcrossAscensionStatistics);
