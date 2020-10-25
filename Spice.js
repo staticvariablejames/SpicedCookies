@@ -436,6 +436,39 @@ Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains = function() {
 }
 
 
+
+/********************************************
+ * Module: Permanent upgrade slot selection *
+ ********************************************/
+
+Spice.allowPermanentUpgradeSlotSelectionWithinAscension = function() {
+    // Pushed to Game.customStatsMenu.push
+    for(div of document.querySelectorAll('div.crate.upgrade.heavenly')) {
+        /* This is a kludge
+         * We iterate through all the "crates" displayed under the list of prestige upgrades,
+         * looking for the ones which mention Game.UpgradesById[264] in their onmouseover attribute.
+         *
+         * TODO: Find better way of handling this.
+         * This is brittle, difficult to test automatically,
+         * and prone to breakage if the game updates.
+         */
+        let str = div.attributes.onmouseover.nodeValue;
+        let makeCallback = function(slot) {
+            return function() {
+                Game.AssignPermanentSlot(slot);
+                Game.UpdateMenu(); // Not instantaneous but better than not having it
+            }
+        }
+        if(str.includes("Game.UpgradesById[264]")) div.onclick = makeCallback(0);
+        if(str.includes("Game.UpgradesById[265]")) div.onclick = makeCallback(1);
+        if(str.includes("Game.UpgradesById[266]")) div.onclick = makeCallback(2);
+        if(str.includes("Game.UpgradesById[267]")) div.onclick = makeCallback(3);
+        if(str.includes("Game.UpgradesById[268]")) div.onclick = makeCallback(4);
+    }
+}
+
+
+
 /******************
  * User Interface *
  ******************/
@@ -657,6 +690,7 @@ Spice.launch = function() {
     Game.customMinigame['Bank'].sellGood.push(Spice.checkStockMarketTallyAchievements);
 
     // Statistics
+    Game.customStatsMenu.push(Spice.allowPermanentUpgradeSlotSelectionWithinAscension);
     Game.customStatsMenu.push(Spice.displayAcrossAscensionStatistics);
     Game.customStatsMenu.push(function() {
         CCSE.AppendStatsVersionNumber(Spice.name, Spice.version);
