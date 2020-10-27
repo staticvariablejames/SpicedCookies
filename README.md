@@ -185,6 +185,18 @@ if the number given by the vanilla formula would be higher,
 then that number is used instead.
 
 
+Permanent upgrade slots can be chosen during an ascension (non-disableable)
+---------------------------------------------------------------------------
+
+During an ascension,
+you can click on the permanent upgrade slots in the statistics menu
+to change the permanent upgrades for the next ascension.
+
+![Permanent Upgrade Slots](doc/permanent-upgrade-slots.png "Changing slots during an ascension!")
+
+(It takes a few seconds for the displayed picture to change in the statistics page.)
+
+
 Changelog
 =========
 
