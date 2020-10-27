@@ -469,6 +469,23 @@ Spice.allowPermanentUpgradeSlotSelectionWithinAscension = function() {
 
 
 
+/*******************************************************
+ * Module: better tooltip for season-switching cookies *
+ *******************************************************/
+
+Spice.injectSeasonalCookieTooltips = function() {
+    Game.customUpgrades['Bunny biscuit'].descFunc.push(function(me, desc) {
+        let unlocked = 0;
+        for(let egg of Game.easterEggs) {
+            if(Game.Upgrades[egg].unlocked) unlocked++;
+        }
+        return desc.replace("eggs.", 'eggs.<div class="line"></div>'+
+            `You've unlocked <b>${unlocked}/${Game.easterEggs.length}</b> eggs.`);
+    });
+}
+
+
+
 /******************
  * User Interface *
  ******************/
