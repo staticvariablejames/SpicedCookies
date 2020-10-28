@@ -478,14 +478,37 @@ Spice.allowPermanentUpgradeSlotSelectionWithinAscension = function() {
  * Module: better tooltip for season-switching cookies *
  *******************************************************/
 
-Spice.injectSeasonalCookieTooltips = function() {
+Spice.countUnlockedUpgrades = function(upgradeNames) {
+    let unlocked = 0;
+    for(name of upgradeNames) {
+        if(Game.Upgrades[name].unlocked) unlocked++;
+    }
+    return unlocked;
+}
+
+Spice.pushSeasonalCookieTooltips = function() {
     Game.customUpgrades['Bunny biscuit'].descFunc.push(function(me, desc) {
-        let unlocked = 0;
-        for(let egg of Game.easterEggs) {
-            if(Game.Upgrades[egg].unlocked) unlocked++;
-        }
+        let unlocked = Spice.countUnlockedUpgrades(Game.easterEggs);
         return desc.replace("eggs.", 'eggs.<div class="line"></div>'+
             `You've unlocked <b>${unlocked}/${Game.easterEggs.length}</b> eggs.`);
+    });
+    Game.customUpgrades['Festive biscuit'].descFunc.push(function(me, desc) {
+        let santa = Spice.countUnlockedUpgrades(Game.santaDrops);
+        desc = desc.replace("gifts.", 'gifts.<div class="line"></div>'+
+            `You've unlocked <b>${santa}/${Game.santaDrops.length}</b> of Santa's gifts.`);
+        let reindeer = Spice.countUnlockedUpgrades(Game.reindeerDrops);
+        return desc.replace("cookies.", 'cookies.<div class="line"></div>'+
+            `You've unlocked <b>${reindeer}/${Game.reindeerDrops.length}</b> reindeer cookies.`);
+    });
+    Game.customUpgrades['Ghostly biscuit'].descFunc.push(function(me, desc) {
+        let unlocked = Spice.countUnlockedUpgrades(Game.halloweenDrops);
+        return desc.replace("cookies.", 'cookies.<div class="line"></div>'+
+            `You've unlocked <b>${unlocked}/${Game.halloweenDrops.length}</b> halloween cookies.`);
+    });
+    Game.customUpgrades['Lovesick biscuit'].descFunc.push(function(me, desc) {
+        let unlocked = Spice.countUnlockedUpgrades(Game.heartDrops);
+        return desc.replace("biscuits.", 'biscuits.<div class="line"></div>'+
+            `You've unlocked <b>${unlocked}/${Game.heartDrops.length}</b> heart biscuits.`);
     });
 }
 
@@ -717,6 +740,9 @@ Spice.launch = function() {
     Game.customStatsMenu.push(function() {
         CCSE.AppendStatsVersionNumber(Spice.name, Spice.version);
     });
+
+    // Tooltips
+    Spice.pushSeasonalCookieTooltips();
 
     // Code injections
     Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains();
