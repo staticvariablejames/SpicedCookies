@@ -397,7 +397,7 @@ Spice.createStockMarketAchievements = function() {
  * The the vanilla formula for the number of heavenly chips that will be gained is
  *      floor(cbrt(f+c)/1000) - floor(cbrt(f)/1000))
  * This function computes
- *      cbrt(f+c)/1000 - cbrt(f)/1000 - 1
+ *      floor(cbrt(f+c)/1000 - cbrt(f)/1000)
  * which is a lower bound for the formula above
  * (but can be computed with significantly less loss due to numerical imprecision)
  * and returns the maximum between it and the vanilla formula.
@@ -407,9 +407,14 @@ Spice.additionalHeavenlyChips = function() {
     let c = Game.cookiesEarned;
     let a = Math.cbrt((f+c)/1e12);
     let b = Math.cbrt(f/1e12);
-    let approximation = c/1e12/(a*a + a*b + b*b); // numerically stable
+    let approximation = c/1e12/(a*a + a*b + b*b);
+    /* The approximation is mathematically equivalent to
+     *      cbrt(f+c)/1000 - cbrt(f)/1000
+     * and it is numerically stable.
+     * We just need to floor it to guarantee it is a lower bound.
+     */
     let correctFormula = Math.floor(a) - Math.floor(b); // numerically unstable
-    return Math.max(Math.floor(approximation - 1), correctFormula);
+    return Math.max(Math.floor(approximation), correctFormula);
 }
 
 Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains = function() {

@@ -377,11 +377,11 @@ function testHeavenlyChipsNumericalPrecision() {
     Util.Ascend(); Util.Reincarnate();
 
     // Next prestige level happens at (1e63 + 3e42 + 3e21 + 1)*1e12
-    Game.Earn(7e42*1e12); // Enough for two heavenly chips
+    Game.Earn(3.001e42*1e12); // Enough a heavenly chip
     let saveGame = CCSE.WriteSave(1);
 
     Util.Ascend(); Util.Reincarnate();
-    console.assert(Game.resets == 1);
+    console.assert(Game.resets == 1); // Precision loss
 
     CCSE.LoadSave(saveGame);
     Spice.settings.numericallyStableHeavenlyChipGains = true;
