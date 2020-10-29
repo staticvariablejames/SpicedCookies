@@ -197,6 +197,19 @@ to change the permanent upgrades for the next ascension.
 (It takes a few seconds for the displayed picture to change in the statistics page.)
 
 
+Season switcher tooltips says how many seasonal upgrades were unlocked (non-disableable)
+----------------------------------------------------------------------------------------
+
+![Season switcher tooltip](doc/season-switcher-tooltip.png "Slightly better season swtcher tooltips")
+
+The season switches now have a line saying how many upgrades from that season were unlocked.
+This is useful, for example, if you are saving Chocolate egg for a combo.
+
+By default,
+this extra line is hidden if all upgrades were bought.
+This can be disabled in the menu.
+
+
 Changelog
 =========
 
