@@ -32,6 +32,7 @@ Spice.settings = { // default settings
     extraAchievementsAcrossAscensions: false,
     extraStockMarketAchievements: false,
     numericallyStableHeavenlyChipGains: false,
+    autohideSeasonalBiscuitsTooltip: true,
 };
 
 Spice.defaultSaveGame = function() {
@@ -478,38 +479,39 @@ Spice.allowPermanentUpgradeSlotSelectionWithinAscension = function() {
  * Module: better tooltip for season-switching cookies *
  *******************************************************/
 
-Spice.countUnlockedUpgrades = function(upgradeNames) {
-    let unlocked = 0;
-    for(name of upgradeNames) {
-        if(Game.Upgrades[name].unlocked) unlocked++;
-    }
-    return unlocked;
-}
-
 Spice.pushSeasonalCookieTooltips = function() {
+    let seasonalReplacer = function(desc, upgradeNames, replacementStr) {
+        let unlocked = 0;
+        let bought = 0;
+        let total = 0;
+        for(let name of upgradeNames) {
+            total++;
+            if(Game.Upgrades[name].unlocked) unlocked++;
+            if(Game.Upgrades[name].bought) bought++;
+        }
+        if(Spice.settings.autohideSeasonalBiscuitsTooltip && bought == total)
+            return desc;
+        return desc.replace(replacementStr, `${replacementStr}<div class="line"></div>` +
+            `You've unlocked <b>${unlocked}/${total}</b> ${replacementStr}`);
+    }
     Game.customUpgrades['Bunny biscuit'].descFunc.push(function(me, desc) {
-        let unlocked = Spice.countUnlockedUpgrades(Game.easterEggs);
-        return desc.replace("eggs.", 'eggs.<div class="line"></div>'+
-            `You've unlocked <b>${unlocked}/${Game.easterEggs.length}</b> eggs.`);
+        return seasonalReplacer(desc, Game.easterEggs, "eggs.");
     });
+
     Game.customUpgrades['Festive biscuit'].descFunc.push(function(me, desc) {
-        let santa = Spice.countUnlockedUpgrades(Game.santaDrops);
-        desc = desc.replace("gifts.", 'gifts.<div class="line"></div>'+
-            `You've unlocked <b>${santa}/${Game.santaDrops.length}</b> of Santa's gifts.`);
-        let reindeer = Spice.countUnlockedUpgrades(Game.reindeerDrops);
-        return desc.replace("cookies.", 'cookies.<div class="line"></div>'+
-            `You've unlocked <b>${reindeer}/${Game.reindeerDrops.length}</b> reindeer cookies.`);
+        desc = seasonalReplacer(desc, Game.santaDrops, "of Santa's gifts.");
+        desc = seasonalReplacer(desc, Game.reindeerDrops, "reindeer cookies.");
+        return desc;
     });
+
     Game.customUpgrades['Ghostly biscuit'].descFunc.push(function(me, desc) {
-        let unlocked = Spice.countUnlockedUpgrades(Game.halloweenDrops);
-        return desc.replace("cookies.", 'cookies.<div class="line"></div>'+
-            `You've unlocked <b>${unlocked}/${Game.halloweenDrops.length}</b> halloween cookies.`);
+        return seasonalReplacer(desc, Game.halloweenDrops, "halloween cookies.");
     });
+
     Game.customUpgrades['Lovesick biscuit'].descFunc.push(function(me, desc) {
-        let unlocked = Spice.countUnlockedUpgrades(Game.heartDrops);
-        return desc.replace("biscuits.", 'biscuits.<div class="line"></div>'+
-            `You've unlocked <b>${unlocked}/${Game.heartDrops.length}</b> heart biscuits.`);
+        return seasonalReplacer(desc, Game.heartDrops, "heart biscuits.");
     });
+    // This could have been a single function
 }
 
 
@@ -532,6 +534,7 @@ Spice.copySettings = function(settings) {
         'extraAchievementsAcrossAscensions',
         'extraStockMarketAchievements',
         'numericallyStableHeavenlyChipGains',
+        'autohideSeasonalBiscuitsTooltip',
     ];
 
     for(key of numericSettings) {
@@ -650,6 +653,12 @@ Spice.customOptionsMenu = function() {
         Spice.makeButton('numericallyStableHeavenlyChipGains',
             'Use numerically stable formula for heavenly chip gains',
             'Use vanilla formula for heavenly chip gains',
+        ) + '</div>';
+
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('autohideSeasonalBiscuitsTooltip',
+            'Automatically hide extra season switcher tooltips if all upgrades were purchased',
+            'Always display the "You\'ve unlocked..." line in season switcher biscuits',
         ) + '</div>';
 
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
