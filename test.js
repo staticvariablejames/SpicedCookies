@@ -398,3 +398,57 @@ function testHeavenlyChipsNumericalPrecision() {
     Util.Ascend(); Util.Reincarnate();
     console.assert(Game.resets == 1);
 }
+
+function testSeasonalCookieTooltips() {
+    Util.wipeSave();
+    let desc = "";
+
+    Game.Upgrades[Game.easterEggs[0]].unlock();
+    Game.Upgrades[Game.easterEggs[1]].unlock();
+    Game.Upgrades[Game.easterEggs[2]].unlock();
+    Game.Upgrades[Game.easterEggs[3]].earn();
+    Game.Upgrades[Game.easterEggs[4]].earn();
+    desc = Game.Upgrades['Bunny biscuit'].descFunc();
+    console.assert(desc.includes("5/" + Game.easterEggs.length));
+
+    Game.Upgrades[Game.santaDrops[0]].unlock();
+    Game.Upgrades[Game.santaDrops[1]].unlock();
+    Game.Upgrades[Game.santaDrops[2]].earn();
+    Game.Upgrades[Game.reindeerDrops[0]].unlock();
+    Game.Upgrades[Game.reindeerDrops[1]].unlock();
+    Game.Upgrades[Game.reindeerDrops[2]].unlock();
+    Game.Upgrades[Game.reindeerDrops[3]].unlock();
+    Game.Upgrades[Game.reindeerDrops[4]].earn();
+    Game.Upgrades[Game.reindeerDrops[5]].earn();
+    Game.Upgrades[Game.reindeerDrops[6]].earn();
+    desc = Game.Upgrades['Festive biscuit'].descFunc();
+    console.assert(desc.includes("3/" + Game.santaDrops.length));
+    console.assert(desc.includes("7/" + Game.reindeerDrops.length));
+
+    Game.Upgrades[Game.halloweenDrops[0]].unlock();
+    Game.Upgrades[Game.halloweenDrops[1]].earn();
+    desc = Game.Upgrades['Ghostly biscuit'].descFunc();
+    console.assert(desc.includes("1/" + Game.halloweenDrops.length));
+
+    Game.Upgrades[Game.heartDrops[0]].unlock();
+    Game.Upgrades[Game.heartDrops[1]].earn();
+    Game.Upgrades[Game.heartDrops[2]].earn();
+    desc = Game.Upgrades['Lovesick biscuit'].descFunc();
+    console.assert(desc.includes("3/" + Game.heartDrops.length));
+
+    // Test that earning everything does not change the line
+    let text = Game.easterEggs.length + "/" + Game.easterEggs.length;
+    for(let name of Game.easterEggs) Game.Upgrades[name].unlock();
+    desc = Game.Upgrades['Bunny biscuit'].descFunc();
+    console.assert(Array.from(desc.matchAll(text)).length == 1);
+
+    // Test that unlocking everything does change the line
+    for(let name of Game.easterEggs) Game.Upgrades[name].earn();
+    desc = Game.Upgrades['Bunny biscuit'].descFunc();
+    console.assert(Array.from(desc.matchAll(text)).length == 1);
+
+    // Test that the setting is respected
+    Spice.settings.autohideSeasonalBiscuitsTooltip = false;
+    desc = Game.Upgrades['Bunny biscuit'].descFunc();
+    console.assert(Array.from(desc.matchAll(text)).length == 2);
+}
