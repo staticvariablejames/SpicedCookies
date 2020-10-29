@@ -582,19 +582,27 @@ Spice.toggleSetting = function(buttonId, settingName, onText, offText, onFunctio
         element.innerHTML = offText;
         if(offFunction) offFunction();
     }
+    PlaySound('snd/tick.mp3');
+}
+
+Spice.escapeQuotes = function(string) {
+    /* Escape things for makeButton purposes.
+     * Painful trial and error suggests we have to quote it twice.
+     * TODO figure out why.
+     */
+    return string.replaceAll("'", '&amp;apos;')
+                 .replaceAll('"', '&amp;quot;');
 }
 
 Spice.makeButton = function(settingName, onText, offText, onFunctionName, offFunctionName) {
     let set = Spice.settings[settingName];
-    onText = onText.replace(/'/,'\\\''); // escape single quotes
-    offText = offText.replace(/'/,'\\\'');
     let buttonId = "SpiceButton" + settingName;
-    let onclick = `Spice.toggleSetting('${buttonId}', '${settingName}',
-        '${onText}', '${offText}',
-        ${onFunctionName}, ${offFunctionName}
+    let onclick = `Spice.toggleSetting('${buttonId}', '${settingName}', \
+        '${Spice.escapeQuotes(onText)}', '${Spice.escapeQuotes(offText)}', \
+        ${onFunctionName}, ${offFunctionName} \
     )`;
     return `<a id="${buttonId}" class="option${set? "" : " off"}" 
-            onclick="${onclick};PlaySound('snd/tick.mp3');">
+            onclick="${onclick};">
             ${set? onText : offText}
             </a>`;
 }
