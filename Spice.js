@@ -601,42 +601,48 @@ Spice.makeButton = function(settingName, onText, offText, onFunctionName, offFun
 Spice.customOptionsMenu = function() {
     let menuStr = "";
     menuStr += '<div class="listing">' + 
-                Spice.makeButton('displayStockDelta',
-                    'Display stock market deltas', 'Hide stock market deltas',
-                    'Spice.enableStockMarketDeltaRows', 'Spice.disableStockMarketDeltaRows'
-                ) + '</div>' +
-                '<div class="listing">' +
-                Spice.makeButton('saveStockMarketHistory',
-                    'Save the stock market value history', 'Don\'t save stock market value history'
-                ) + '</div>' +
-                '<div class="listing">' +
-                Spice.makeButton('tallyOnlyStockMarketProfits',
-                    'Tally only stock market profits', 'Tally both profits and losses',
-                    'Spice.updateProfitTallyDisplay', 'Spice.updateProfitTallyDisplay'
-                ) + '<label>Whether to include or not negative profits in the across-ascensions stock market tally</label></div>' +
-                '<div class="listing">' +
-                Spice.makeButton('awardAchievementsAcrossAscensions',
-                    'Award achievements based on all-time statistics', 'Award achievements based on current ascension statistics only',
-                    'Spice.checkAcrossAscensionsAchievements'
-                ) + '<label>Whether to award achievements related to popping wrinklers, finding reindeer, hand-making cookies, and stock market profits based on the statistics amassed across ascensions, or on the statistics of this ascension only</label></div>' +
-                '<div class="listing">' +
-                Spice.makeButton('extraAchievementsAcrossAscensions',
-                    'Create new achievements related to across-ascensions progress',
-                    'Don\'t create new achievements related to across-ascensions progress',
-                    'Spice.createAchievementsForProgressAcrossAscensions',
-                ) + '<label>Whether to create two achievements for popping wrinklers and clicking reindeers (NOTE: you must refresh your page after disabling this option)</label></div>' +
-                '<div class="listing">' +
-                Spice.makeButton('extraStockMarketAchievements',
-                    'Create three new achievements for the stock market',
-                    'Don\'t create new achievements for the stock market',
-                    'Spice.createStockMarketAchievements',
-                ) + '<label>Whether to create two achievements for popping wrinklers and clicking reindeers (NOTE: you must refresh your page after disabling this option)</label></div>' +
-                '<div class="listing">' +
-                Spice.makeButton('numericallyStableHeavenlyChipGains',
-                    'Use numerically stable formula for heavenly chip gains',
-                    'Use vanilla formula for heavenly chip gains',
-                ) + '</div>' +
-                '</div>';
+        Spice.makeButton('displayStockDelta',
+            'Display stock market deltas', 'Hide stock market deltas',
+            'Spice.enableStockMarketDeltaRows', 'Spice.disableStockMarketDeltaRows'
+        ) + '</div>';
+
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('saveStockMarketHistory',
+            'Save the stock market value history', 'Don\'t save stock market value history'
+        ) + '</div>';
+
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('tallyOnlyStockMarketProfits',
+            'Tally only stock market profits', 'Tally both profits and losses',
+            'Spice.updateProfitTallyDisplay', 'Spice.updateProfitTallyDisplay'
+        ) + '<label>Whether to include or not negative profits in the across-ascensions stock market tally</label></div>';
+
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('awardAchievementsAcrossAscensions',
+            'Award achievements based on all-time statistics', 'Award achievements based on current ascension statistics only',
+            'Spice.checkAcrossAscensionsAchievements'
+        ) + '<label>Whether to award achievements related to popping wrinklers, finding reindeer, hand-making cookies, and stock market profits based on the statistics amassed across ascensions, or on the statistics of this ascension only</label></div>';
+
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('extraAchievementsAcrossAscensions',
+            'Create new achievements related to across-ascensions progress',
+            'Don\'t create new achievements related to across-ascensions progress',
+            'Spice.createAchievementsForProgressAcrossAscensions',
+        ) + '<label>Whether to create two achievements for popping wrinklers and clicking reindeers (NOTE: you must refresh your page after disabling this option)</label></div>';
+
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('extraStockMarketAchievements',
+            'Create three new achievements for the stock market',
+            'Don\'t create new achievements for the stock market',
+            'Spice.createStockMarketAchievements',
+        ) + '<label>Whether to create two achievements for popping wrinklers and clicking reindeers (NOTE: you must refresh your page after disabling this option)</label></div>';
+
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('numericallyStableHeavenlyChipGains',
+            'Use numerically stable formula for heavenly chip gains',
+            'Use vanilla formula for heavenly chip gains',
+        ) + '</div>';
+
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
 
