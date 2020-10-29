@@ -531,6 +531,7 @@ Spice.copySettings = function(settings) {
         'awardAchievementsAcrossAscensions',
         'extraAchievementsAcrossAscensions',
         'extraStockMarketAchievements',
+        'numericallyStableHeavenlyChipGains',
     ];
 
     for(key of numericSettings) {
