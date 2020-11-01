@@ -39,55 +39,34 @@ function testStockMarketHistory() {
         ranOnce = true; // Work around Cookie Clicker calling launch() again on wipe save
 
         // Right now, the stock market has 16 minutes of history
-        let ccseSave = CCSE.WriteSave(1);
-        let vanillaSave = Game.WriteSave(1);
+        let saveGame = Game.WriteSave(1);
 
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
-        Game.LoadSave(vanillaSave);
-        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 2);
-        CCSE.LoadSave(ccseSave);
+        Util.wipeSave("with minigames");
+        Game.LoadSave(saveGame);
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
 
         // Test disabling the function
         document.getElementById('prefsButton').click();
         document.getElementById('SpiceButtonsaveStockMarketHistory').click();
-        ccseSave = CCSE.WriteSave(1);
-        CCSE.LoadSave(ccseSave);
+        saveGame = Game.WriteSave(1);
+        Game.LoadSave(saveGame);
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 2);
 
         // Enable it again
         document.getElementById('SpiceButtonsaveStockMarketHistory').click();
 
 
-        // Tick a few times, we will make sure it resets on ascension
+        // Tick a few times, we want to make sure it resets on ascension
         for(let i = 0; i < 15; i++) Game.Objects.Bank.minigame.tick();
-        Util.Reincarnate();
+        Util.Ascend(); Util.Reincarnate();
 
         Game.Objects.Bank.getFree(1); // Unlock the minigame
-
-        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
-        ccseSave = CCSE.WriteSave(1);
-        vanillaSave = Game.WriteSave(1);
-        Game.LoadSave(vanillaSave);
-        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 2);
-        CCSE.LoadSave(ccseSave);
-        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
-
-        // Same, but wiping the save this time
-        for(let i = 0; i < 15; i++) Game.Objects.Bank.minigame.tick();
-        Util.wipeSave("with minigames");
-
-        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
-        ccseSave = CCSE.WriteSave(1);
-        vanillaSave = Game.WriteSave(1);
-        Game.LoadSave(vanillaSave);
-        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 2);
-        CCSE.LoadSave(ccseSave);
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
 
         // Make sure loading the mod with an existing save does not break it
         Spice.saveGame = Spice.defaultSaveGame();
-        Spice.loadStockMarketHistory();
+        Spice.loadStockMarketHistory(); // Pretend we just ran Game.LoadMod('Spice.js')
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
         Game.Objects.Bank.minigame.tick();
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 18);
@@ -128,7 +107,7 @@ function testAcrossAscensionsStatistics() {
     console.assert(document.getElementById('menu').textContent.indexOf("Reindeer found : 1,700 (all time : 1,713)") !== -1);
     console.assert(document.getElementById('menu').textContent.indexOf("Hand-made cookies : 2,300 (all time : 2,319)") !== -1);
 
-    let save = CCSE.WriteSave(1);
+    let saveGame = Game.WriteSave(1);
     Spice.saveGame = Spice.defaultSaveGame(); // Wipe save data
     Spice.saveGame.bigCookieClicksPreviousAscensions = 55;
     Spice.saveGame.wrinklersPoppedPreviousAscensions = 77;
@@ -139,7 +118,7 @@ function testAcrossAscensionsStatistics() {
     console.assert(Spice.saveGame.wrinklersPoppedPreviousAscensions === 0);
     console.assert(Spice.saveGame.reindeerClickedPreviousAscensions === 0);
     console.assert(Spice.saveGame.handmadeCookiesPreviousAscensions === 0);
-    CCSE.LoadSave(save);
+    Game.LoadSave(saveGame);
     Game.UpdateMenu();
     console.assert(document.getElementById('menu').textContent.indexOf("Cookie clicks : 1,000 (all time : 1,005)") !== -1);
     console.assert(document.getElementById('menu').textContent.indexOf("Wrinklers popped : 3,000 (all time : 3,007)") !== -1);
@@ -201,7 +180,7 @@ function testStockMarketTallying() {
         console.assert(Spice.saveGame.stockMarketProfitsPreviousAscensions === 35);
         Util.Reincarnate();
 
-        let saveGame = CCSE.WriteSave(1);
+        let saveGame = Game.WriteSave(1);
         Util.wipeSave();
 
         /* Wiping the save re-runs Game.Objects.Bank.minigame.launch,
@@ -209,7 +188,7 @@ function testStockMarketTallying() {
          * So we have to run the line below again. */
         profitRow = document.getElementById('bankTally').parentNode;
         console.assert(profitRow.textContent.indexOf("all time : $0") !== -1);
-        CCSE.LoadSave(saveGame);
+        Game.LoadSave(saveGame);
         console.assert(profitRow.textContent.indexOf("all time : $35") !== -1);
 
         /* I don't think the situation below will ever happen,
@@ -249,7 +228,7 @@ function testAcrossAscensionsAchievements() {
         Game.Objects['Bank'].minigame.goodsById[3].stock = 1;
         Game.Objects['Bank'].minigame.goodsById[3].val = 16e6;
         Game.Objects['Bank'].minigame.sellGood(3, 1)
-        console.assert(!Game.HasAchiev('Liquid assets'));
+        console.assert(!Game.HasAchiev('Gaseous assets'));
 
         document.getElementById('prefsButton').click();
         document.getElementById('SpiceButtonawardAchievementsAcrossAscensions').click();
@@ -378,12 +357,12 @@ function testHeavenlyChipsNumericalPrecision() {
 
     // Next prestige level happens at (1e63 + 3e42 + 3e21 + 1)*1e12
     Game.Earn(3.001e42*1e12); // Enough a heavenly chip
-    let saveGame = CCSE.WriteSave(1);
+    let saveGame = Game.WriteSave(1);
 
     Util.Ascend(); Util.Reincarnate();
     console.assert(Game.resets == 1); // Precision loss
 
-    CCSE.LoadSave(saveGame);
+    Game.LoadSave(saveGame);
     Spice.settings.numericallyStableHeavenlyChipGains = true;
     Util.Ascend(); Util.Reincarnate();
     console.assert(Game.resets == 2); // No precision loss here
