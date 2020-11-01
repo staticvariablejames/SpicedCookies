@@ -8,8 +8,8 @@ if(typeof CCSE == 'undefined') Game.LoadMod('https://klattmose.github.io/CookieC
 // Spice.launch is at the end of this file.
 Spice.name = "Spiced Cookies";
 Spice.version = "0.2.0"; // Semantic versioning
-Spice.GameVersion = "2.029";
-Spice.CCSEVersion = "2.018";
+Spice.GameVersion = "2.031";
+Spice.CCSEVersion = "2.020";
 
 /* Injects or modifies the given function.
  * `pattern` and `replacement` are the first and second arguments to String.prototype.replace.
@@ -21,7 +21,7 @@ Spice.rewriteCode = function(targetFunction, pattern, replacement) {
     return (new Function('return ' + newCode))();
 }
 
-/* Both settings and saveGame are stored in the CCSE save,
+/* Both settings and saveGame are stored in the CCSE.config,
  * but the save game is reset on a wipeSave whereas the settings are not.
  */
 Spice.settings = { // default settings
@@ -666,11 +666,11 @@ Spice.customOptionsMenu = function() {
 
 Spice.load = function() {
     // Pull the save from CCSE
-    if(CCSE.save.OtherMods.Spice) {
-        Spice.copySettings(CCSE.save.OtherMods.Spice.settings);
-        Spice.copySaveGame(CCSE.save.OtherMods.Spice.saveGame);
+    if(CCSE.config.OtherMods.Spice) {
+        Spice.copySettings(CCSE.config.OtherMods.Spice.settings);
+        Spice.copySaveGame(CCSE.config.OtherMods.Spice.saveGame);
 
-        if (CCSE.save.OtherMods.Spice.version != Spice.version) {
+        if (CCSE.config.OtherMods.Spice.version != Spice.version) {
             l('logButton').classList.add('hasUpdate');
         }
     }
@@ -690,7 +690,7 @@ Spice.save = function() {
     Spice.saveStockMarketHistory();
 
     // Push the save to CSSE
-    CCSE.save.OtherMods.Spice = {
+    CCSE.config.OtherMods.Spice = {
         settings: Spice.settings,
         saveGame: Spice.saveGame,
         version: Spice.version,
@@ -773,7 +773,7 @@ Spice.launch = function() {
     Game.customShimmerTypes['reindeer'].popFunc.push(Spice.checkReindeerClickedAcrossAscensionsAchievements);
 
     // Big cookie clicks
-    Game.customCookieClicks.push(Spice.checkHandmadeCookiesAcrossAscensionsAchievements);
+    Game.registerHook('click', Spice.checkHandmadeCookiesAcrossAscensionsAchievements);
 
     // Stock Market
     CCSE.MinigameReplacer(function() {
