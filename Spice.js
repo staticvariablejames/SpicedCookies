@@ -307,7 +307,8 @@ Spice.checkStockMarketTallyAchievements = function() {
     if(!Game.Objects['Bank'].minigame) return; // safeguarding
 
     if(Spice.settings.awardAchievementsAcrossAscensions) {
-        if(Spice.effectiveStockMarketTally() >= 3600*24*365) Game.Win('Liquid assets');
+        if(Spice.effectiveStockMarketTally() >= 10e6) Game.Win('Liquid assets');
+        if(Spice.effectiveStockMarketTally() >= 3600*24*365) Game.Win('Gaseous assets');
     }
 
     if(Spice.settings.extraStockMarketAchievements) {
