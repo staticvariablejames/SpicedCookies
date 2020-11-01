@@ -693,6 +693,42 @@ Spice.save = function() {
     };
 }
 
+Spice.addVersionHistory = function() {
+    // Run on Spice.launch()
+    str = `
+    <div class="listing">
+        <a href="https://github.com/staticvariablejames/SpicedCookies" target="blank">Spiced Cookies</a>
+        is a collection of small modifications to Cookie Clicker,
+        adding a bit of spice to your gameplay.
+    </div>
+
+    <div class="listing">
+        Every single feature can be either ignored or disabled in the settings,
+        and most of them start disabled by default.
+    </div>
+
+    <div class="subsection update small"><div class="title">2020-10-31 - UI niceties</div>
+        <div class="listing">&bull; Numerically stable formula for heavenly chip gains (disabled by default)</div>
+        <div class="listing">&bull; Permanent upgrade slots can be chosen during an ascension (non-disableable)</div>
+        <div class="listing">&bull; Season switcher tooltips says how many seasonal upgrades were unlocked (non-disableable)</div>
+    </div>
+
+    <div class="subsection update small"><div class="title">2020-10-23 - alpha release</div>
+        <div class="listing">&bull; Save the history of stock market prices (enabled by default)</div>
+        <div class="listing">&bull; Display the delta of stock market goods (enabled by default)</div>
+        <div class="listing">&bull; Track more statistics across ascensions (non-disableable)</div>
+        <div class="listing">&bull; Merciful Market Profit Tallying (enabled by default)</div>
+        <div class="listing">&bull; Across-ascensions progress unlocks achievements (enabled by default)</div>
+        <div class="listing">&bull; Two extra achievements for popping wrinklers and clicking reindeer (disabled by default)</div>
+        <div class="listing">&bull; Three extra stock market achievements (disabled by default)</div>
+    </div>
+
+    `;
+    Game.customInfoMenu.push(function(){
+        CCSE.PrependCollapsibleInfoMenu(Spice.name, str);
+    });
+}
+
 Spice.launch = function() {
     if(!CCSE.ConfirmGameCCSEVersion(Spice.name, Spice.version, Spice.GameVersion, Spice.CCSEVersion)) {
         Spice.isLoaded = true;
@@ -701,6 +737,9 @@ Spice.launch = function() {
 
     // Options menu
     Game.customOptionsMenu.push(Spice.customOptionsMenu);
+
+    // Info menu
+    Spice.addVersionHistory();
 
     // Hard reset: replace Spice.saveGame with the default savegame
     Game.customReset.push(function(hard) {
