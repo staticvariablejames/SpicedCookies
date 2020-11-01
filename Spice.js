@@ -669,6 +669,10 @@ Spice.load = function() {
     if(CCSE.save.OtherMods.Spice) {
         Spice.copySettings(CCSE.save.OtherMods.Spice.settings);
         Spice.copySaveGame(CCSE.save.OtherMods.Spice.saveGame);
+
+        if (CCSE.save.OtherMods.Spice.version != Spice.version) {
+            l('logButton').classList.add('hasUpdate');
+        }
     }
 
     // Run the load save functions
