@@ -125,7 +125,7 @@ Across-ascensions progress unlocks achievements (enabled by default)
 Achievements for popping wrinklers,
 clicking reindeer,
 baking cookies by hand,
-and Liquid Assets
+and Liquid and Gaseous Assets
 are awarded based on the all-time progress,
 rather than based only on the progress in the current ascension.
 
@@ -225,3 +225,8 @@ mostly with just a few features for the stock market.
 Adds a numerically stable formula for heavenly chips,
 allows changing permanent upgrade slots during an ascension,
 and add slightly nicer tooltips for the season switchers.
+
+0.2.1
+-----
+
+Update to Cookie Clicker v2.031.
