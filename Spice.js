@@ -664,6 +664,35 @@ Spice.customOptionsMenu = function() {
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
 
+Spice.load = function() {
+    // Pull the save from CCSE
+    if(CCSE.save.OtherMods.Spice) {
+        Spice.copySettings(CCSE.save.OtherMods.Spice.settings);
+        Spice.copySaveGame(CCSE.save.OtherMods.Spice.saveGame);
+    }
+
+    // Run the load save functions
+    if(Spice.settings.displayStockDelta) Spice.enableStockMarketDeltaRows();
+    else Spice.disableStockMarketDeltaRows();
+
+    Spice.loadStockMarketHistory();
+
+    // Update displays
+    Spice.updateProfitTallyDisplay();
+}
+
+Spice.save = function() {
+    // Run the save game functions
+    Spice.saveStockMarketHistory();
+
+    // Push the save to CSSE
+    CCSE.save.OtherMods.Spice = {
+        settings: Spice.settings,
+        saveGame: Spice.saveGame,
+        version: Spice.version,
+    };
+}
+
 Spice.launch = function() {
     if(!CCSE.ConfirmGameCCSEVersion(Spice.name, Spice.version, Spice.GameVersion, Spice.CCSEVersion)) {
         Spice.isLoaded = true;
@@ -672,38 +701,6 @@ Spice.launch = function() {
 
     // Options menu
     Game.customOptionsMenu.push(Spice.customOptionsMenu);
-
-    // Save/reload
-    CCSE.customSave.push(function() {
-        // Run the save game functions
-        Spice.saveStockMarketHistory();
-
-        // Push the save to CSSE
-        CCSE.save.OtherMods.Spice = {
-            settings: Spice.settings,
-            saveGame: Spice.saveGame,
-            version: Spice.version,
-        };
-    });
-
-    let loadSave = function() {
-        // Pull the save from CCSE
-        if(CCSE.save.OtherMods.Spice) {
-            Spice.copySettings(CCSE.save.OtherMods.Spice.settings);
-            Spice.copySaveGame(CCSE.save.OtherMods.Spice.saveGame);
-        }
-
-        // Run the load save functions
-        if(Spice.settings.displayStockDelta) Spice.enableStockMarketDeltaRows();
-        else Spice.disableStockMarketDeltaRows();
-
-        Spice.loadStockMarketHistory();
-
-        // Update displays
-        Spice.updateProfitTallyDisplay();
-    }
-    CCSE.customLoad.push(loadSave);
-    // We manually call loadSave() at the end of initialization
 
     // Hard reset: replace Spice.saveGame with the default savegame
     Game.customReset.push(function(hard) {
@@ -771,7 +768,9 @@ Spice.launch = function() {
     // Code injections
     Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains();
 
-    loadSave();
+    CCSE.customSave.push(Spice.save);
+    CCSE.customLoad.push(Spice.load);
+    Spice.load();
     Spice.isLoaded = true;
 }
 
