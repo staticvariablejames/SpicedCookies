@@ -218,3 +218,10 @@ Changelog
 
 Alpha release,
 mostly with just a few features for the stock market.
+
+0.2.0
+-----
+
+Adds a numerically stable formula for heavenly chips,
+allows changing permanent upgrade slots during an ascension,
+and add slightly nicer tooltips for the season switchers.
