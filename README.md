@@ -230,3 +230,8 @@ and add slightly nicer tooltips for the season switchers.
 -----
 
 Update to Cookie Clicker v2.031.
+
+0.2.2
+-----
+
+Fix a stock market crash that happens when a pre-idleverses save is loaded.
