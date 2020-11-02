@@ -10,38 +10,6 @@ and most of them start disabled by default.
 All the features are listed below.
 
 
-Important note for Backup and Save-scumming
-===========================================
-
-This mod uses [Klattmose's CCSE](https://klattmose.github.io/CookieClicker/CCSE-POCs/),
-and all extra information stored by this mod
-(like the stock market history)
-is managed by CCSE.
-
-This means that,
-to fully back up your save file,
-you need to export the vanilla save
-(Options -> General -> Export save)
-_and_ the CCSE save
-(Options -> CCSE -> Export custom save).
-
-Similarly,
-to fully restore your save file,
-you need to load the vanilla save and the CCSE save,
-**in this order**.
-Failure to do so may cause both save games to be out of sync,
-so that you will have e.g. stock market values from your current save file
-but delta values from the backed up save file.
-
-This also means that,
-if, at any moment, you stop using the mod,
-all the extra information stored by the mod is lost
-but the vanilla save will still work as intended,
-and any cookies, vanilla achievements, vanilla buildings etc
-that were earned while this mod was being used
-will be kept.
-
-
 Using the mod
 =============
 
