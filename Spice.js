@@ -134,7 +134,9 @@ Spice.loadStockMarketHistory = function() {
     if(Spice.saveGame.stockMarketHistory.length === 0) return;
     if(Spice.saveGame.stockMarketHistory[0].length < 1) return;
     for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
-        Game.Objects['Bank'].minigame.goodsById[i].vals = Spice.saveGame.stockMarketHistory[i];
+        if(i in Spice.saveGame.stockMarketHistory)
+            Game.Objects['Bank'].minigame.goodsById[i].vals = Spice.saveGame.stockMarketHistory[i];
+        // Spice.saveGame.stockMarketHistory[i] won't exist if e.g. loading a pre-idleverses save
     }
 }
 

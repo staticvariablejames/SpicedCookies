@@ -70,6 +70,15 @@ function testStockMarketHistory() {
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
         Game.Objects.Bank.minigame.tick();
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 18);
+
+        // Make sure loading the mod with an old version does not break it
+        Util.wipeSave('with minigames');
+        let original = Spice.stockMarketGoodsCount;
+        Spice.stockMarketGoodsCount = () => 15; // fool saveStockMarketHistory
+        save = Game.WriteSave(1);
+        Spice.stockMarketGoodsCount = original;
+        Game.LoadSave(save);
+        Game.Objects.Bank.minigame.tick(); // Should not throw any exceptions
     }, 'Bank');
 }
 
