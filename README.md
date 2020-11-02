@@ -235,3 +235,8 @@ Update to Cookie Clicker v2.031.
 -----
 
 Fix a stock market crash that happens when a pre-idleverses save is loaded.
+
+0.2.3
+-----
+
+Fix a ReferenceError related to permanent upgrade slots.

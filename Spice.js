@@ -7,7 +7,7 @@ if(typeof CCSE == 'undefined') Game.LoadMod('https://klattmose.github.io/CookieC
 
 // Spice.launch is at the end of this file.
 Spice.name = "Spiced Cookies";
-Spice.version = "0.2.2"; // Semantic versioning
+Spice.version = "0.2.3"; // Semantic versioning
 Spice.GameVersion = "2.031";
 Spice.CCSEVersion = "2.020";
 
@@ -461,7 +461,7 @@ Spice.allowPermanentUpgradeSlotSelectionWithinAscension = function() {
          * This is brittle, difficult to test automatically,
          * and prone to breakage if the game updates.
          */
-        let str = div.attributes.onmouseover.nodeValue;
+        let str = div.attributes.onmouseover?.nodeValue ?? ""; // onmouseover might be undefined
         let makeCallback = function(slot) {
             return function() {
                 Game.AssignPermanentSlot(slot);
