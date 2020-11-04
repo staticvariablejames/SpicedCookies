@@ -208,3 +208,8 @@ Fix a stock market crash that happens when a pre-idleverses save is loaded.
 -----
 
 Fix a ReferenceError related to permanent upgrade slots.
+
+0.2.4
+-----
+
+Register the mod in the modding API and use it for storing settings and save game data.
