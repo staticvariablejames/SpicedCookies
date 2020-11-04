@@ -41,8 +41,14 @@ function testStockMarketHistory() {
         // Right now, the stock market has 16 minutes of history
         let saveGame = Game.WriteSave(1);
 
-        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
+        Game.Objects.Bank.minigame.tick();
+        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 18);
         Util.wipeSave("with minigames");
+        Game.LoadSave(saveGame);
+        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
+
+        Game.Objects.Bank.minigame.tick();
+        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 18);
         Game.LoadSave(saveGame);
         console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
 
@@ -79,6 +85,7 @@ function testStockMarketHistory() {
         Spice.stockMarketGoodsCount = original;
         Game.LoadSave(save);
         Game.Objects.Bank.minigame.tick(); // Should not throw any exceptions
+        console.log('Finished testStockMarketHistory()');
     }, 'Bank');
 }
 
@@ -208,6 +215,8 @@ function testStockMarketTallying() {
         Util.Ascend(); Util.Reincarnate();
         console.assert(Spice.saveGame.stockMarketProfitsPreviousAscensions === 65);
         console.assert(profitRow.textContent.indexOf("all time : $65") !== -1);
+
+        console.log("Finished testStockMarketTallying()");
     }, 'Bank');
 }
 
@@ -275,6 +284,8 @@ function testAcrossAscensionsAchievements() {
         Game.Objects['Bank'].minigame.goodsById[3].val = 16e6;
         Game.Objects['Bank'].minigame.sellGood(3, 1)
         console.assert(Game.HasAchiev('Liquid assets'));
+
+        console.log("Finished testAcrossAscensionsAchievements()");
     }, 'Bank');
 }
 
@@ -355,6 +366,8 @@ function testStockMarketAchievements() {
         Game.Objects['Bank'].minigame.profit = -32e6;
         Game.Objects['Bank'].minigame.buyGood(4, 1);
         console.assert(Game.HasAchiev('Solid assets')); // even while having stock
+
+        console.log("Finished testStockMarketAchievements()");
     }, 'Bank');
 }
 

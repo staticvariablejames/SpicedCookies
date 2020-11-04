@@ -1,11 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-var Spice = {};
-// 'var' used here to avoid syntax errors if this script is loaded more than once
+let Spice = {};
 if(typeof CCSE == 'undefined') Game.LoadMod('https://klattmose.github.io/CookieClicker/CCSE.js');
-// CCSE calls Game.Win('Third-party') for us
 
-// Spice.launch is at the end of this file.
 Spice.name = "Spiced Cookies";
 Spice.version = "0.2.3"; // Semantic versioning
 Spice.GameVersion = "2.031";
@@ -667,41 +664,8 @@ Spice.customOptionsMenu = function() {
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
 
-Spice.load = function() {
-    // Pull the save from CCSE
-    if(CCSE.config.OtherMods.Spice) {
-        Spice.copySettings(CCSE.config.OtherMods.Spice.settings);
-        Spice.copySaveGame(CCSE.config.OtherMods.Spice.saveGame);
-
-        if (CCSE.config.OtherMods.Spice.version != Spice.version) {
-            l('logButton').classList.add('hasUpdate');
-        }
-    }
-
-    // Run the load save functions
-    if(Spice.settings.displayStockDelta) Spice.enableStockMarketDeltaRows();
-    else Spice.disableStockMarketDeltaRows();
-
-    Spice.loadStockMarketHistory();
-
-    // Update displays
-    Spice.updateProfitTallyDisplay();
-}
-
-Spice.save = function() {
-    // Run the save game functions
-    Spice.saveStockMarketHistory();
-
-    // Push the save to CSSE
-    CCSE.config.OtherMods.Spice = {
-        settings: Spice.settings,
-        saveGame: Spice.saveGame,
-        version: Spice.version,
-    };
-}
-
 Spice.addVersionHistory = function() {
-    // Run on Spice.launch()
+    // Run on Spice.init()
     str = `
     <div class="listing">
         <a href="https://github.com/staticvariablejames/SpicedCookies" target="blank">Spiced Cookies</a>
@@ -740,12 +704,42 @@ Spice.addVersionHistory = function() {
     });
 }
 
-Spice.launch = function() {
-    if(!CCSE.ConfirmGameCCSEVersion(Spice.name, Spice.version, Spice.GameVersion, Spice.CCSEVersion)) {
-        Spice.isLoaded = true;
-        return;
+
+
+/*************************
+ * Modding API interface *
+ *************************/
+
+Spice.save = function() {
+    // Run the save game functions
+    Spice.saveStockMarketHistory();
+
+    // Push the save to CSSE
+    return JSON.stringify({
+        settings: Spice.settings,
+        saveGame: Spice.saveGame,
+        version: Spice.version,
+    });
+}
+
+Spice.load = function(str) {
+    let obj = JSON.parse(str);
+    Spice.copySettings(obj.settings);
+    Spice.copySaveGame(obj.saveGame);
+
+    if(obj.version != Spice.version) {
+        l('logButton').classList.add('hasUpdate');
     }
 
+    if(Spice.settings.displayStockDelta) Spice.enableStockMarketDeltaRows();
+    else Spice.disableStockMarketDeltaRows();
+
+    Spice.loadStockMarketHistory();
+
+    Spice.updateProfitTallyDisplay();
+}
+
+Spice.init = function() {
     // Options menu
     Game.customOptionsMenu.push(Spice.customOptionsMenu);
 
@@ -817,21 +811,25 @@ Spice.launch = function() {
 
     // Code injections
     Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains();
-
-    CCSE.customSave.push(Spice.save);
-    CCSE.customLoad.push(Spice.load);
-    Spice.load();
-    Spice.isLoaded = true;
 }
 
-// Code copied from CCSE's documentation
+
+
+/*****************
+ * Wait for CCSE *
+ *****************/
+
 if(!Spice.isLoaded){
-	if(CCSE && CCSE.isLoaded){
-		Spice.launch();
-	}
-	else{
-		if(!CCSE) var CCSE = {};
-		if(!CCSE.postLoadHooks) CCSE.postLoadHooks = [];
-		CCSE.postLoadHooks.push(Spice.launch);
-	}
+    if(CCSE && CCSE.isLoaded){
+        Game.registerMod('Spiced cookies', Spice);
+    }
+    else {
+        if(!CCSE) var CCSE = {};
+        if(!CCSE.postLoadHooks) CCSE.postLoadHooks = [];
+        CCSE.postLoadHooks.push(function() {
+            if(CCSE.ConfirmGameCCSEVersion(Spice.name, Spice.version, Spice.GameVersion, Spice.CCSEVersion)) {
+                Game.registerMod('Spiced cookies', Spice);
+            }
+        });
+    }
 }
