@@ -724,6 +724,10 @@ Spice.save = function() {
 
 Spice.load = function(str) {
     let obj = JSON.parse(str);
+    Spice.loadObject(obj);
+}
+
+Spice.loadObject = function(obj) {
     Spice.copySettings(obj.settings);
     Spice.copySaveGame(obj.saveGame);
 
@@ -811,6 +815,12 @@ Spice.init = function() {
 
     // Code injections
     Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains();
+
+    // Legacy data, was previously stored in CCSE.config.OtherMods
+    if(CCSE.config.OtherMods.Spice) {
+        Spice.loadObject(CCSE.config.OtherMods.Spice);
+        delete CCSE.config.OtherMods.Spice; // be a good citizen and not bloat CCSE's save object
+    }
 }
 
 
