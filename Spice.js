@@ -83,32 +83,72 @@ Spice.stockMarketDeltaRow = function(stockId) {
     return document.getElementById('stockMarketDelta-' + stockId);
 }
 
-/* Updates the text inside the row created by Spice.createStockMarketDeltaRows.
+/* Similar as above, but with the text "mode: --" instead.
+ * The div is placed above the div above.
+ */
+Spice.stockMarketModeRow = function(stockId) {
+    let div = document.getElementById('stockMarketMode-' + stockId);
+    if(div) return div;
+
+    let upperBox = document.getElementById('bankGood-' + stockId).firstChild;
+    let deltaDiv = Spice.stockMarketDeltaRow(stockId).parentNode;
+    let modeDiv = upperBox.insertBefore(document.createElement("div"), deltaDiv);
+    for(let key in deltaDiv.style) {
+        modeDiv.style[key] = deltaDiv.style[key];
+    }
+    modeDiv.style.display = 'none'; // Mode rows are hidden by default
+
+    modeDiv.innerHTML = 'mode: <div id="stockMarketMode-' + stockId + '" ' +
+        'style="display:inline; font-weight:bold;">--</div>';
+
+    return document.getElementById('stockMarketMode-' + stockId);
+}
+
+Spice.stockMarketModeNames = ['stable','slow rise','slow fall','fast rise','fast fall','chaotic'];
+
+/* Updates the text inside the delta and mode rows created by the functions above.
  * This is pushed to Game.customMinigame.Bank.tick.
  */
-Spice.updateStockMarketDeltaRows = function() {
+Spice.updateStockMarketRows = function() {
     for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
+        let stock = Game.Objects['Bank'].minigame.goodsById[i];
         let div = Spice.stockMarketDeltaRow(i);
         if(div) {
-            div.innerHTML = Math.floor(1000*Game.Objects['Bank'].minigame.goodsById[i].d)/1000;
+            div.innerHTML = Math.floor(stock.d)/1000;
+        }
+        div = Spice.stockMarketModeRow(i);
+        if(div) {
+            div.innerHTML = Spice.stockMarketModeNames[stock.mode] + ' (' + stock.dur + ')';
         }
     }
 }
 
-// Show the delta rows
-Spice.enableStockMarketDeltaRows = function() {
+/* Show and hide the two extra rows created for the stock market.
+ * The delta rows are hidden/shown according to Spice.settings.displayStockDelta,
+ * the mode rows are hidden/shown according to Game.Has('Omniscient day traders').
+ */
+Spice.updateStockMarketRowsVisibility = function() {
     for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
         let deltaDiv = Spice.stockMarketDeltaRow(i).parentNode;
-        deltaDiv.style.display = "block";
+        let modeDiv = Spice.stockMarketModeRow(i).parentNode;
+        if(Spice.settings.displayStockDelta) deltaDiv.style.display = "block";
+        else deltaDiv.style.display = "none";
+        if(Game.Has('Omniscient day traders')) modeDiv.style.display = "block";
+        else modeDiv.style.display = "none";
     }
 }
 
-// Hide the delta rows
-Spice.disableStockMarketDeltaRows = function() {
-    for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
-        let deltaDiv = Spice.stockMarketDeltaRow(i).parentNode;
-        deltaDiv.style.display = "none";
-    }
+Spice.createStockMarketModeDebugUpgrade = function() {
+    if('Omniscient day traders' in Game.Upgrades) return;
+    let upgrade = CCSE.NewUpgrade('Omniscient day traders',
+        'Stock modes are visible in the stock market.' +
+            '<q>No time for flavor text, pay attention to your stocks!</q>',
+        7,
+        Game.Achievements['Buy buy buy'].icon,
+        Spice.updateStockMarketRowsVisibility
+    );
+    upgrade.order = Game.Upgrades['A really good guide book'].order + 0.001;
+    upgrade.pool = 'debug';
 }
 
 /*****************************************
@@ -572,7 +612,10 @@ Spice.copySaveGame = function(saveGame) {
     }
 }
 
-// Callback for Spice.makeButton
+/* Callback for Spice.makeButton
+ * It is important that the functions onFunction and offFunction
+ * are called only after the appropriate setting is toggled.
+ */
 Spice.toggleSetting = function(buttonId, settingName, onText, offText, onFunction, offFunction) {
     Spice.settings[settingName] = !Spice.settings[settingName];
     let element = document.getElementById(buttonId);
@@ -615,7 +658,7 @@ Spice.customOptionsMenu = function() {
     menuStr += '<div class="listing">' + 
         Spice.makeButton('displayStockDelta',
             'Display stock market deltas', 'Hide stock market deltas',
-            'Spice.enableStockMarketDeltaRows', 'Spice.disableStockMarketDeltaRows'
+            'Spice.updateStockMarketRowsVisibility', 'Spice.updateStockMarketRowsVisibility'
         ) + '</div>';
 
     menuStr += '<div class="listing">' +
@@ -739,11 +782,8 @@ Spice.loadObject = function(obj) {
         l('logButton').classList.add('hasUpdate');
     }
 
-    if(Spice.settings.displayStockDelta) Spice.enableStockMarketDeltaRows();
-    else Spice.disableStockMarketDeltaRows();
-
+    Spice.updateStockMarketRowsVisibility();
     Spice.loadStockMarketHistory();
-
     Spice.updateProfitTallyDisplay();
 }
 
@@ -786,7 +826,7 @@ Spice.init = function() {
 
     // Stock Market
     CCSE.MinigameReplacer(function() {
-        Spice.updateStockMarketDeltaRows();
+        Spice.updateStockMarketRows();
         Spice.createProfitTallyDiv();
     }, 'Bank');
 
@@ -797,7 +837,7 @@ Spice.init = function() {
      */
 
     if(!Game.customMinigame['Bank'].tick) Game.customMinigame['Bank'].tick = [];
-    Game.customMinigame['Bank'].tick.push(Spice.updateStockMarketDeltaRows);
+    Game.customMinigame['Bank'].tick.push(Spice.updateStockMarketRows);
 
     if(!Game.customMinigame['Bank'].buyGood) Game.customMinigame['Bank'].buyGood = [];
     Game.customMinigame['Bank'].buyGood.push(Spice.updateProfitTallyDisplay);
@@ -816,6 +856,10 @@ Spice.init = function() {
 
     // Tooltips
     Spice.pushSeasonalCookieTooltips();
+
+    // Upgrades
+    Spice.createStockMarketModeDebugUpgrade();
+    Game.customUpgrades['Omniscient day traders'].toggle.push(Spice.updateStockMarketRowsVisibility);
 
     // Code injections
     Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains();

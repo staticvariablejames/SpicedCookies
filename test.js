@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // See https://github.com/staticvariablejames/CCtest
 
-function testStockMarketDelta() {
+function testStockMarketRows() {
     Util.wipeSave("with minigames");
 
     // Continue the test after the minigame is loaded
@@ -24,6 +24,29 @@ function testStockMarketDelta() {
         document.getElementById('SpiceButtondisplayStockDelta').click();
         document.getElementById('prefsButton').click();
         console.assert(stockDiv.clientHeight === heightWithDelta);
+
+        // Test that disabling the option stays on load
+        Spice.settings.displayStockDelta = false;
+        let save = Game.WriteSave(1);
+        Game.LoadSave(save);
+        console.assert(stockDiv.clientHeight === heightWithoutDelta);
+
+        Spice.settings.displayStockDelta = true;
+        save = Game.WriteSave(1);
+        Game.LoadSave(save);
+        console.assert(stockDiv.clientHeight === heightWithDelta);
+
+        // Test debug upgrade
+        Game.Upgrades['Omniscient day traders'].buy();
+        let heightWithBoth = stockDiv.clientHeight;
+        console.assert(heightWithDelta < heightWithBoth);
+
+        save = Game.WriteSave(1);
+        Game.Upgrades['Omniscient day traders'].toggle();
+        console.assert(stockDiv.clientHeight === heightWithDelta);
+
+        Game.LoadSave(save);
+        console.assert(stockDiv.clientHeight === heightWithBoth);
 
         console.log('Finished testStockMarketDelta()');
     }, 'Bank');
