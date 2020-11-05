@@ -557,7 +557,6 @@ Spice.pushSeasonalCookieTooltips = function() {
     Game.customUpgrades['Lovesick biscuit'].descFunc.push(function(me, desc) {
         return seasonalReplacer(desc, Game.heartDrops, "heart biscuits.");
     });
-    // This could have been a single function
 }
 
 
