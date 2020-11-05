@@ -819,8 +819,8 @@ Spice.init = function() {
     Game.customAscend.push(Spice.updateAcrossAscensionsStockMarketTallying);
 
     // Reincarnate
-    Game.customReincarnate.push(Spice.updateProfitTallyDisplay)
-    Game.customReincarnate.push(Spice.updateStockMarketRowsVisibility);
+    Game.registerHook('reincarnate', Spice.updateProfitTallyDisplay)
+    Game.registerHook('reincarnate', Spice.updateStockMarketRowsVisibility);
 
     // Wrinklers
     Game.customWrinklerPop.push(Spice.checkWrinklersPoppedAcrossAscensionsAchievements);
