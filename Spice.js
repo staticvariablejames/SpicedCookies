@@ -114,7 +114,7 @@ Spice.updateStockMarketRows = function() {
         let stock = Game.Objects['Bank'].minigame.goodsById[i];
         let div = Spice.stockMarketDeltaRow(i);
         if(div) {
-            div.innerHTML = Math.floor(stock.d)/1000;
+            div.innerHTML = Math.floor(1000*stock.d)/1000;
         }
         div = Spice.stockMarketModeRow(i);
         if(div) {
