@@ -203,7 +203,7 @@ Spice.loadStockMarketHistory = function() {
  * even though the mod was not being used while those wrinklers were popped.
  */
 
-Spice.updateAcrossAscensionStatistics = function() {
+Spice.updateAcrossAscensionsStatistics = function() {
     // This function is pushed to Game.customAscend
     Spice.saveGame.bigCookieClicksPreviousAscensions += Game.cookieClicks;
     Spice.saveGame.wrinklersPoppedPreviousAscensions += Game.wrinklersPopped;
@@ -222,7 +222,7 @@ Spice.locateStatsMenuElement = function(text) {
     return undefined;
 }
 
-Spice.displayAcrossAscensionStatistics = function() {
+Spice.displayAcrossAscensionsStatistics = function() {
     // This is pushed to Game.customStatsMenu
     let div = undefined;
     div = Spice.locateStatsMenuElement('Cookie clicks');
@@ -815,7 +815,7 @@ Spice.init = function() {
     });
 
     // Ascension
-    Game.customAscend.push(Spice.updateAcrossAscensionStatistics);
+    Game.customAscend.push(Spice.updateAcrossAscensionsStatistics);
     Game.customAscend.push(Spice.updateAcrossAscensionsStockMarketTallying);
 
     // Reincarnate
@@ -857,7 +857,7 @@ Spice.init = function() {
 
     // Statistics
     Game.customStatsMenu.push(Spice.allowPermanentUpgradeSlotSelectionWithinAscension);
-    Game.customStatsMenu.push(Spice.displayAcrossAscensionStatistics);
+    Game.customStatsMenu.push(Spice.displayAcrossAscensionsStatistics);
     Game.customStatsMenu.push(function() {
         CCSE.AppendStatsVersionNumber(Spice.name, Spice.version);
     });
