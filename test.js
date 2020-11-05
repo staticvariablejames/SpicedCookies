@@ -482,3 +482,16 @@ function testSeasonalCookieTooltips() {
     desc = Game.Upgrades['Bunny biscuit'].descFunc();
     console.assert(Array.from(desc.matchAll(text)).length == 2);
 }
+
+function testTranscendentDebugging() {
+    Util.wipeSave();
+    Game.Upgrades['Perfect idling'].earn();
+    Util.Ascend(); Util.Reincarnate();
+    console.assert(!Game.Has('Perfect idling'));
+
+    Game.Upgrades['Perfect idling'].earn();
+    Game.Upgrades['Transcendent debugging'].earn();
+    Util.Ascend(); Util.Reincarnate();
+    console.assert(Game.Has('Perfect idling'));
+    console.assert(Game.Has('Transcendent debugging'));
+}

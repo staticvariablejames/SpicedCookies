@@ -44,6 +44,12 @@ Spice.defaultSaveGame = function() {
 }
 Spice.saveGame = Spice.defaultSaveGame();
 
+/* Scratchpad used to store data that needs to persist beyond a function call,
+ * but does not need to be put in the save game data.
+ */
+Spice.tmp = {};
+
+
 /************************************************
  * Module: display deltas of stock market goods *
  ************************************************/
@@ -145,6 +151,7 @@ Spice.updateStockMarketRowsVisibility = function() {
 }
 
 Spice.createStockMarketModeDebugUpgrade = function() {
+    // Run on init
     if('Omniscient day traders' in Game.Upgrades) return;
     let upgrade = CCSE.NewUpgrade('Omniscient day traders',
         'Stock modes are visible in the stock market.' +
@@ -559,6 +566,43 @@ Spice.pushSeasonalCookieTooltips = function() {
     });
 }
 
+/************************************
+ * Module: permanent debug upgrades *
+ ************************************/
+
+Spice.createPermanentDebugUpgradesUpgrade = function() {
+    // Run on init
+    if('Transcendent debugging' in Game.Upgrades) return;
+    let upgrade = CCSE.NewUpgrade('Transcendent debugging',
+        'Debug upgrades persist across ascensions.' +
+            '<q>Like Permanent upgrade slots, but for debug upgrades!</q>',
+        7, [10, 31]
+    );
+    upgrade.order = Game.Upgrades['A really good guide book'].order + 0.002;
+    upgrade.pool = 'debug';
+}
+
+Spice.saveCurrentDebugUpgrades = function() {
+    // Executed on ascension
+    Spice.tmp.ownedDebugUpgrades = [];
+    /* There is no need to save this permanently
+     * because games can't be saved while in the ascension menu.
+     */
+
+    if(!Game.Has('Transcendent debugging')) return;
+
+    for(i in Game.Upgrades) {
+        if(Game.Upgrades[i].pool == 'debug' && Game.Upgrades[i].bought)
+            Spice.tmp.ownedDebugUpgrades.push(i);
+    }
+}
+
+Spice.restoreDebugUpgrades = function() {
+    // Executed on reincarnate
+    for(i of Spice.tmp.ownedDebugUpgrades) {
+        Game.Upgrades[i].earn();
+    }
+}
 
 
 /******************
@@ -816,10 +860,12 @@ Spice.init = function() {
     // Ascension
     Game.customAscend.push(Spice.updateAcrossAscensionsStatistics);
     Game.customAscend.push(Spice.updateAcrossAscensionsStockMarketTallying);
+    Game.customAscend.push(Spice.saveCurrentDebugUpgrades);
 
     // Reincarnate
     Game.registerHook('reincarnate', Spice.updateProfitTallyDisplay)
     Game.registerHook('reincarnate', Spice.updateStockMarketRowsVisibility);
+    Game.registerHook('reincarnate', Spice.restoreDebugUpgrades);
 
     // Wrinklers
     Game.customWrinklerPop.push(Spice.checkWrinklersPoppedAcrossAscensionsAchievements);
@@ -867,6 +913,8 @@ Spice.init = function() {
     // Upgrades
     Spice.createStockMarketModeDebugUpgrade();
     Game.customUpgrades['Omniscient day traders'].toggle.push(Spice.updateStockMarketRowsVisibility);
+
+    Spice.createPermanentDebugUpgradesUpgrade();
 
     // Code injections
     Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains();
