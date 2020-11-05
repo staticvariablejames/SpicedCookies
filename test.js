@@ -48,7 +48,13 @@ function testStockMarketRows() {
         Game.LoadSave(save);
         console.assert(stockDiv.clientHeight === heightWithBoth);
 
-        console.log('Finished testStockMarketDelta()');
+        Util.Ascend(); Util.Reincarnate(); // Ascending removes the upgrade
+        console.assert(!Game.Has('Omniscient day traders'));
+        Game.Objects.Bank.getFree(1); Game.Objects.Bank.switchMinigame(true);
+        stockDiv.style.display = "inline-block"; // Force the good to be displayed
+        console.assert(stockDiv.clientHeight === heightWithDelta);
+
+        console.log('Finished testStockMarketRows()');
     }, 'Bank');
 }
 

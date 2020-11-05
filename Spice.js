@@ -126,6 +126,12 @@ Spice.updateStockMarketRows = function() {
 /* Show and hide the two extra rows created for the stock market.
  * The delta rows are hidden/shown according to Spice.settings.displayStockDelta,
  * the mode rows are hidden/shown according to Game.Has('Omniscient day traders').
+ *
+ * This function must be called in a few places:
+ * - On loading save game
+ * - After purchasing/toggling Omniscient day traders
+ * - After toggling Spice.settings.displayStockDelta
+ * - After ascending (because we lose Omniscient day traders on ascension)
  */
 Spice.updateStockMarketRowsVisibility = function() {
     for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
@@ -814,6 +820,7 @@ Spice.init = function() {
 
     // Reincarnate
     Game.customReincarnate.push(Spice.updateProfitTallyDisplay)
+    Game.customReincarnate.push(Spice.updateStockMarketRowsVisibility);
 
     // Wrinklers
     Game.customWrinklerPop.push(Spice.checkWrinklersPoppedAcrossAscensionsAchievements);
@@ -828,6 +835,7 @@ Spice.init = function() {
     CCSE.MinigameReplacer(function() {
         Spice.updateStockMarketRows();
         Spice.createProfitTallyDiv();
+        Spice.loadStockMarketHistory();
     }, 'Bank');
 
     /* The functions inside Game.customMinigame['Bank']
