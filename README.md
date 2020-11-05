@@ -197,6 +197,29 @@ or type the following command in the console:
     Game.Upgrades['Omniscient day traders'].toggle();
 ```
 
+
+Preserve debug upgrades across ascensions (debug upgrade)
+---------------------------------------------------------
+
+![Persistent debug upgrades](doc/transcendent-debugging.png "Transcendent debugging")
+
+Debug upgrades are mere upgrades,
+so they get wiped out after ascending.
+This debug upgrade allows you to keep them
+(like a persistent upgrade slot,
+but for debug upgrades only,
+and affecting all debug upgrades).
+
+This is particularly useful with "Perfect idling" and "Omniscient day traders",
+which are upgrades players might want to have throughout an entire game.
+
+To get the upgrade,
+you need to either Open Sesame,
+or type the following command in the console:
+```javascript
+    Game.Upgrades['Transcendent debugging'].toggle();
+```
+
 Changelog
 =========
 
