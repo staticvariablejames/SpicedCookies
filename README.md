@@ -178,6 +178,25 @@ this extra line is hidden if all upgrades were bought.
 This can be disabled in the menu.
 
 
+Display the mode of stock market goods (debug upgrade)
+------------------------------------------------------
+
+![Stock market modes](doc/omniscient-day-traders.png "Omniscient day traders")
+
+Adds a debug upgrade that displays the current mode of a stock,
+in a similar manner that the deltas are displayed.
+For example,
+in the picture above,
+Sugar is in slow rise,
+and it will stay this way for the next 716 ticks.
+
+To get the upgrade,
+you need to either Open Sesame,
+or type the following command in the console:
+```javascript
+    Game.Upgrades['Omniscient day traders'].toggle();
+```
+
 Changelog
 =========
 
