@@ -220,6 +220,30 @@ or type the following command in the console:
     Game.Upgrades['Transcendent debugging'].toggle();
 ```
 
+
+Discrepancy Patch (disabled by default)
+---------------------------------------
+
+If a sugar lump is left to be harvested automatically,
+the next lump should start growing in the instant that the previous lump is harvested.
+However, since Javascript is slow and the game relies on `Date.now()` for this,
+sometimes the game misses the mark by a few milliseconds.
+[This is relevant for manipulating the sugar lump type](https://github.com/staticvariablejames/ChooseYourOwnLump#a-wrench-in-our-plans).
+
+This patches it so that the growth start is consistent.
+
+This mod can only patch the issue after it is loaded,
+so in order to take advantage of it you must reload your save from a backup.
+
+(Always reloading your save from a backup is reccomended anyway
+because in the very first time that a save is loaded
+the minigames are still loading,
+so Rigidel has no effect on lump times.)
+
+Note: if you disable this feature after having enabled it once,
+you must refresh your browser for the change to take place.
+
+
 Changelog
 =========
 
