@@ -30,6 +30,7 @@ Spice.settings = { // default settings
     extraStockMarketAchievements: false,
     numericallyStableHeavenlyChipGains: false,
     autohideSeasonalBiscuitsTooltip: true,
+    patchDiscrepancy: false,
 };
 
 Spice.defaultSaveGame = function() {
@@ -605,6 +606,38 @@ Spice.restoreDebugUpgrades = function() {
 }
 
 
+
+/***************************
+ * Module: discrepancy fix *
+ ***************************/
+
+Spice.patchDiscrepancy = function() {
+    // Run on init and on load
+    if(!Spice.settings.patchDiscrepancy) return;
+    // Since this is time-sensitive, we will not patch anything by default
+
+    Game.loadLumps = Spice.rewriteCode(Game.loadLumps,
+        'Game.lumpT=Date.now()-(age-amount*Game.lumpOverripeAge);',
+        '// Game.lumpT += amount*Game.lumpOverripeAge; // Spiced cookies patch'
+    );
+    // We shift the responsibility of updating Game.lumpT to Game.harvestLumps
+    Game.harvestLumps = Spice.rewriteCode(Game.harvestLumps,
+        'Game.lumpT=Date.now();',
+        `let harvestedAmount = Math.floor((Date.now() - Game.lumpT)/Game.lumpOverripeAge);
+        if(harvestedAmount > 0) {
+            Game.lumpT += Game.lumpOverripeAge * harvestedAmount;
+        } // Spiced cookies patch
+    `);
+    // Now we have to patch clickLump, because harvestLumps wouldn't change lump time in this case
+    Game.clickLump = Spice.rewriteCode(Game.clickLump,
+        /Game.computeLumpType\(\);/g,
+        `Game.lumpT = Date.now(); // Spiced cookies patch
+        Game.computeLumpType();
+    `);
+}
+
+
+
 /******************
  * User Interface *
  ******************/
@@ -624,6 +657,7 @@ Spice.copySettings = function(settings) {
         'extraStockMarketAchievements',
         'numericallyStableHeavenlyChipGains',
         'autohideSeasonalBiscuitsTooltip',
+        'patchDiscrepancy',
     ];
 
     for(key of numericSettings) {
@@ -753,6 +787,17 @@ Spice.customOptionsMenu = function() {
             'Always display the "You\'ve unlocked..." line in season switcher biscuits',
         ) + '</div>';
 
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('patchDiscrepancy',
+            'Fix imprecision in lump times computation',
+            'Don\'t patch lump times computation',
+            'Spice.patchDiscrepancy'
+        ) +
+        '<label>Patches the discrepancy so it is always zero; ' +
+            'see the Choose Your Own Lump mod for details ' +
+            '(NOTE: you must refresh your page after disabling this option)' +
+        '</label></div>';
+
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
 
@@ -834,6 +879,7 @@ Spice.loadObject = function(obj) {
     Spice.updateStockMarketRowsVisibility();
     Spice.loadStockMarketHistory();
     Spice.updateProfitTallyDisplay();
+    Spice.patchDiscrepancy();
 }
 
 Spice.init = function() {
@@ -918,6 +964,7 @@ Spice.init = function() {
 
     // Code injections
     Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains();
+    Spice.patchDiscrepancy();
 
     // Legacy data, was previously stored in CCSE.config.OtherMods
     if(CCSE.config.OtherMods.Spice) {

@@ -495,3 +495,35 @@ function testTranscendentDebugging() {
     console.assert(Game.Has('Perfect idling'));
     console.assert(Game.Has('Transcendent debugging'));
 }
+
+function testDiscrepancyPatch() {
+    /* One nasty effect of the lack of proper Date.now() mocking
+     * is that this test only passes within an hour of loading page.
+     */
+    Util.wipeSave();
+    Game.Earn(1e12); Game.doLumps(); // Unlock lumps
+    Game.lumpT = Util.defaultMockedDate;
+    console.assert(Game.lumpsTotal === 0);
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtonpatchDiscrepancy').click();
+    document.getElementById('prefsButton').click();
+
+    let save = Game.WriteSave(1);
+
+    Util.mockedDate += 25*3600*1000;
+    for(let i = 0; i < 100; i++) { // The Vanilla is time-sensitive, this patch should not be
+        Game.LoadSave(save);
+        console.assert(Game.lumpT === Util.defaultMockedDate + 24*3600*1000);
+    }
+
+    Util.mockedDate += 24*3600*1000;
+    Game.doLumps();
+    console.assert(Game.lumpT === Util.defaultMockedDate + 2*24*3600*1000);
+
+    Util.mockedDate += 22*3600*1000 + 1;
+    Game.doLumps();
+    console.assert(Game.lumpT === Util.defaultMockedDate + 2*24*3600*1000);
+    Game.clickLump();
+    console.assert(Game.lumpT < Util.defaultMockedDate + 3*24*3600*1000);
+    console.assert(Game.lumpT > Util.mockedDate);
+}
