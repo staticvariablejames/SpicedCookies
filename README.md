@@ -111,8 +111,8 @@ These are regular achievements that give milk (if they are enabled).
 These achievements are awarded according to progress through all ascensions
 regardless of the previous setting.
 
-Note: if you disable this feature after having enabled it once,
-you must refresh your browser for the change to take place.
+**NOTE**: You must refresh your browser page after disabling this feature
+for the change to take place.
 
 
 Three extra stock market achievements (disabled by default)
@@ -125,8 +125,8 @@ and a shadow one for getting to -$31.536 million in profits in a single ascensio
 
 The first two achievements do give milk.
 
-Note: if you disable this feature after having enabled it once,
-you must refresh your browser for the change to take place.
+**NOTE**: You must refresh your browser page after disabling this feature
+for the change to take place.
 
 
 Numerically stable formula for heavenly chip gains (disabled by default)
@@ -240,8 +240,8 @@ because in the very first time that a save is loaded
 the minigames are still loading,
 so Rigidel has no effect on lump times.)
 
-Note: if you disable this feature after having enabled it once,
-you must refresh your browser for the change to take place.
+**NOTE**: You must refresh your browser page after disabling this feature
+for the change to take place.
 
 
 Changelog
