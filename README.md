@@ -181,7 +181,8 @@ This can be disabled in the menu.
 Display the mode of stock market goods (debug upgrade)
 ------------------------------------------------------
 
-![Stock market modes](doc/omniscient-day-traders.png "Omniscient day traders")
+![Stock market modes](doc/stock-market-modes.png "Stock market modes")
+![Omniscient day traders](doc/omniscient-day-traders.png "Omniscient day traders")
 
 Adds a debug upgrade that displays the current mode of a stock,
 in a similar manner that the deltas are displayed.
@@ -201,7 +202,8 @@ or type the following command in the console:
 Preserve debug upgrades across ascensions (debug upgrade)
 ---------------------------------------------------------
 
-![Persistent debug upgrades](doc/transcendent-debugging.png "Transcendent debugging")
+![Persistent debug upgrades](doc/persistent-debug-upgrades.png "Persistent debug upgrades")
+![Transcendent debugging](doc/transcendent-debugging.png "Transcendent debugging")
 
 Debug upgrades are mere upgrades,
 so they get wiped out after ascending.
