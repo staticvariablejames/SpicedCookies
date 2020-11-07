@@ -279,3 +279,9 @@ Fix a ReferenceError related to permanent upgrade slots.
 -----
 
 Register the mod in the modding API and use it for storing settings and save game data.
+
+0.3.0
+-----
+
+Adds two debug ugrades (Omniscient day traders and Transcendent debugging)
+and patch lump growth times to be deterministic.

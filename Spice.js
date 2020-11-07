@@ -4,7 +4,7 @@ let Spice = {};
 if(typeof CCSE == 'undefined') Game.LoadMod('https://klattmose.github.io/CookieClicker/CCSE.js');
 
 Spice.name = "Spiced Cookies";
-Spice.version = "0.2.4"; // Semantic versioning
+Spice.version = "0.3.0"; // Semantic versioning
 Spice.GameVersion = "2.031";
 Spice.CCSEVersion = "2.020";
 
@@ -813,6 +813,12 @@ Spice.addVersionHistory = function() {
     <div class="listing">
         Every single feature can be either ignored or disabled in the settings,
         and most of them start disabled by default.
+    </div>
+
+    <div class="subsection update small"><div class="title">2020-11-06 - Debugging discrepancies</div>
+        <div class="listing">&bull; Display the mode of stock market goods (debug upgrade)</div>
+        <div class="listing">&bull; Preserve debug upgrades across ascensions (debug upgrade)</div>
+        <div class="listing">&bull; Discrepancy Patch (disabled by default)</div>
     </div>
 
     <div class="subsection update small"><div class="title">2020-11-03 - Vanilla update (2)!</div>
