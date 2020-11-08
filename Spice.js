@@ -31,6 +31,7 @@ Spice.settings = { // default settings
     numericallyStableHeavenlyChipGains: false,
     autohideSeasonalBiscuitsTooltip: true,
     patchDiscrepancy: false,
+    warnLessThan100Lumps: true,
 };
 
 Spice.defaultSaveGame = function() {
@@ -638,6 +639,75 @@ Spice.patchDiscrepancy = function() {
 
 
 
+/*********************************************
+ * Module: Sugar baking overspending warning *
+ *********************************************/
+
+Spice.shouldWarnAboutTooFewLumps = function(lumps = Game.lumps) {
+    return Spice.settings.warnLessThan100Lumps && Game.Has('Sugar baking') && lumps < 100;
+}
+
+// Colors the lump number red if there are too few lumps
+Spice.updateLumpCountColor = function() {
+    // Pushed to Game.customDoLumps
+    if(Spice.shouldWarnAboutTooFewLumps()) {
+        document.getElementById('lumpsAmount').style.color = "red";
+    } else {
+        document.getElementById('lumpsAmount').style.color = "";
+    }
+}
+
+Spice.warnfulLumpTooltip = function(str) {
+    /* Pushed to Game.customLumpTooltip
+     * Actually we "unshift" it to Game.customLumpTooltip
+     * This makes sure that, regardless of whether this mod or CYOL gets loaded first,
+     * the warning from this mod is shown above the wall of predictions from CYOL.
+     */
+    if(Spice.shouldWarnAboutTooFewLumps()) {
+        str += '<div class="line"></div>';
+        str += '<div style="text-align:center">' +
+                    '<div style="color:red; display:inline-block">Warning:</div>' +
+                    ' too few sugar lumps, Sugar baking is not maxed out!' +
+                '</div>';
+    }
+    return str;
+}
+
+Spice.injectWarningIntoLumpConfirmationTooltip = function() {
+    pattern = "'?</div>'";
+    replacement = `'?</div>' + ( // Spiced cookies modification
+            Spice.shouldWarnAboutTooFewLumps(Game.lumps-n)?
+                '<div>This will bring your sugar lumps down' +
+                    (Game.lumps >= 100 ? ' to below 100, ' : ', ') +
+                    'undermining Sugar baking' +
+                '</div>'
+            :'')
+        `;
+    /* This one is a pain...
+     * Game.spendLump is not a regular function, but a factory:
+     * calling it returns a function which should be used as a callback
+     * that will do the task of opening the prompt and calling the given callback.
+     * However,
+     * in almost all places that spendLump is used,
+     * the returned function is used directly (like `Game.spendLump(args)()`)
+     * rather than stored for later call.
+     * So rewriting `Game.spendLump` itself is enough for most cases:
+     */
+    Game.spendLump = Spice.rewriteCode(Game.spendLump, pattern, replacement);
+    /* The only exception is Game.Upgrades['Sugar frenzy'].clickFunction.
+     * Since one of the arguments is an anonymous function,
+     * short of copy-pasting Orteil's code here
+     * (which would be terrible for compatibility with other mods)
+     * we simply cannot modify that function.
+     *
+     * Since this is a helper feature,
+     * I expect most players to know what they are doing when they activate Sugar frenzy,
+     * so it should not be a huge loss.
+     */
+}
+
+
+
 /******************
  * User Interface *
  ******************/
@@ -658,6 +728,7 @@ Spice.copySettings = function(settings) {
         'numericallyStableHeavenlyChipGains',
         'autohideSeasonalBiscuitsTooltip',
         'patchDiscrepancy',
+        'warnLessThan100Lumps',
     ];
 
     for(key of numericSettings) {
@@ -797,6 +868,16 @@ Spice.customOptionsMenu = function() {
             'see the Choose Your Own Lump mod for details ' +
             '(NOTE: you must refresh your page after disabling this option)' +
         '</label></div>';
+
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('warnLessThan100Lumps',
+            'Warn if overspending lumps hurts Sugar baking',
+            'Ignore lump overspending for Sugar baking purposes',
+            'Spice.updateLumpCountColor',
+            'Spice.updateLumpCountColor'
+        ) +
+        '<label>If Sugar baking is purchased, ' +
+            'the lump count becomes red if less than 100 lumps are available.</label></div>';
 
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
@@ -962,6 +1043,10 @@ Spice.init = function() {
     // Tooltips
     Spice.pushSeasonalCookieTooltips();
 
+    // Lumps
+    Game.customDoLumps.push(Spice.updateLumpCountColor)
+    Game.customLumpTooltip.unshift(Spice.warnfulLumpTooltip); // unshift avoits conflict with CYOL
+
     // Upgrades
     Spice.createStockMarketModeDebugUpgrade();
     Game.customUpgrades['Omniscient day traders'].toggle.push(Spice.updateStockMarketRowsVisibility);
@@ -971,6 +1056,7 @@ Spice.init = function() {
     // Code injections
     Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains();
     Spice.patchDiscrepancy();
+    Spice.injectWarningIntoLumpConfirmationTooltip();
 
     // Legacy data, was previously stored in CCSE.config.OtherMods
     if(CCSE.config.OtherMods.Spice) {
