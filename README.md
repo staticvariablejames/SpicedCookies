@@ -246,6 +246,30 @@ so Rigidel has no effect on lump times.)
 for the change to take place.
 
 
+Red-colored lump count if under 100 and Sugar baking is present (enabled by default)
+------------------------------------------------------------------------------------
+
+[100 lumps](doc/100-lumps.png "100 lumps is normal")
+[99 lumps](doc/99-lumps.png "99 lumps is suboptimal")
+
+[Lump confirmation](doc/spend-lump-confirmation.png "Warn about going under 100 lumps")
+
+Sugar baking increases your CpS by 1% per unspent sugar lump,
+capped at 100 lumps.
+Since this is a heavenly upgrade is easy to forget it,
+and wonder why CpS decreases when leveling up buildings.
+
+So, if Sugar baking is present,
+Spiced Cookies helpfully let you know you are underutilizing that heavenly upgrade
+by coloring the lump count red if the number of sugar lumps is below 100.
+
+There is also a small hint about it in the lump confirmation prompt.
+
+Note: for technical reasons,
+the extra info for the lump confirmation is not available for activating Sugar frenzy.
+However if you are using Sugar frenzy you should know what you are doing.
+
+
 Changelog
 =========
 
