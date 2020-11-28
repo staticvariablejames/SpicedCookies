@@ -62,7 +62,7 @@ function testStockMarketHistory() {
     Util.wipeSave("with minigames");
 
     let ranOnce = false;
-    // Continue the test after the minigame is unloaded
+    // Continue the test after the minigame is loaded
     CCSE.MinigameReplacer(function() {
         if(ranOnce) return;
         ranOnce = true; // Work around Cookie Clicker calling launch() again on wipe save
@@ -359,7 +359,7 @@ function testStockMarketAchievements() {
     Util.wipeSave("with minigames");
 
     let ranOnce = false;
-    // Continue the test after the minigame is unloaded
+    // Continue the test after the minigame is loaded
     CCSE.MinigameReplacer(function() {
         if(ranOnce) return;
         ranOnce = true;
