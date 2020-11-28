@@ -612,10 +612,20 @@ Spice.restoreDebugUpgrades = function() {
  * Module: discrepancy fix *
  ***************************/
 
+/* Patches the discrepancy.
+ * For ease of use, this function bails out if Spice.settings.patchDiscrepancy is false,
+ * so it is safe to call this function at all times.
+ *
+ * Conversely, Spice.settings.patchDiscrepancy must be set to true before running this function,
+ * but the callback Spice.toggleSetting takes care of that.
+ */
 Spice.patchDiscrepancy = function() {
-    // Run on init and on load
+    // This function is run on init and on load
     if(!Spice.settings.patchDiscrepancy) return;
-    // Since this is time-sensitive, we will not patch anything by default
+    /* Since Orteil's code is sensitive to timing issues,
+     * patching it changes the behavior of game loads,
+     * so I think it is safer to leave it as an explicit opt-in feature.
+     */
 
     Game.loadLumps = Spice.rewriteCode(Game.loadLumps,
         'Game.lumpT=Date.now()-(age-amount*Game.lumpOverripeAge);',
