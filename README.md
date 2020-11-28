@@ -270,6 +270,18 @@ the extra info for the lump confirmation is not available for activating Sugar f
 However if you are using Sugar frenzy you should know what you are doing.
 
 
+Pantheon Swap Patch (disabled by default)
+-----------------------------------------
+
+Slotting a spirit from the roster into an already occupied slot
+makes the save game go to an invalid state.
+This patch fixes this.
+
+**NOTE**: You must refresh your browser page after disabling this feature
+for the change to take place.
+
+
+
 Changelog
 =========
 
