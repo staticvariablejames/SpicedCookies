@@ -49,6 +49,7 @@ Spice.settings = { // default settings
     autohideSeasonalBiscuitsTooltip: true,
     patchDiscrepancy: false,
     warnLessThan100Lumps: true,
+    patchPantheonSwaps: false,
 };
 
 Spice.defaultSaveGame = function() {
@@ -735,6 +736,26 @@ Spice.injectWarningIntoLumpConfirmationTooltip = function() {
 
 
 
+/********************************
+ * Module: patch Pantheon swaps *
+ ********************************/
+
+Spice.patchPantheonSwaps = function() {
+    // This function is run on init, load and minigame load.
+    if(!Spice.settings.patchPantheonSwaps) return;
+    if(!Game.Objects['Temple'].minigame) return; // It will be run again on minigame load
+    if(Spice.tmp.pantheonSwapsPatched) return;
+    Spice.tmp.pantheonSwapsPatched = true;
+
+    Game.Objects['Temple'].minigame.slotGod = Spice.rewriteMinigameCode('Temple',
+        Game.Objects['Temple'].minigame.slotGod,
+        'M.slot[god.slot]=M.slot[slot];',
+        'if(god.slot != -1) $& // Spiced cookies patch'
+    );
+}
+
+
+
 /******************
  * User Interface *
  ******************/
@@ -756,6 +777,7 @@ Spice.copySettings = function(settings) {
         'autohideSeasonalBiscuitsTooltip',
         'patchDiscrepancy',
         'warnLessThan100Lumps',
+        'patchPantheonSwaps',
     ];
 
     for(key of numericSettings) {
@@ -906,6 +928,15 @@ Spice.customOptionsMenu = function() {
         '<label>If Sugar baking is purchased, ' +
             'the lump count becomes red if less than 100 lumps are available.</label></div>';
 
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('patchPantheonSwaps',
+            'Patch Pantheon swap bug',
+            'Don\'t patch the Pantheon',
+            'Spice.patchPantheonSwaps'
+        ) +
+        '<label>(NOTE: you must refresh your page after disabling this option)' +
+        '</label></div>';
+
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
 
@@ -994,6 +1025,7 @@ Spice.loadObject = function(obj) {
     Spice.loadStockMarketHistory();
     Spice.updateProfitTallyDisplay();
     Spice.patchDiscrepancy();
+    Spice.patchPantheonSwaps();
 }
 
 Spice.init = function() {
@@ -1059,6 +1091,11 @@ Spice.init = function() {
     if(!Game.customMinigame['Bank'].sellGood) Game.customMinigame['Bank'].sellGood = [];
     Game.customMinigame['Bank'].sellGood.push(Spice.updateProfitTallyDisplay);
     Game.customMinigame['Bank'].sellGood.push(Spice.checkStockMarketTallyAchievements);
+
+    // Pantheon
+    CCSE.MinigameReplacer(function() {
+        Spice.patchPantheonSwaps();
+    }, 'Temple');
 
     // Statistics
     Game.customStatsMenu.push(Spice.allowPermanentUpgradeSlotSelectionWithinAscension);
