@@ -1143,6 +1143,13 @@ Spice.init = function() {
         Spice.loadObject(CCSE.config.OtherMods.Spice);
         delete CCSE.config.OtherMods.Spice; // be a good citizen and not bloat CCSE's save object
     }
+
+    /* Klattmose's mods and Cookie Clickre itself nest notifications like this
+     * in the 'else' branch of a `if(Game.prefs.popup)` conditional.
+     * However, it seems that this variable is always zero;
+     * unless this changes in the future,
+     * I will keep calling Game.Notify. */
+    Game.Notify('Spiced Cookies loaded!', '', '', 1, 1);
 }
 
 
