@@ -281,6 +281,14 @@ This patch fixes this.
 for the change to take place.
 
 
+Holobore's description mention wrath cookies (non-disableable)
+--------------------------------------------------------------
+
+The description of Holobore's negative effect now reads
+"If a golden or wrath cookie is clicked,
+this spirit is unslotted and all worship swaps will be used up."
+
+
 
 Changelog
 =========
