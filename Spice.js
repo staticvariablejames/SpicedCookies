@@ -1032,8 +1032,13 @@ Spice.loadObject = function(obj) {
     Spice.copySettings(obj.settings);
     Spice.copySaveGame(obj.saveGame);
 
-    if(obj.version != Spice.version) {
-        l('logButton').classList.add('hasUpdate');
+    if(obj.version != Spice.version) { // Update!
+        if(!document.getElementById('logButton').classList.contains('hasUpdate')) {
+            // CC was not updated, only the mod
+            document.getElementById('checkForUpdate').textContent = "New mod update!";
+            // NOTE: this might conflict with other mods
+        }
+        document.getElementById('logButton').classList.add('hasUpdate');
     }
 
     Spice.updateStockMarketRowsVisibility();
