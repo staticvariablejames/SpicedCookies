@@ -4,7 +4,7 @@ let Spice = {};
 if(typeof CCSE == 'undefined') Game.LoadMod('https://klattmose.github.io/CookieClicker/CCSE.js');
 
 Spice.name = "Spiced Cookies";
-Spice.version = "0.3.0"; // Semantic versioning
+Spice.version = "0.3.1"; // Semantic versioning
 Spice.GameVersion = "2.031";
 Spice.CCSEVersion = "2.021";
 

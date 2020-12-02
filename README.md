@@ -287,3 +287,8 @@ Register the mod in the modding API and use it for storing settings and save gam
 
 Adds two debug ugrades (Omniscient day traders and Transcendent debugging)
 and patch lump growth times to be deterministic.
+
+0.3.1
+-----
+
+Update to CCSE 2.031.
