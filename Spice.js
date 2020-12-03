@@ -50,6 +50,7 @@ Spice.settings = { // default settings
     patchDiscrepancy: false,
     warnLessThan100Lumps: true,
     patchPantheonSwaps: false,
+    achievementsForBackingUp: false,
 };
 
 Spice.defaultSaveGame = function() {
@@ -788,6 +789,17 @@ Spice.mentionWrathCookiesInHolobore = function() {
 
 
 
+/************************************************
+ * Module: Achievements for backing up the save *
+ ************************************************/
+
+Spice.createAchievementsForBackingUp = function() {
+    // This function is run on load and on setting toggle
+    if(!Spice.settings.achievementsForBackingUp) return;
+}
+
+
+
 /******************
  * User Interface *
  ******************/
@@ -810,6 +822,7 @@ Spice.copySettings = function(settings) {
         'patchDiscrepancy',
         'warnLessThan100Lumps',
         'patchPantheonSwaps',
+        'achievementsForBackingUp',
     ];
 
     for(key of numericSettings) {
@@ -969,6 +982,15 @@ Spice.customOptionsMenu = function() {
         '<label>(NOTE: you must refresh your page after disabling this option)' +
         '</label></div>';
 
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('achievementsForBackingUp',
+            'Create achievements for backing up the game save',
+            'Don\'t create new achievements for backing up the save',
+            'Spice.createAchievementsForBackingUp'
+        ) +
+        '<label>(NOTE: you must refresh your page after disabling this option)' +
+        '</label></div>';
+
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
 
@@ -1073,6 +1095,7 @@ Spice.loadObject = function(obj) {
     // Achievements
     Spice.createAchievementsForProgressAcrossAscensions();
     Spice.createStockMarketAchievements();
+    Spice.createAchievementsForBackingUp();
 
     // Patches
     Spice.patchDiscrepancy();
