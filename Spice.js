@@ -839,6 +839,9 @@ Spice.exportSaveCallback = function() {
         Game.Win('Archivist');
 
         if(Spice.saveGame.numberOfValidBackups >= 30) Game.Win('Diligent archivist');
+
+        Spice.tmp.backupsThisSession = (Spice.tmp.backupsThisSession ?? 0) + 1;
+        if(Spice.tmp.backupsThisSession >= 30) Game.Win('Paranoid archivist');
     }
 }
 

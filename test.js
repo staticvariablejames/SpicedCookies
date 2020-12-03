@@ -630,4 +630,30 @@ function testAchievementsForBackingUp() {
     console.assert(Game.HasAchiev('Diligent archivist'));
     Game.LoadSave(save);
     console.assert(Game.HasAchiev('Diligent archivist'));
+
+    console.assert(Spice.tmp.backupsThisSession === 9);
+    save = exportSave();
+    Game.LoadSave(save);
+    console.assert(Spice.tmp.backupsThisSession === 10);
+    exportSave(); // Discard the save
+    Game.LoadSave(save);
+    console.assert(Spice.tmp.backupsThisSession === 11);
+
+    Util.wipeSave(); // Wiping save does not change the settings
+    console.assert(Spice.tmp.backupsThisSession === 11); // Survives even across wipe saves
+    exportSave(); // Discard the save
+    console.assert(Spice.tmp.backupsThisSession === 12);
+    Game.LoadSave(save);
+    console.assert(Spice.tmp.backupsThisSession === 12);
+
+    console.assert(!Game.HasAchiev('Paranoid archivist'));
+    Spice.tmp.backupsThisSession = 29;
+    save = exportSave();
+    console.assert(Game.HasAchiev('Paranoid archivist'));
+    Game.LoadSave(save);
+    console.assert(Game.HasAchiev('Paranoid archivist'));
+
+    Util.wipeSave();
+    save = exportSave();
+    console.assert(Game.HasAchiev('Paranoid archivist'));
 }
