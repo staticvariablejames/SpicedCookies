@@ -66,7 +66,8 @@ Spice.defaultSaveGame = function() {
         reindeerClickedPreviousAscensions: 0,
         handmadeCookiesPreviousAscensions: 0,
         stockMarketProfitsPreviousAscensions: 0,
-        numberOfValidBackups: 0,
+        numberOfBackups: 0,
+        numberOfValidBackups: 0, // "Valid" is for "Dilligent archivist" purposes
         lastValidBackupDate: 0,
     };
 }
@@ -830,6 +831,8 @@ Spice.createAchievementsForBackingUp = function() {
 
 Spice.exportSaveCallback = function() {
     // Calls to this function are injected by Spice.injectCallbackOnExportSave
+    Spice.saveGame.numberOfBackups++;
+
     if(Date.now() > Spice.saveGame.lastValidBackupDate + 18*3600*1000) {
         Spice.saveGame.lastValidBackupDate = Date.now();
         Spice.saveGame.numberOfValidBackups++;
@@ -859,6 +862,14 @@ Spice.injectCallbackOnExportSave = function() {
 
 Spice.displayBackupStatistics = function() {
     // Pushed to Game.customStatsMenu
+    if(Spice.saveGame.numberOfBackups > 0) {
+        CCSE.AppendStatsSpecial(
+            `<div class="listing">
+                <b>Number of backups:</b>
+                ${Beautify(Spice.saveGame.numberOfBackups)}
+            </div>`
+        );
+    }
     if(Spice.saveGame.numberOfValidBackups > 0) {
         let s = Spice.saveGame.numberOfValidBackups > 1 ? 's' : '';
         CCSE.AppendStatsSpecial(
@@ -914,6 +925,7 @@ Spice.copySaveGame = function(saveGame) {
         'reindeerClickedPreviousAscensions',
         'handmadeCookiesPreviousAscensions',
         'stockMarketProfitsPreviousAscensions',
+        'numberOfBackups',
         'numberOfValidBackups',
         'lastValidBackupDate',
     ];

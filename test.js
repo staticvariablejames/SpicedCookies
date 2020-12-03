@@ -596,11 +596,14 @@ function testAchievementsForBackingUp() {
 
     let save = exportSave();
     console.assert(Game.HasAchiev('Archivist'));
+    console.assert(Spice.saveGame.numberOfBackups === 1);
     Game.LoadSave(save);
     console.assert(Game.HasAchiev('Archivist'));
+    console.assert(Spice.saveGame.numberOfBackups === 1);
 
     console.assert(Spice.saveGame.numberOfValidBackups === 1);
     save = exportSave();
+    console.assert(Spice.saveGame.numberOfBackups === 2);
     console.assert(Spice.saveGame.numberOfValidBackups === 1);
 
     Util.mockedDate += 3600*1000;
@@ -608,18 +611,23 @@ function testAchievementsForBackingUp() {
     Util.mockedDate += 3600*1000;
     save = exportSave();
     console.assert(Spice.saveGame.numberOfValidBackups === 1);
+    console.assert(Spice.saveGame.numberOfBackups === 4);
 
     Util.mockedDate += 18*3600*1000;
     save = exportSave();
+    console.assert(Spice.saveGame.numberOfBackups === 5);
     console.assert(Spice.saveGame.numberOfValidBackups === 2);
     Game.LoadSave(save);
+    console.assert(Spice.saveGame.numberOfBackups === 5);
     console.assert(Spice.saveGame.numberOfValidBackups === 2);
 
     Util.mockedDate += 20*3600*1000;
     exportSave(); // Discard this save
     Game.LoadSave(save);
+    console.assert(Spice.saveGame.numberOfBackups === 5);
     console.assert(Spice.saveGame.numberOfValidBackups === 2);
     save = exportSave();
+    console.assert(Spice.saveGame.numberOfBackups === 6);
     console.assert(Spice.saveGame.numberOfValidBackups === 3);
 
     Spice.saveGame.numberOfValidBackups = 29; // Speeding things up
@@ -643,6 +651,7 @@ function testAchievementsForBackingUp() {
     console.assert(Spice.tmp.backupsThisSession === 11);
 
     Util.wipeSave(); // Wiping save does not change the settings
+    console.assert(Spice.saveGame.numberOfBackups === 0); // Properly wiped out
     console.assert(Spice.tmp.backupsThisSession === 11); // Survives even across wipe saves
     exportSave(); // Discard the save
     console.assert(Spice.tmp.backupsThisSession === 12);
