@@ -35,6 +35,11 @@ Spice.rewriteMinigameCode = function(buildingName, targetFunction, pattern, repl
     return (new Function('M', 'objKey', 'return ' + newCode))(M, objKey);
 }
 
+// Icons
+Spice.iconsURL = 'https://staticvariablejames.github.io/SpicedCookies/img/icons.png';
+Spice.icons = {};
+Spice.icons.floppyDisk = [0, 0, Spice.iconsURL];
+
 /* Both settings and saveGame are stored in the CCSE.config,
  * but the save game is reset on a wipeSave whereas the settings are not.
  */
