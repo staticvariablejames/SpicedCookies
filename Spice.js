@@ -801,6 +801,29 @@ Spice.mentionWrathCookiesInHolobore = function() {
 Spice.createAchievementsForBackingUp = function() {
     // This function is run on load and on setting toggle
     if(!Spice.settings.achievementsForBackingUp) return;
+    if('Archivist' in Game.Achievements) return; // Make this function idempotent
+
+    let last;
+    last = CCSE.NewAchievement('Archivist',
+        `Back up your save file.
+        <q>Future me will be thankful.</q>`,
+        Spice.icons.floppyDisk
+    );
+    last.order = Game.Achievements['You win a cookie'].order + 1;
+
+    last = CCSE.NewAchievement('Diligent archivist',
+        `Back up your save file in <b>30 distinct days</b>.
+        <q>Thank you, past me!</q>`,
+        Spice.icons.floppyDisk
+    );
+    last.order = Game.Achievements['You win a cookie'].order + 1.1;
+
+    last = CCSE.NewAchievement('Paranoid archivist',
+        'Back up your save file <b>30 times in a single session</b>.',
+        Spice.icons.floppyDisk
+    );
+    last.order = Game.Achievements['You win a cookie'].order + 1.2;
+    last.pool = 'shadow';
 }
 
 

@@ -411,11 +411,13 @@ function testAchievementCreation() {
         settings: {
             extraAchievementsAcrossAscensions: true,
             extraStockMarketAchievements: true,
+            achievementsForBackingUp: true,
         }
     });
 
     console.assert('Parasitesmasher' in Game.Achievements);
     console.assert('Who wants to be a millionaire?' in Game.Achievements);
+    console.assert('Archivist' in Game.Achievements);
 }
 
 function testHeavenlyChipsNumericalPrecision() {
