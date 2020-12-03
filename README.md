@@ -305,6 +305,18 @@ Backing up your save in different days increases the second counter.
 so you have some leeway as to when back up your save.)
 
 
+Achievements for Backing Up (disabled by default)
+-------------------------------------------------
+
+[Archivist achievement](doc/archivist-achievement.png "Archivist achievement")
+
+Adds three achievements related to backing up save files:
+one for backing up for the first time,
+one for backing up 30 distinct days,
+and a shadow achievement for backing up 30 times in a single session
+(without closing/reloading the browser).
+
+
 Changelog
 =========
 
