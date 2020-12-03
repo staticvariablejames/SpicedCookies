@@ -4,7 +4,7 @@ let Spice = {};
 if(typeof CCSE == 'undefined') Game.LoadMod('https://klattmose.github.io/CookieClicker/CCSE.js');
 
 Spice.name = "Spiced Cookies";
-Spice.version = "0.3.1"; // Semantic versioning
+Spice.version = "0.4.0"; // Semantic versioning
 Spice.GameVersion = "2.031";
 Spice.CCSEVersion = "2.021";
 
@@ -1092,6 +1092,20 @@ Spice.addVersionHistory = function() {
     <div class="listing">
         Every single feature can be either ignored or disabled in the settings,
         and most of them start disabled by default.
+    </div>
+
+    <div class="subsection update small"><div class="title">2020-12-03 - Memory aids</div>
+        <div class="listing">&bull; Lump count is colored red if smaller than 100
+            and Sugar baking is present (enabled by default)</div>
+        <div class="listing">&bull; Patch vanilla bug in the pantheon (disabled by default)</div>
+        <div class="listing">&bull; Clarify that Holobore is affected by wrath cookies too
+            (non-disableable)</div>
+        <div class="listing">&bull; Record the number of times the game was backed up
+            (non-disableable)</div>
+        <div class="listing">&bull; Three new achievements for backing up the save game
+            (disabled by default)</div>
+        <div class="listing">&bull; Bug fix: opted-in achievements were not being created
+            after loading a save game.</div>
     </div>
 
     <div class="subsection update small"><div class="title">2020-11-06 - Debugging discrepancies</div>

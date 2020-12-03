@@ -363,3 +363,13 @@ and patch lump growth times to be deterministic.
 -----
 
 Update to CCSE 2.031.
+
+0.4.0
+-----
+
+- Lump count is colored red if smaller than 100 and Sugar baking is present.
+- Patch vanilla bug in the pantheon.
+- Clarify that Holobore is affected by wrath cookies too.
+- Record the number of times the game was backed up.
+- Three new achievements for backing up the save game.
+- Bug fix: opted-in achievements were not being created after loading a save game.
