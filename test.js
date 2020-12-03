@@ -587,10 +587,47 @@ function testAchievementsForBackingUp() {
     document.getElementById('prefsButton').click();
     document.getElementById('SpiceButtonachievementsForBackingUp').click();
 
-    Game.ExportSave();
-    let save = document.getElementById('textareaPrompt').textContent;
-    document.getElementById('promptOption0').click();
+    let exportSave = function() {
+        Game.ExportSave();
+        let save = document.getElementById('textareaPrompt').textContent;
+        document.getElementById('promptOption0').click();
+        return save;
+    }
+
+    let save = exportSave();
     console.assert(Game.HasAchiev('Archivist'));
     Game.LoadSave(save);
     console.assert(Game.HasAchiev('Archivist'));
+
+    console.assert(Spice.saveGame.numberOfValidBackups === 1);
+    save = exportSave();
+    console.assert(Spice.saveGame.numberOfValidBackups === 1);
+
+    Util.mockedDate += 3600*1000;
+    save = exportSave();
+    Util.mockedDate += 3600*1000;
+    save = exportSave();
+    Util.mockedDate += 3600*1000;
+    save = exportSave();
+    Util.mockedDate += 3600*1000;
+    save = exportSave();
+    console.assert(Spice.saveGame.numberOfValidBackups === 1);
+
+    Util.mockedDate += 16*3600*1000;
+    save = exportSave();
+    console.assert(Spice.saveGame.numberOfValidBackups === 2);
+    Game.LoadSave(save);
+    console.assert(Spice.saveGame.numberOfValidBackups === 2);
+
+    Spice.saveGame.numberOfValidBackups = 29; // Speeding things up
+    save = exportSave();
+    console.assert(Spice.saveGame.numberOfValidBackups === 29); // No time changes
+    console.assert(!Game.HasAchiev('Diligent archivist'));
+
+    Util.mockedDate += 20*3600*1000;
+    save = exportSave();
+    console.assert(Spice.saveGame.numberOfValidBackups === 30);
+    console.assert(Game.HasAchiev('Diligent archivist'));
+    Game.LoadSave(save);
+    console.assert(Game.HasAchiev('Diligent archivist'));
 }

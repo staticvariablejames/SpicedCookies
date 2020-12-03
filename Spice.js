@@ -66,6 +66,8 @@ Spice.defaultSaveGame = function() {
         reindeerClickedPreviousAscensions: 0,
         handmadeCookiesPreviousAscensions: 0,
         stockMarketProfitsPreviousAscensions: 0,
+        numberOfValidBackups: 0,
+        lastValidBackupDate: 0,
     };
 }
 Spice.saveGame = Spice.defaultSaveGame();
@@ -828,8 +830,15 @@ Spice.createAchievementsForBackingUp = function() {
 
 Spice.exportSaveCallback = function() {
     // Calls to this function are injected by Spice.injectCallbackOnExportSave
+    if(Date.now() > Spice.saveGame.lastValidBackupDate + 18*3600*1000) {
+        Spice.saveGame.lastValidBackupDate = Date.now();
+        Spice.saveGame.numberOfValidBackups++;
+    }
+
     if(Spice.settings.achievementsForBackingUp) {
         Game.Win('Archivist');
+
+        if(Spice.saveGame.numberOfValidBackups >= 30) Game.Win('Diligent archivist');
     }
 }
 
@@ -889,6 +898,8 @@ Spice.copySaveGame = function(saveGame) {
         'reindeerClickedPreviousAscensions',
         'handmadeCookiesPreviousAscensions',
         'stockMarketProfitsPreviousAscensions',
+        'numberOfValidBackups',
+        'lastValidBackupDate',
     ];
     let numberMatrixData = ['stockMarketHistory'];
 
