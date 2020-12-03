@@ -857,6 +857,19 @@ Spice.injectCallbackOnExportSave = function() {
     );
 }
 
+Spice.displayBackupStatistics = function() {
+    // Pushed to Game.customStatsMenu
+    if(Spice.saveGame.numberOfValidBackups > 0) {
+        let s = Spice.saveGame.numberOfValidBackups > 1 ? 's' : '';
+        CCSE.AppendStatsSpecial(
+            `<div class="listing">
+                <b>Number of days you backed up your save:</b>
+                ${Spice.saveGame.numberOfValidBackups} day${s}
+            </div>`
+        );
+    }
+}
+
 
 
 /******************
@@ -1236,6 +1249,7 @@ Spice.init = function() {
     // Statistics
     Game.customStatsMenu.push(Spice.allowPermanentUpgradeSlotSelectionWithinAscension);
     Game.customStatsMenu.push(Spice.displayAcrossAscensionsStatistics);
+    Game.customStatsMenu.push(Spice.displayBackupStatistics);
     Game.customStatsMenu.push(function() {
         CCSE.AppendStatsVersionNumber(Spice.name, Spice.version);
     });
