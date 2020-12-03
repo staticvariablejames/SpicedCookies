@@ -826,6 +826,25 @@ Spice.createAchievementsForBackingUp = function() {
     last.pool = 'shadow';
 }
 
+Spice.exportSaveCallback = function() {
+    // Calls to this function are injected by Spice.injectCallbackOnExportSave
+    if(Spice.settings.achievementsForBackingUp) {
+        Game.Win('Archivist');
+    }
+}
+
+Spice.injectCallbackOnExportSave = function() {
+    // This function is run on load
+    Game.ExportSave = Spice.rewriteCode(Game.ExportSave,
+        '{',
+        '{Spice.exportSaveCallback(); // Spiced Cookies modification\n'
+    );
+    Game.FileSave = Spice.rewriteCode(Game.FileSave,
+        '{',
+        '{Spice.exportSaveCallback(); // Spiced Cookies modification\n'
+    );
+}
+
 
 
 /******************
@@ -1224,6 +1243,7 @@ Spice.init = function() {
     Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains();
     Spice.patchDiscrepancy();
     Spice.injectWarningIntoLumpConfirmationTooltip();
+    Spice.injectCallbackOnExportSave();
 
     // Legacy data, was previously stored in CCSE.config.OtherMods
     if(CCSE.config.OtherMods.Spice) {

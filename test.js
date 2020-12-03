@@ -581,3 +581,16 @@ function testPantheonSlotSwapFix() {
         console.log('Finished testPantheonSlotSwapFix()');
     }, 'Temple');
 }
+
+function testAchievementsForBackingUp() {
+    Util.wipeSave();
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtonachievementsForBackingUp').click();
+
+    Game.ExportSave();
+    let save = document.getElementById('textareaPrompt').textContent;
+    document.getElementById('promptOption0').click();
+    console.assert(Game.HasAchiev('Archivist'));
+    Game.LoadSave(save);
+    console.assert(Game.HasAchiev('Archivist'));
+}
