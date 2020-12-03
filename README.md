@@ -289,6 +289,21 @@ The description of Holobore's negative effect now reads
 this spirit is unslotted and all worship swaps will be used up."
 
 
+Backup Counter (non-disableable)
+--------------------------------
+
+[Backup statistics](doc/backup-statistics.png "Backup counter")
+
+Spiced Cookies counts the number of times you hit the "Export save" or "Save to file" buttons!
+Autosaves and the "Save" button do not count.
+
+That counter is saved with the save file,
+so this effectively counts the number of times you backed up that specific lineage of save files.
+
+Backing up your save in different days increases the second counter.
+(Spiced Cookies counts two backups made 18h apart as being in "different days",
+so you have some leeway as to when back up your save.)
+
 
 Changelog
 =========
