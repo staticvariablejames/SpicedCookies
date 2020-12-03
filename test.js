@@ -400,6 +400,24 @@ function testStockMarketAchievements() {
     }, 'Bank');
 }
 
+function testAchievementCreation() {
+    // This test must be run in isolation
+    console.assert(!('Parasitesmasher' in Game.Achievements));
+    console.assert(!('Who wants to be a millionaire?' in Game.Achievements));
+
+    // Pretend we are loading a complete save
+    Spice.loadObject({
+        version: Spice.version,
+        settings: {
+            extraAchievementsAcrossAscensions: true,
+            extraStockMarketAchievements: true,
+        }
+    });
+
+    console.assert('Parasitesmasher' in Game.Achievements);
+    console.assert('Who wants to be a millionaire?' in Game.Achievements);
+}
+
 function testHeavenlyChipsNumericalPrecision() {
     Spice.settings.numericallyStableHeavenlyChipGains = false;
     Util.wipeSave();

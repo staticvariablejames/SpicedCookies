@@ -412,6 +412,9 @@ Spice.checkAcrossAscensionsAchievements = function() {
  ******************************/
 
 Spice.createAchievementsForProgressAcrossAscensions = function() {
+    // This function is run on load and on settings toggle
+    if(!Spice.settings.extraAchievementsAcrossAscensions) return;
+
     let last, adjacent;
 
     if(!('Parasitesmasher' in Game.Achievements)) { // Makes this function idempotent
@@ -434,6 +437,9 @@ Spice.createAchievementsForProgressAcrossAscensions = function() {
 }
 
 Spice.createStockMarketAchievements = function() {
+    // This function is run on load and on settings toggle
+    if(!Spice.settings.extraStockMarketAchievements) return;
+
     let last, adjacent;
 
     if(!('Who wants to be a millionaire?' in Game.Achievements)) {
@@ -1055,6 +1061,20 @@ Spice.loadObject = function(obj) {
     Spice.updateStockMarketRowsVisibility();
     Spice.loadStockMarketHistory();
     Spice.updateProfitTallyDisplay();
+
+    /* A few modules (namely, achievements and vanilla bugfixes)
+     * are only run if the player explicitly asks for it,
+     * so we must run the corrseponding functions here.
+     *
+     * The check for the corresponding setting happens inside the function itself,
+     * so there is no need for 'if's here.
+     */
+
+    // Achievements
+    Spice.createAchievementsForProgressAcrossAscensions();
+    Spice.createStockMarketAchievements();
+
+    // Patches
     Spice.patchDiscrepancy();
     Spice.patchPantheonSwaps();
 }
