@@ -607,17 +607,20 @@ function testAchievementsForBackingUp() {
     save = exportSave();
     Util.mockedDate += 3600*1000;
     save = exportSave();
-    Util.mockedDate += 3600*1000;
-    save = exportSave();
-    Util.mockedDate += 3600*1000;
-    save = exportSave();
     console.assert(Spice.saveGame.numberOfValidBackups === 1);
 
-    Util.mockedDate += 16*3600*1000;
+    Util.mockedDate += 18*3600*1000;
     save = exportSave();
     console.assert(Spice.saveGame.numberOfValidBackups === 2);
     Game.LoadSave(save);
     console.assert(Spice.saveGame.numberOfValidBackups === 2);
+
+    Util.mockedDate += 20*3600*1000;
+    exportSave(); // Discard this save
+    Game.LoadSave(save);
+    console.assert(Spice.saveGame.numberOfValidBackups === 2);
+    save = exportSave();
+    console.assert(Spice.saveGame.numberOfValidBackups === 3);
 
     Spice.saveGame.numberOfValidBackups = 29; // Speeding things up
     save = exportSave();
