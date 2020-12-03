@@ -444,9 +444,20 @@ Spice.createStockMarketAchievements = function() {
         last.order = adjacent.order + 1e-5;
 
         last = CCSE.NewAchievement('Failing on purpose',
-            '<b>Go below -$1 million</b> in stock market profits and have no goods in stock during an ascension.<q>I did not burn a thousand cookies, I simply discovered a thousand ways of how not to bake cookies!<br />[Thomas Edison\'s grandmother, probably]</q>',
+            `<b>Go below -$1 million</b> in stock market profits
+            and have no goods in stock during an ascension.
+            <q>I did not burn a thousand cookies,
+                I simply discovered a thousand ways of how not to bake cookies!<br />
+                &mdash; Thomas Edison\'s grandmother, probably</q>`,
             adjacent.icon);
         last.order = adjacent.order + 2e-5;
+        /* Minor note: there is only one upgrade with an attributed quote,
+         * namely, Birthday cookie.
+         * The quote is attributed to Orteil himself, and his name is inside the quotation marks.
+         * I am replicating the style here
+         * (except I'm using an em-dash for clarity).
+         * This should be changed if that style changes as well.
+         */
 
         last = CCSE.NewAchievement('Solid assets',
             '<b>Go below -$31.536 million</b> in stock market profits in a single ascension.',
