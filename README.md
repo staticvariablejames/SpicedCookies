@@ -323,46 +323,46 @@ Changelog
 0.1.0
 -----
 
-Alpha release,
-mostly with just a few features for the stock market.
+- Alpha release,
+    mostly with just a few features for the stock market.
 
 0.2.0
 -----
 
-Adds a numerically stable formula for heavenly chips,
-allows changing permanent upgrade slots during an ascension,
-and add slightly nicer tooltips for the season switchers.
+- Adds a numerically stable formula for heavenly chips.
+- Allows changing permanent upgrade slots during an ascension.
+- Add slightly nicer tooltips for the season switchers.
 
 0.2.1
 -----
 
-Update to Cookie Clicker v2.031.
+- Update to Cookie Clicker v2.031.
 
 0.2.2
 -----
 
-Fix a stock market crash that happens when a pre-idleverses save is loaded.
+- Fix a stock market crash that happens when a pre-idleverses save is loaded.
 
 0.2.3
 -----
 
-Fix a ReferenceError related to permanent upgrade slots.
+- Fix a ReferenceError related to permanent upgrade slots.
 
 0.2.4
 -----
 
-Register the mod in the modding API and use it for storing settings and save game data.
+- Register the mod in the modding API and use it for storing settings and save game data.
 
 0.3.0
 -----
 
-Adds two debug ugrades (Omniscient day traders and Transcendent debugging)
-and patch lump growth times to be deterministic.
+- Adds two debug ugrades (Omniscient day traders and Transcendent debugging)
+- Patch lump growth times to be deterministic.
 
 0.3.1
 -----
 
-Update to CCSE 2.031.
+- Update to CCSE 2.031.
 
 0.4.0
 -----
