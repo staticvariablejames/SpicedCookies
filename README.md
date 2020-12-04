@@ -330,6 +330,29 @@ Spiced Cookies patches that.
 The same happens with building rusts.
 
 
+Patch Sugar frenzy not disaappearing when activated with a single lump (disabled by default)
+--------------------------------------------------------------------------------------------
+
+If Sugar frenzy is purchased when the player has a single lump available,
+the Sugar frenzy switch does not disappear;
+this makes it possible to activate Sugar frenzy multiple times during an ascension.
+Spiced Cookies patches this.
+
+**NOTE**: You must refresh your browser page after disabling this feature
+for the change to take place.
+
+**NOTE 2**: For technical reasons,
+Spiced Cookies replace the entire code for activating Sugar frenzy,
+instead of surgically injecting the patch.
+This may conflict with mods that also try to mess with Sugar frenzy,
+so if you notice conflicts try disabling this option first.
+
+As a side-effect,
+the lump confirmation prompt will also warn if overspending would hurt Sugar baking
+[if this option is enabled](#red-colored-lump-count-if-under-100-and-sugar-baking-is-present-enabled-by-default).
+
+
+
 Changelog
 =========
 
