@@ -249,10 +249,10 @@ for the change to take place.
 Red-colored lump count if under 100 and Sugar baking is present (enabled by default)
 ------------------------------------------------------------------------------------
 
-[100 lumps](doc/100-lumps.png "100 lumps is normal")
-[99 lumps](doc/99-lumps.png "99 lumps is suboptimal")
+![100 lumps](doc/100-lumps.png "100 lumps is normal")
+![99 lumps](doc/99-lumps.png "99 lumps is suboptimal")
 
-[Lump confirmation](doc/spend-lump-confirmation.png "Warn about going under 100 lumps")
+![Lump confirmation](doc/spend-lump-confirmation.png "Warn about going under 100 lumps")
 
 Sugar baking increases your CpS by 1% per unspent sugar lump,
 capped at 100 lumps.
@@ -292,7 +292,7 @@ this spirit is unslotted and all worship swaps will be used up."
 Backup Counter (non-disableable)
 --------------------------------
 
-[Backup statistics](doc/backup-statistics.png "Backup counter")
+![Backup statistics](doc/backup-statistics.png "Backup counter")
 
 Spiced Cookies counts the number of times you hit the "Export save" or "Save to file" buttons!
 Autosaves and the "Save" button do not count.
@@ -308,7 +308,7 @@ so you have some leeway as to when back up your save.)
 Achievements for Backing Up (disabled by default)
 -------------------------------------------------
 
-[Archivist achievement](doc/archivist-achievement.png "Archivist achievement")
+![Archivist achievement](doc/archivist-achievement.png "Archivist achievement")
 
 Adds three achievements related to backing up save files:
 one for backing up for the first time,
