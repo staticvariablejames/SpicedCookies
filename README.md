@@ -317,6 +317,19 @@ and a shadow achievement for backing up 30 times in a single session
 (without closing/reloading the browser).
 
 
+Patch visual glitch of building specials (non-disableable)
+----------------------------------------------------------
+
+A building special with 73 cursors has an effect of increasing CpS by 730.0000000000001%
+(due to floating-point math).
+The game always rounds this number up for display,
+so it is displayed as +731%,
+even though the nearest integer is 730%.
+Spiced Cookies patches that.
+
+The same happens with building rusts.
+
+
 Changelog
 =========
 

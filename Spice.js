@@ -883,6 +883,26 @@ Spice.displayBackupStatistics = function() {
 
 
 
+/*******************************************
+ * Module: visual bug on building specials *
+ *******************************************/
+
+Spice.patchBuildingSpecialsVisualGlitch = function() {
+    // Called on load
+    Game.buffTypesByName['building buff'].func
+        = Spice.rewriteCode(Game.buffTypesByName['building buff'].func,
+            /Math.ceil/g,
+            'Math.round'
+        );
+    Game.buffTypesByName['building debuff'].func
+        = Spice.rewriteCode(Game.buffTypesByName['building debuff'].func,
+            /Math.ceil/g,
+            'Math.round'
+        );
+}
+
+
+
 /******************
  * User Interface *
  ******************/
@@ -1298,6 +1318,7 @@ Spice.init = function() {
     Spice.patchDiscrepancy();
     Spice.injectWarningIntoLumpConfirmationTooltip();
     Spice.injectCallbackOnExportSave();
+    Spice.patchBuildingSpecialsVisualGlitch();
 
     // Legacy data, was previously stored in CCSE.config.OtherMods
     if(CCSE.config.OtherMods.Spice) {
