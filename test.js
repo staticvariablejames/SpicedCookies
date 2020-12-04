@@ -669,3 +669,19 @@ function testAchievementsForBackingUp() {
     save = exportSave();
     console.assert(Game.HasAchiev('Paranoid archivist'));
 }
+
+function testSugarFrenzyPatch() {
+    Util.wipeSave();
+    Game.Earn(1e9); // Unlock lumps
+    Game.Upgrades['Sugar craving'].earn();
+    Util.Ascend(); Util.Reincarnate();
+    Game.lumps = 1;
+    Game.Upgrades['Sugar frenzy'].click();
+    console.assert(Game.Upgrades['Sugar frenzy'].bought == 0); // Check it is still present
+
+    Game.lumps = 1;
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtonpatchSugarFrenzyPersistence').click();
+    Game.Upgrades['Sugar frenzy'].click();
+    console.assert(Game.Upgrades['Sugar frenzy'].bought == 1); // Check the patch works
+}
