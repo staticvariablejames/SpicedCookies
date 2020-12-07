@@ -491,31 +491,35 @@ Spice.createStockMarketAchievements = function() {
  * Module: numerical stability *
  *******************************/
 
-/* Computes a numerically stable lower bound for the number of heavenly chips gained by ascending.
- *
- * Let f be the number of cookies forfeited by ascending so far,
- * and c be the number of cookies baked in this ascension.
- * The the vanilla formula for the number of heavenly chips that will be gained is
- *      floor(cbrt(f+c)/1000) - floor(cbrt(f)/1000))
- * This function computes
- *      floor(cbrt(f+c)/1000 - cbrt(f)/1000)
- * which is a lower bound for the formula above
- * (but can be computed with significantly less loss due to numerical imprecision)
- * and returns the maximum between it and the vanilla formula.
+/* Computes a monotonic, numerically stable formula
+ * for the number of heavenly chips gained by ascending.
  */
-Spice.additionalHeavenlyChips = function() {
+Spice.stableHeavenlyChipGains = function() {
     let f = Game.cookiesReset;
     let c = Game.cookiesEarned;
     let a = Math.cbrt((f+c)/1e12);
     let b = Math.cbrt(f/1e12);
+    // let vanillaFormula = Math.floor(a) - Math.floor(b); // not used directly
     let approximation = c/1e12/(a*a + a*b + b*b);
-    /* The approximation is mathematically equivalent to
-     *      cbrt(f+c)/1000 - cbrt(f)/1000
+    /* The approximation above is mathematically equivalent to a-b,
      * and it is numerically stable.
      * We just need to floor it to guarantee it is a lower bound.
      */
-    let correctFormula = Math.floor(a) - Math.floor(b); // numerically unstable
-    return Math.max(Math.floor(approximation), correctFormula);
+    approximation = Math.floor(approximation);
+    let truncatedVanillaFormula = Math.min(Math.floor(a), 2**53) - Math.floor(b);
+    /* If a < 2**53, we want to use the vanilla formula.
+     * If b > 2**53, we want to use the numerically stable approximation.
+     * If we have b < 2**53 < a, we still want to use the numerically stable approximation,
+     * but simply using an 'if' might make the formula non-monotonic.
+     * Returning the maximum between approximation and truncatedVanillaFormula fits the bill:
+     * if b >= 2**53 then truncatedVanillaFormula <= 0 so the value equals approximation.
+     * if a <= 2**53 then truncatedVanillaFormula = vanillaFormula >= approximation,
+     * because there is no loss of precision here.
+     * And finally,
+     * both approximation and truncatedVanillaFormula are monotonic (with fixed b),
+     * so their maximum is also monotonic.
+     */
+    return Math.max(approximation, truncatedVanillaFormula);
 }
 
 Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains = function() {
@@ -524,19 +528,19 @@ Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains = function() {
         `$&
         // Spiced Cookies modification
         if(Spice.settings.numericallyStableHeavenlyChipGains) {
-            ascendNowToGet = Spice.additionalHeavenlyChips();
+            ascendNowToGet = Spice.stableHeavenlyChipGains();
         }`
     );
     Game.EarnHeavenlyChips = Spice.rewriteCode(Game.EarnHeavenlyChips,
         'prestige>Game.prestige',
-        `prestige>Game.prestige || (Spice.settings.numericallyStableHeavenlyChipGains && Spice.additionalHeavenlyChips() > 0)`
+        `prestige>Game.prestige || (Spice.settings.numericallyStableHeavenlyChipGains && Spice.stableHeavenlyChipGains() > 0)`
     );
     Game.EarnHeavenlyChips = Spice.rewriteCode(Game.EarnHeavenlyChips,
         'var prestigeDifference=prestige-Game.prestige;',
         `$&
         // Spiced Cookies modification
         if(Spice.settings.numericallyStableHeavenlyChipGains) {
-            prestigeDifference = Spice.additionalHeavenlyChips();
+            prestigeDifference = Spice.stableHeavenlyChipGains();
         }`
     );
 }
