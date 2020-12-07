@@ -522,7 +522,7 @@ Spice.stableHeavenlyChipGains = function() {
     return Math.max(approximation, truncatedVanillaFormula);
 }
 
-Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains = function() {
+Spice.injectNumericallyStableFormulaForHeavenlyChipGains = function() {
     if(!Spice.settings.numericallyStableHeavenlyChipGains) return;
 
     Game.Logic = Spice.rewriteCode(Game.Logic,
@@ -1099,7 +1099,7 @@ Spice.customOptionsMenu = function() {
         Spice.makeButton('numericallyStableHeavenlyChipGains',
             'Use numerically stable formula for heavenly chip gains',
             'Use vanilla formula for heavenly chip gains',
-            'Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains',
+            'Spice.injectNumericallyStableFormulaForHeavenlyChipGains',
         ) +
         '<label>(NOTE: you must refresh your page after disabling this option)' +
         '</label></div>';
@@ -1279,7 +1279,7 @@ Spice.loadObject = function(obj) {
     Spice.createAchievementsForBackingUp();
 
     // Patches
-    Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains();
+    Spice.injectNumericallyStableFormulaForHeavenlyChipGains();
     Spice.patchDiscrepancy();
     Spice.patchPantheonSwaps();
     Spice.patchSugarFrenzyUnwantedPersistence();
