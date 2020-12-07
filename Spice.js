@@ -1377,8 +1377,6 @@ Spice.init = function() {
     Spice.createPermanentDebugUpgradesUpgrade();
 
     // Code injections
-    Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains();
-    Spice.patchDiscrepancy();
     Spice.injectWarningIntoLumpConfirmationTooltip();
     Spice.injectCallbackOnExportSave();
     Spice.patchBuildingSpecialsVisualGlitch();
