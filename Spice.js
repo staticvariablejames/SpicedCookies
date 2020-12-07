@@ -523,25 +523,19 @@ Spice.stableHeavenlyChipGains = function() {
 }
 
 Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains = function() {
+    if(!Spice.settings.numericallyStableHeavenlyChipGains) return;
+
     Game.Logic = Spice.rewriteCode(Game.Logic,
         'var ascendNowToGet=ascendNowToOwn-Math.floor(chipsOwned);',
-        `$&
-        // Spiced Cookies modification
-        if(Spice.settings.numericallyStableHeavenlyChipGains) {
-            ascendNowToGet = Spice.stableHeavenlyChipGains();
-        }`
+        'var ascendNowToGet = Spice.stableHeavenlyChipGains(); // Spiced Cookies injection\n'
     );
     Game.EarnHeavenlyChips = Spice.rewriteCode(Game.EarnHeavenlyChips,
         'prestige>Game.prestige',
-        `prestige>Game.prestige || (Spice.settings.numericallyStableHeavenlyChipGains && Spice.stableHeavenlyChipGains() > 0)`
+        'Spice.stableHeavenlyChipGains() > 0'
     );
     Game.EarnHeavenlyChips = Spice.rewriteCode(Game.EarnHeavenlyChips,
         'var prestigeDifference=prestige-Game.prestige;',
-        `$&
-        // Spiced Cookies modification
-        if(Spice.settings.numericallyStableHeavenlyChipGains) {
-            prestigeDifference = Spice.stableHeavenlyChipGains();
-        }`
+        'var prestigeDifference = Spice.stableHeavenlyChipGains(); // Spiced Cookies injection\n'
     );
 }
 
@@ -1105,7 +1099,10 @@ Spice.customOptionsMenu = function() {
         Spice.makeButton('numericallyStableHeavenlyChipGains',
             'Use numerically stable formula for heavenly chip gains',
             'Use vanilla formula for heavenly chip gains',
-        ) + '</div>';
+            'Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains',
+        ) +
+        '<label>(NOTE: you must refresh your page after disabling this option)' +
+        '</label></div>';
 
     menuStr += '<div class="listing">' +
         Spice.makeButton('autohideSeasonalBiscuitsTooltip',
@@ -1282,6 +1279,7 @@ Spice.loadObject = function(obj) {
     Spice.createAchievementsForBackingUp();
 
     // Patches
+    Spice.injectNumericallyPreciseFormulaForHeavenlyChipGains();
     Spice.patchDiscrepancy();
     Spice.patchPantheonSwaps();
     Spice.patchSugarFrenzyUnwantedPersistence();
