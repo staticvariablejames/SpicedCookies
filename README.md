@@ -145,12 +145,11 @@ before being able to ascend and have that run count towards the achievement.
 This mod adds a numerically stable formula for computing the new prestige level,
 so that the achievements like Endless Cycle are less painful to get at high prestige levels.
 
-Due to truncation the stable approximate formula may actually be off by one prestige level,
-but the computed value always underestimates the theoretical number
-(so the mod never makes it easier to get the achievements).
-To prevent issues with low prestige values,
-if the number given by the vanilla formula would be higher,
-then that number is used instead.
+The formula only kicks in at high prestige levels
+(beyond 9 quadrillion).
+
+**NOTE**: You must refresh your browser page after disabling this feature
+for the change to take place.
 
 
 Permanent upgrade slots can be chosen during an ascension (non-disableable)
