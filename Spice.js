@@ -57,6 +57,7 @@ Spice.settings = { // default settings
     patchPantheonSwaps: false,
     achievementsForBackingUp: false,
     patchSugarFrenzyPersistence: false,
+    buff777upgrades: false,
 };
 
 Spice.defaultSaveGame = function() {
@@ -951,6 +952,44 @@ Spice.patchSugarFrenzyUnwantedPersistence = function() {
 
 
 
+/*******************************************
+ * Module: 777-series of heavenly upgrades *
+ *******************************************/
+
+
+Spice.multiplierBuff777UpgradeSeries = function() {
+    /* Pushed to Game.customHeavenlyMultiplier,
+     * Game.customShimmerTypes['golden'].durationMult,
+     * and Game.customShimmerTypes['golden'].customEffectDurMod.
+     */
+    let mult = 1;
+    if(Spice.settings.buff777upgrades) {
+        if(Game.Has('Lucky number')) mult *= 1.02/1.01;
+        if(Game.Has('Lucky payout')) mult *= 1.04/1.01;
+    }
+    return mult;
+}
+
+Spice.push777seriestTooltips = function() {
+    // This function is called on load
+    Game.customUpgrades['Lucky number'].descFunc.push(function(me, desc) {
+        if(Spice.settings.buff777upgrades) {
+            return desc.replace(/1%/g, '2%');
+        } else {
+            return desc;
+        }
+    });
+    Game.customUpgrades['Lucky payout'].descFunc.push(function(me, desc) {
+        if(Spice.settings.buff777upgrades) {
+            return desc.replace(/1%/g, '4%');
+        } else {
+            return desc;
+        }
+    });
+}
+
+
+
 /******************
  * User Interface *
  ******************/
@@ -975,6 +1014,7 @@ Spice.copySettings = function(settings) {
         'patchPantheonSwaps',
         'achievementsForBackingUp',
         'patchSugarFrenzyPersistence',
+        'buff777upgrades',
     ];
 
     for(key of numericSettings) {
@@ -1157,6 +1197,12 @@ Spice.customOptionsMenu = function() {
         ) +
         '<label>(NOTE: you must refresh your page after disabling this option)' +
         '</label></div>';
+
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('buff777upgrades',
+            'Buff the 777-series of upgrades',
+            'Don\'t buff the 777-series of upgrades',
+        ) + '</div>';
 
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
@@ -1355,6 +1401,11 @@ Spice.init = function() {
         Spice.mentionWrathCookiesInHolobore();
     }, 'Temple');
 
+    // Effect multipliers
+    Game.customHeavenlyMultiplier.push(Spice.multiplierBuff777UpgradeSeries);
+    Game.customShimmerTypes['golden'].durationMult.push(Spice.multiplierBuff777UpgradeSeries);
+    Game.customShimmerTypes['golden'].customEffectDurMod.push(Spice.multiplierBuff777UpgradeSeries);
+
     // Statistics
     Game.customStatsMenu.push(Spice.allowPermanentUpgradeSlotSelectionWithinAscension);
     Game.customStatsMenu.push(Spice.displayAcrossAscensionsStatistics);
@@ -1365,6 +1416,7 @@ Spice.init = function() {
 
     // Tooltips
     Spice.pushSeasonalCookieTooltips();
+    Spice.push777seriestTooltips();
 
     // Lumps
     Game.customDoLumps.push(Spice.updateLumpCountColor)

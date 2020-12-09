@@ -687,3 +687,38 @@ function testSugarFrenzyPatch() {
     Game.Upgrades['Sugar frenzy'].click();
     console.assert(Game.Upgrades['Sugar frenzy'].bought == 1); // Check the patch works
 }
+
+function test777buffs() {
+    let unlockHC = function() {
+        Game.Upgrades['Heavenly chip secret'].earn();
+        Game.Upgrades['Heavenly cookie stand'].earn();
+        Game.Upgrades['Heavenly bakery'].earn();
+        Game.Upgrades['Heavenly confectionery'].earn();
+        Game.Upgrades['Heavenly key'].earn();
+    }
+    Util.wipeSave();
+
+    unlockHC();
+    Game.Upgrades['Lucky digit'].earn();
+    Game.Upgrades['Lucky number'].earn();
+
+    console.assert(approx(Game.GetHeavenlyMultiplier(), 1.01**2));
+    Spice.settings.buff777upgrades = true;
+    console.assert(approx(Game.GetHeavenlyMultiplier(), 1.01*1.02));
+
+    Game.Upgrades['Lucky payout'].earn();
+    console.assert(approx(Game.GetHeavenlyMultiplier(), 1.01*1.02*1.04));
+    Spice.settings.buff777upgrades = false;
+    console.assert(approx(Game.GetHeavenlyMultiplier(), 1.01**3));
+
+    let gc = new Game.shimmer('golden');
+    console.assert(approx(gc.dur, 13*1.01**3));
+    gc.force = 'multiply cookies'; gc.pop(); // Safely getting rid of the golden cookie
+
+    Spice.settings.buff777upgrades = true;
+    gc = new Game.shimmer('golden');
+    console.assert(approx(gc.dur, 13*1.01*1.02*1.04));
+
+    gc.force = 'frenzy'; gc.pop();
+    console.assert(Game.buffs.Frenzy.maxTime == Math.ceil(77*1.01*1.02*1.04)*Game.fps);
+}
