@@ -747,3 +747,14 @@ function test777acquisition() {
     console.assert(document.getElementById('heavenlyUpgrade413') == null);
     Util.Reincarnate();
 }
+
+function testHeavenlyBackdoor() {
+    Util.wipeSave();
+    Game.Upgrades['Heavenly backdoor'].earn();
+    Util.Ascend();
+    console.assert(document.getElementById('heavenlyUpgrade181') != null);
+    Util.Reincarnate();
+    Util.Ascend();
+    console.assert(document.getElementById('heavenlyUpgrade181') == null); // lost the upgrade
+    Util.Reincarnate();
+}
