@@ -990,11 +990,11 @@ Spice.replace777seriesAcquisitionRestrictions = function() {
     }
 }
 
-Spice.push777seriestTooltips = function() {
+Spice.push777seriesTooltips = function() {
     // This function is called on load
     Game.customUpgrades['Lucky digit'].descFunc.push(function(me, desc) {
         if(Spice.settings.simplify777upgradeAcquisition) {
-            desc = desc.replace('prestige level ends in', 'prestige level gained ends in');
+            desc = desc.replace('prestige level ends in', 'gained prestige level ends in');
         }
         return desc;
     });
@@ -1003,7 +1003,7 @@ Spice.push777seriestTooltips = function() {
             desc = desc.replace(/1%/g, '2%');
         }
         if(Spice.settings.simplify777upgradeAcquisition) {
-            desc = desc.replace('prestige level ends in', 'prestige level gained ends in');
+            desc = desc.replace('prestige level ends in', 'gained prestige level ends in');
         }
         return desc;
     });
@@ -1012,7 +1012,7 @@ Spice.push777seriestTooltips = function() {
             return desc.replace(/1%/g, '4%');
         }
         if(Spice.settings.simplify777upgradeAcquisition) {
-            desc = desc.replace('prestige level ends in', 'prestige level gained ends in');
+            desc = desc.replace('prestige level ends in', 'gained prestige level ends in');
         }
         return desc;
     });
@@ -1482,11 +1482,12 @@ Spice.init = function() {
 
     // Tooltips
     Spice.pushSeasonalCookieTooltips();
-    Spice.push777seriestTooltips();
+    Spice.push777seriesTooltips();
 
     // Lumps
     Game.customDoLumps.push(Spice.updateLumpCountColor)
-    Game.customLumpTooltip.unshift(Spice.warnfulLumpTooltip); // unshift avoits conflict with CYOL
+    Game.customLumpTooltip.unshift(Spice.warnfulLumpTooltip);
+    // Calling unshift instead of push avoids order dependence with respect to CYOL
 
     // Upgrades
     Spice.createStockMarketModeDebugUpgrade();
@@ -1506,8 +1507,8 @@ Spice.init = function() {
         delete CCSE.config.OtherMods.Spice; // be a good citizen and not bloat CCSE's save object
     }
 
-    /* Klattmose's mods and Cookie Clickre itself nest notifications like this
-     * in the 'else' branch of a `if(Game.prefs.popup)` conditional.
+    /* Klattmose's mods and Cookie Clicker itself
+     * nest notifications like this in the 'else' branch of a `if(Game.prefs.popup)` conditional.
      * However, it seems that this variable is always zero;
      * unless this changes in the future,
      * I will keep calling Game.Notify. */
