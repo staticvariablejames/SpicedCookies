@@ -722,3 +722,28 @@ function test777buffs() {
     gc.force = 'frenzy'; gc.pop();
     console.assert(Game.buffs.Frenzy.maxTime == Math.ceil(77*1.01*1.02*1.04)*Game.fps);
 }
+
+function test777acquisition() {
+    Util.wipeSave();
+    Game.Upgrades['Legacy'].earn();
+    Game.Upgrades['Heavenly luck'].earn();
+    Game.Upgrades['Lasting fortune'].earn();
+    Game.Upgrades['Decisive fate'].earn();
+    Game.Earn(8e8**3*1.00000001e12); // 800_000_002 prestige levels
+    Util.Ascend(); Util.Reincarnate();
+    Game.Earn(800_777_779**3*1.0000000000001e12 - 8e8**3*1.00000001e12); // another 777_777 levels
+
+    Spice.settings.simplify777upgradeAcquisition = true;
+    let save = Game.WriteSave(1);
+    Game.LoadSave(save); // Trigger the code injection
+    Util.Ascend();
+    console.assert(document.getElementById('heavenlyUpgrade411') != null);
+    console.assert(document.getElementById('heavenlyUpgrade412') != null);
+    console.assert(document.getElementById('heavenlyUpgrade413') != null);
+    Util.Reincarnate();
+    Util.Ascend();
+    console.assert(document.getElementById('heavenlyUpgrade411') == null);
+    console.assert(document.getElementById('heavenlyUpgrade412') == null);
+    console.assert(document.getElementById('heavenlyUpgrade413') == null);
+    Util.Reincarnate();
+}

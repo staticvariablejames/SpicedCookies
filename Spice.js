@@ -58,6 +58,7 @@ Spice.settings = { // default settings
     achievementsForBackingUp: false,
     patchSugarFrenzyPersistence: false,
     buff777upgrades: false,
+    simplify777upgradeAquisition: false,
 };
 
 Spice.defaultSaveGame = function() {
@@ -970,21 +971,50 @@ Spice.multiplierBuff777UpgradeSeries = function() {
     return mult;
 }
 
+Spice.replace777seriesAcquisitionRestrictions = function() {
+    // Called on load and on toggle
+    if(Spice.settings.simplify777upgradeAcquisition) {
+        for(let name of ['Lucky digit', 'Lucky number', 'Lucky payout']) {
+            let upgrade = Game.Upgrades[name];
+            upgrade.showIf = Spice.rewriteCode(upgrade.showIf,
+                'Math.ceil\(Game.prestige\)', 'Spice.stableHeavenlyChipGains()'
+            );
+        }
+    } else { // Undo
+        for(let name of ['Lucky digit', 'Lucky number', 'Lucky payout']) {
+            let upgrade = Game.Upgrades[name];
+            upgrade.showIf = Spice.rewriteCode(upgrade.showIf,
+                'Spice.stableHeavenlyChipGains\(\)', 'Math.ceil(Game.prestige)'
+            );
+        }
+    }
+}
+
 Spice.push777seriestTooltips = function() {
     // This function is called on load
+    Game.customUpgrades['Lucky digit'].descFunc.push(function(me, desc) {
+        if(Spice.settings.simplify777upgradeAcquisition) {
+            desc = desc.replace('prestige level ends in', 'prestige level gained ends in');
+        }
+        return desc;
+    });
     Game.customUpgrades['Lucky number'].descFunc.push(function(me, desc) {
         if(Spice.settings.buff777upgrades) {
-            return desc.replace(/1%/g, '2%');
-        } else {
-            return desc;
+            desc = desc.replace(/1%/g, '2%');
         }
+        if(Spice.settings.simplify777upgradeAcquisition) {
+            desc = desc.replace('prestige level ends in', 'prestige level gained ends in');
+        }
+        return desc;
     });
     Game.customUpgrades['Lucky payout'].descFunc.push(function(me, desc) {
         if(Spice.settings.buff777upgrades) {
             return desc.replace(/1%/g, '4%');
-        } else {
-            return desc;
         }
+        if(Spice.settings.simplify777upgradeAcquisition) {
+            desc = desc.replace('prestige level ends in', 'prestige level gained ends in');
+        }
+        return desc;
     });
 }
 
@@ -1015,6 +1045,7 @@ Spice.copySettings = function(settings) {
         'achievementsForBackingUp',
         'patchSugarFrenzyPersistence',
         'buff777upgrades',
+        'simplify777upgradeAcquisition',
     ];
 
     for(key of numericSettings) {
@@ -1204,6 +1235,14 @@ Spice.customOptionsMenu = function() {
             'Don\'t buff the 777-series of upgrades',
         ) + '</div>';
 
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('simplify777upgradeAcquisition',
+            'Unlock the 777-series of upgrades based on prestige gain',
+            'Unlock the 777-series of upgrades based on current prestige',
+            'Spice.replace777seriesAcquisitionRestrictions',
+            'Spice.replace777seriesAcquisitionRestrictions' // Called on both cases
+        ) + '</div>';
+
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
 
@@ -1323,6 +1362,9 @@ Spice.loadObject = function(obj) {
     Spice.createAchievementsForProgressAcrossAscensions();
     Spice.createStockMarketAchievements();
     Spice.createAchievementsForBackingUp();
+
+    // Conditional code injections
+    Spice.replace777seriesAcquisitionRestrictions();
 
     // Patches
     Spice.injectNumericallyStableFormulaForHeavenlyChipGains();
