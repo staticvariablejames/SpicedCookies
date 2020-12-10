@@ -59,6 +59,7 @@ Spice.settings = { // default settings
     patchSugarFrenzyPersistence: false,
     buff777upgrades: false,
     simplify777upgradeAquisition: false,
+    extra777seriesUpgrades: false,
 };
 
 Spice.defaultSaveGame = function() {
@@ -975,6 +976,11 @@ Spice.multiplierBuff777UpgradeSeries = function() {
     if(Spice.settings.buff777upgrades) {
         if(Game.Has('Lucky number')) mult *= 1.02/1.01;
         if(Game.Has('Lucky payout')) mult *= 1.04/1.01;
+        if(Game.Has('Lucky tally')) mult *= 1.08;
+        if(Game.Has('Lucky value')) mult *= 1.16;
+    } else {
+        if(Game.Has('Lucky tally')) mult *= 1.01;
+        if(Game.Has('Lucky value')) mult *= 1.01;
     }
     return mult;
 }
@@ -1024,6 +1030,61 @@ Spice.push777seriesTooltips = function() {
         }
         return desc;
     });
+}
+
+Spice.createExtra777seriesUpgrades = function() {
+    // Called on load and on settings toggle
+    if(!Spice.settings.extra777seriesUpgrades) return;
+    if('Lucky tally' in Game.Upgrades) return; // Idempotency
+
+    let previous0 = Game.Upgrades['Lucky number'];
+    let previous1 = Game.Upgrades['Lucky payout'];
+    let deltaX = (previous1.posX - previous0.posX)*0.75;
+    let deltaY = (previous1.posY - previous0.posY)*0.75;
+
+    let last;
+    last = CCSE.NewHeavenlyUpgrade('Lucky tally', 'why BeautifyInText, Orteil?',
+        777_777_777_777,
+        previous1.icon,
+        previous1.posX + deltaX, previous1.posY + deltaY,
+        ['Lucky payout']
+    );
+    last.descFunc = function() {
+        let p = Spice.buff777upgrades ? 1 : 8; // Percentage
+        return `<b>+${p}%</b> prestige level effect on CpS.<br>
+        <b>+${p}%</b> golden cookie effect duration.<br>
+        <b>+${p}%</b> golden cookie lifespan.
+        <q>This upgrade only exists due to a stroke of luck.
+            It's stealth abilities can hardly be surpassed.
+            it only appears when your gained prestige level ends in 7,777,777,777.
+        </q>`;
+    }
+    last.showIf = function(){
+        return Spice.stableHeavenlyChipGains() % 10_000_000_000 == 7_777_777_777;
+    }
+    last.order = previous1.order + 0.001;
+
+    last = CCSE.NewHeavenlyUpgrade('Lucky value', 'why BeautifyInText, Orteil?',
+        77_777_777_777_777_777,
+        previous1.icon,
+        previous1.posX + 2*deltaX, previous1.posY + 2*deltaY,
+        ['Lucky tally']
+    );
+    last.descFunc = function() {
+        let p = Spice.buff777upgrades ? 1 : 16; // Percentage
+        return `<b>+${p}%</b> prestige level effect on CpS.<br>
+        <b>+${p}%</b> golden cookie effect duration.<br>
+        <b>+${p}%</b> golden cookie lifespan.
+        <q>This upgrade is the most rare of its kind;
+            in fact, it's existence was only revealed through the use of otherworldly means.
+            It can only be seen when your gained prestige level ends in 777,777,777,777,777,
+            but it will run away if you gain more than 9 quadrillion prestige levels at once.
+        </q>`;
+    }
+    last.order = previous1.order + 0.002;
+    last.showIf = function(){
+        return Spice.stableHeavenlyChipGains() % 1_000_000_000_000_000 == 777_777_777_777_777;
+    }
 }
 
 
@@ -1275,6 +1336,13 @@ Spice.customOptionsMenu = function() {
             'Spice.replace777seriesAcquisitionRestrictions' // Called on both cases
         ) + '</div>';
 
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('extra777seriesUpgrades',
+            'Create two new heavenly upgrades for the 777-series of upgrades',
+            'Don\'t extend the 777-series of upgrades',
+            'Spice.createExtra777seriesUpgrades'
+        ) + '</div>';
+
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
 
@@ -1394,6 +1462,9 @@ Spice.loadObject = function(obj) {
     Spice.createAchievementsForProgressAcrossAscensions();
     Spice.createStockMarketAchievements();
     Spice.createAchievementsForBackingUp();
+
+    // Upgrades
+    Spice.createExtra777seriesUpgrades();
 
     // Conditional code injections
     Spice.replace777seriesAcquisitionRestrictions();

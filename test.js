@@ -727,21 +727,38 @@ function test777buffs() {
 
     gc.force = 'frenzy'; gc.pop();
     console.assert(Game.buffs.Frenzy.maxTime == Math.ceil(77*1.01*1.02*1.04)*Game.fps);
+
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtonextra777seriesUpgrades').click();
+    document.getElementById('prefsButton').click();
+
+    Game.Upgrades['Lucky tally'].earn();
+    console.assert(approx(Game.GetHeavenlyMultiplier(), 1.01*1.02*1.04*1.08));
+    Game.Upgrades['Lucky value'].earn();
+    console.assert(approx(Game.GetHeavenlyMultiplier(), 1.01*1.02*1.04*1.08*1.16));
+
+    Spice.settings.buff777upgrades = false;
+    console.assert(approx(Game.GetHeavenlyMultiplier(), 1.01**5));
 }
 
 function test777acquisition() {
+    let earnHCUpgrades = function() {
+        Game.Upgrades['Legacy'].earn();
+        Game.Upgrades['Heavenly luck'].earn();
+        Game.Upgrades['Lasting fortune'].earn();
+        Game.Upgrades['Decisive fate'].earn();
+    }
+
     Util.wipeSave();
-    Game.Upgrades['Legacy'].earn();
-    Game.Upgrades['Heavenly luck'].earn();
-    Game.Upgrades['Lasting fortune'].earn();
-    Game.Upgrades['Decisive fate'].earn();
+    earnHCUpgrades();
     Game.Earn(8e8**3*1.00000001e12); // 800_000_002 prestige levels
     Util.Ascend(); Util.Reincarnate();
     Game.Earn(800_777_779**3*1.0000000000001e12 - 8e8**3*1.00000001e12); // another 777_777 levels
 
-    Spice.settings.simplify777upgradeAcquisition = true;
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtonsimplify777upgradeAcquisition').click();
+    document.getElementById('prefsButton').click();
     let save = Game.WriteSave(1);
-    Game.LoadSave(save); // Trigger the code injection
     Util.Ascend();
     console.assert(document.getElementById('heavenlyUpgrade411') != null);
     console.assert(document.getElementById('heavenlyUpgrade412') != null);
@@ -751,6 +768,47 @@ function test777acquisition() {
     console.assert(document.getElementById('heavenlyUpgrade411') == null);
     console.assert(document.getElementById('heavenlyUpgrade412') == null);
     console.assert(document.getElementById('heavenlyUpgrade413') == null);
+    Util.Reincarnate();
+
+    Util.wipeSave();
+    earnHCUpgrades();
+    Game.Upgrades['Lucky payout'].earn();
+
+    console.assert(Spice.settings.simplify777upgradeAcquisition == true);
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtonextra777seriesUpgrades').click();
+    document.getElementById('prefsButton').click();
+    Game.Earn(1e12+1); // One prestige level
+    Util.Ascend();
+    Util.Reincarnate();
+    Game.Earn( (777_777_777_777_777 + 1)**3 * 1e12 ); // 777_777_777_777_777 prestige levels
+    console.assert(Spice.stableHeavenlyChipGains() == 777_777_777_777_777);
+
+    save = Game.WriteSave(1);
+    let luckyTallyDivId = 'heavenlyUpgrade' + Game.Upgrades['Lucky tally'].id;
+    Util.Ascend();
+    console.assert(document.getElementById(luckyTallyDivId) != null); // It is unlocking
+    console.log(luckyTallyDivId);
+
+    Util.Reincarnate();
+    Game.LoadSave(save);
+    Game.Upgrades['Lucky tally'].earn();
+    Util.Ascend();
+    let luckyValueDivId = 'heavenlyUpgrade' + Game.Upgrades['Lucky value'].id;
+    console.assert(document.getElementById(luckyValueDivId) != null); // It is unlocking
+
+    Util.Reincarnate();
+    Util.Ascend();
+    console.assert(document.getElementById(luckyValueDivId) == null); // It is also locking
+
+    Util.Reincarnate();
+    Game.LoadSave(save);
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtonsimplify777upgradeAcquisition').click();
+    document.getElementById('prefsButton').click();
+    console.assert(Spice.settings.simplify777upgradeAcquisition == false);
+    Util.Ascend();
+    console.assert(document.getElementById(luckyTallyDivId) != null); // It still unlocks
     Util.Reincarnate();
 }
 
