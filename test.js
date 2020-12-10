@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // See https://github.com/staticvariablejames/CCtest
 
+function testImplicitAssumptions() {
+    console.assert(Game.HCfactor == 3); // Assumed by the numerically stable heavenly chips formula
+    console.assert(!Game.prefs.popup); // Used to simplify message in Spice.init
+}
+testImplicitAssumptions();
+
 function testStockMarketRows() {
     Util.wipeSave("with minigames");
 
