@@ -142,8 +142,17 @@ because instead of getting a single prestige level
 now we need to get `p/2^52` prestige levels
 before being able to ascend and have that run count towards the achievement.
 
+Furthermore, beyond `2^53`,
+every number in Javascript is even,
+so it is impossible to have a prestige level ending in 7.
+This makes it impossible,
+for example,
+to unlock the upgrade Lucky digit.
+
 This mod adds a numerically stable formula for computing the new prestige level,
 so that the achievements like Endless Cycle are less painful to get at high prestige levels.
+Combined with the [changes to the unlocking conditions for the 777-series of upgrades](#the-777-series-of-upgrades-are-unlocked-based-on-prestige-gain-disabled-by-default),
+this also prevents the player from being permanently unable to acquire those upgrades.
 
 The formula only kicks in at high prestige levels
 (beyond 9 quadrillion).
@@ -350,6 +359,72 @@ As a side-effect,
 the lump confirmation prompt will also warn if overspending would hurt Sugar baking
 [if this option is enabled](#red-colored-lump-count-if-under-100-and-sugar-baking-is-present-enabled-by-default).
 
+
+Buff the 777-series of upgrades (disabled by default)
+-----------------------------------------------------
+
+By default,
+the upgrades Lucky digit, Lucky number, and Lucky payout buff
+prestige level, golden cookie effect duration and golden cookie lifespan
+by 1%.
+With this option,
+their buff is 1%, 2% and 4%,
+respectively.
+
+
+The 777-series of upgrades are unlocked based on prestige gain (disabled by default)
+------------------------------------------------------------------------------------
+
+For example, Lucky digit is unlocked when your total prestige level ends in 7.
+Enabling this option makes it unlocks when you gain a prestige amount that ends in 7.
+
+**NOTE**: If enabled,
+Spiced Cookies uses the [numerically stable formula for heavenly chip gains](#numerically-stable-formula-for-heavenly-chip-gains-disabled-by-default)
+when deciding whether to unlock the upgrades,
+so you may want to enable that option too.
+
+
+Two additional heavenly upgrades for the 777-series of upgrades (disabled by default)
+-------------------------------------------------------------------------------------
+
+Adds another two heavenly upgrades after Lucky payout,
+requiring gaining an amount of prestige that ends in 7,777,777,777
+and 777,777,777,777,777, respectively,
+and cost 100 times their requirements.
+
+If the [777-series of upgrades are buffed](#buff-the-777-series-of-upgrades-disabled-by-default),
+these heavenly upgrades buff prestige level, golden cookie effect duration and golden cookie lifespan
+by 8% and 16%,
+respectively;
+otherwise they buff by 1%.
+
+**NOTE**: You must refresh your browser page after disabling this feature
+for the change to take place.
+
+**NOTE 2**:
+Spiced Cookies always uses the [numerically stable formula for heavenly chip gains](#numerically-stable-formula-for-heavenly-chip-gains-disabled-by-default)
+when deciding whether to unlock the upgrades,
+regardless of whether the previous option is set or not.
+
+
+Remove restrictions for purchasing heavenly upgrades (debug upgrade)
+--------------------------------------------------------------------
+
+Having this upgrade means that the restrictions for purchasing heavenly upgrades
+(namely, having bought the parent upgrades in the ascension tree,
+and specific prestige gains for the 777-series of upgrades)
+are ignored on your next ascension.
+
+Note that,
+unless you have [Transcendent debugging](#preserve-debug-upgrades-across-ascensions-debug-upgrade),
+this upgrade is lost in the next ascension!
+
+To get the upgrade,
+you need to either Open Sesame,
+or type the following command in the console:
+```javascript
+    Game.Upgrades['Heavenly backdoor'].toggle();
+```
 
 
 Changelog
