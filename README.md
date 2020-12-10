@@ -170,8 +170,6 @@ to change the permanent upgrades for the next ascension.
 
 ![Permanent Upgrade Slots](doc/permanent-upgrade-slots.png "Changing slots during an ascension!")
 
-(It takes a few seconds for the displayed picture to change in the statistics page.)
-
 
 Season switcher tooltips says how many seasonal upgrades were unlocked (non-disableable)
 ----------------------------------------------------------------------------------------

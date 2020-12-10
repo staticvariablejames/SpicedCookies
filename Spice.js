@@ -571,7 +571,8 @@ Spice.allowPermanentUpgradeSlotSelectionWithinAscension = function() {
         let makeCallback = function(slot) {
             return function() {
                 Game.AssignPermanentSlot(slot);
-                Game.UpdateMenu(); // Not instantaneous but better than not having it
+                let confirmButton = document.getElementById('promptOption0'); // another kludge
+                confirmButton.addEventListener('click', Game.UpdateMenu);
             }
         }
         if(str.includes("Game.UpgradesById[264]")) div.onclick = makeCallback(0);
