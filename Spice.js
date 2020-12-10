@@ -501,7 +501,15 @@ Spice.stableHeavenlyChipGains = function() {
     let c = Game.cookiesEarned;
     let a = Math.cbrt((f+c)/1e12);
     let b = Math.cbrt(f/1e12);
-    // let vanillaFormula = Math.floor(a) - Math.floor(b); // not used directly
+    /* let vanillaFormula = Math.floor(a) - Math.floor(b); // not used directly
+     * Vanilla Cookie Clicker actually uses Math.pow((f+c)/1e12, 1/Game.HCfactor).
+     * Since Game.HCfactor is always 3,
+     * we can replace Math.pow with Math.cbrt, which is more precise.
+     * So the truncatedVanillaFormula below already has less numerical innacuracy.
+     *
+     * The downside is that if Orteil changes Game.HCfactor to anything different from 3
+     * the formula below cannot be used anymore.
+     */
     let approximation = c/1e12/(a*a + a*b + b*b);
     /* The approximation above is mathematically equivalent to a-b,
      * and it is numerically stable.
