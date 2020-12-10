@@ -20,19 +20,16 @@ Spice.rewriteCode = function(targetFunction, pattern, replacement) {
 
 /* Same as above, but tailored to replacing code in a minigame function.
  *
- * Implementation notes:
- * 1. Each minigame lives inside an object that has an attribute named 'M' pointing to 'this'.
- *    Minigame functions use that variable instead of 'this',
- *    so if we rewrite code we have to supply that variable again.
- * 2. For some reason, CCSE adds a variable named 'objKey' to the closure of every minigame,
- *    so we have to supply that variable too.
+ * Each minigame lives inside an object that has an attribute named 'M' pointing to 'this'.
+ * Minigame functions use that variable instead of 'this',
+ * so if we rewrite code we have to supply that variable again.
+ * That's why we need a separate function.
  */
 Spice.rewriteMinigameCode = function(buildingName, targetFunction, pattern, replacement) {
     let code = targetFunction.toString();
     let newCode = code.replace(pattern, replacement);
     let M = Game.Objects[buildingName].minigame;
-    let objKey = buildingName; // CCSE compatibility
-    return (new Function('M', 'objKey', 'return ' + newCode))(M, objKey);
+    return (new Function('M', 'return ' + newCode))(M);
 }
 
 // Icons
