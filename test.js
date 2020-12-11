@@ -853,3 +853,48 @@ async function testGFDDelayPatch() {
 
     console.log("Finished testGFDDelayPatch()");
 }
+
+async function testSeasonsAffectingFtHoFPatch() {
+    Util.wipeSave('with minigames');
+    Game.seed = 'aaaaa';
+    await Util.waitMinigame('Wizard tower');
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtonpatchGFDDelay').click();
+    document.getElementById('prefsButton').click(); // Easier testing
+
+    let save = Game.WriteSave(1); // Same setup as testGFDDelayPatch
+
+    let testFtHoF = function() {
+        Game.Objects['Wizard tower'].minigame.magic = 50;
+        document.getElementById('grimoireSpell1').click(); // cast FtHoF
+        console.assert(Game.shimmers[0].force == 'cookie storm drop');
+
+        Game.Objects['Wizard tower'].minigame.magic = 50;
+        Game.Objects['Wizard tower'].minigame.spellsCastTotal = 5;
+        Game.killShimmers();
+        document.getElementById('grimoireSpell1').click();
+        console.assert(Game.shimmers[0].force == 'clot');
+    };
+    testFtHoF();
+
+    // Same results if we do patch FtHoF
+    Game.LoadSave(save);
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtonpatchSeasonsAffectingFtHoF').click();
+    document.getElementById('prefsButton').click();
+    save = Game.WriteSave(1);
+
+    testFtHoF();
+
+    // Same results if we change seasons
+    Game.LoadSave(save);
+    Game.season = 'valentines';
+    testFtHoF();
+
+    // Same results after wiping the save
+    Util.wipeSave('with minigames');
+    Game.seed = 'aaaaa';
+    testFtHoF();
+
+    console.log("Finished testSeasonsAffectingFtHoFPatch()");
+}

@@ -71,6 +71,7 @@ Spice.settings = { // default settings
     simplify777upgradeAquisition: false,
     extra777seriesUpgrades: false,
     patchGFDDelay: false,
+    patchSeasonsAffectingFtHoF: false,
 };
 
 Spice.defaultSaveGame = function() {
@@ -1154,6 +1155,60 @@ Spice.patchGFDDelay = function() {
 
 
 
+/*****************************************
+ * Module: patch seasons affecting FtHoF *
+ *****************************************/
+
+Spice.patchSeasonsAffectingFtHoF = function() {
+    // This function is run on save load, minigame load, and settings toggle
+    if(!Spice.settings.patchSeasonsAffectingFtHoF) return;
+    if(!Game.Objects['Wizard tower'].minigame) return;
+    if(Spice.tmp.seasonsFtHoFpatched) return;
+    Spice.tmp.seasonsFtHoFpatched = true;
+    let spell = Game.Objects['Wizard tower'].minigame.spells['hand of fate'];
+
+    spell.win = Spice.rewriteMinigameCode('Wizard tower', spell.win,
+        "var newShimmer=new Game.shimmer('golden',{noWrath:true});",
+        "Math.random(); Math.random(); // Spiced cookies patch\n"
+        /* Keeping these two Math.random calls guarantee that the FtHoF outcome with the patch
+         * matches the out-of-season outcome witohut the patch.
+         * This keeps planners working,
+         * and prevent players from using this patch to scum another FtHoF outcome.
+         */
+    ,
+        "newShimmer.force=choose(choices);",
+        "let force = choose(choices); let sizeMult; // Spiced Cookies patch \n"
+    ,
+        "newShimmer.force=='cookie storm drop'",
+        "force=='cookie storm drop'"
+    ,
+        "newShimmer.sizeMult=Math.random()*0.75+0.25;",
+        "sizeMult=Math.random()*0.75+0.25;"
+    ,
+        /}$/,
+        `let newShimmer = new Game.shimmer('golden',{noWrath:true}); // Spiced cookies patch
+        newShimmer.force = force;
+        if(sizeMult) newShimmer.sizeMult = sizeMult;
+        }`
+    );
+
+    spell.fail = Spice.rewriteMinigameCode('Wizard tower', spell.fail,
+        "var newShimmer=new Game.shimmer('golden',{wrath:true});",
+        "Math.random(); Math.random(); // Spiced cookies patch\n"
+    ,
+        "newShimmer.force=choose(choices);",
+        "let force = choose(choices); // Spiced Cookies patch \n"
+    ,
+        /}$/,
+        `let newShimmer = new Game.shimmer('golden',{wrath:true}); // Spiced cookies patch
+        newShimmer.force = force;
+        }`
+    );
+
+}
+
+
+
 /******************
  * User Interface *
  ******************/
@@ -1181,6 +1236,7 @@ Spice.copySettings = function(settings) {
         'buff777upgrades',
         'simplify777upgradeAcquisition',
         'patchGFDDelay',
+        'patchSeasonsAffectingFtHoF',
     ];
 
     for(key of numericSettings) {
@@ -1392,6 +1448,15 @@ Spice.customOptionsMenu = function() {
             'Spice.patchGFDDelay'
         ) + '</div>';
 
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('patchSeasonsAffectingFtHoF',
+            'Disable seasons affecting the outcome of Force the Hand of Fate',
+            'Keep seasons affecting the outcome of Force the Hand of Fate',
+            'Spice.patchSeasonsAffectingFtHoF'
+        ) +
+        '<label>(NOTE: you must refresh your page after disabling this option)' +
+        '</label></div>';
+
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
 
@@ -1524,6 +1589,7 @@ Spice.loadObject = function(obj) {
     Spice.patchPantheonSwaps();
     Spice.patchSugarFrenzyUnwantedPersistence();
     Spice.patchGFDDelay();
+    Spice.patchSeasonsAffectingFtHoF();
 }
 
 Spice.init = function() {
