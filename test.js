@@ -7,121 +7,113 @@ function testImplicitAssumptions() {
 }
 testImplicitAssumptions();
 
-function testStockMarketRows() {
+async function testStockMarketRows() {
     Util.wipeSave("with minigames");
+    await Util.waitMinigame('Bank');
 
-    // Continue the test after the minigame is loaded
-    CCSE.MinigameReplacer(function() {
-        Game.Objects.Bank.switchMinigame(true); // Show the minigame
-        let stockDiv = document.getElementById('bankGood-3');
-        stockDiv.style.display = "inline-block"; // Force the good to be displayed
-        let heightWithDelta = stockDiv.clientHeight;
+    Game.Objects.Bank.switchMinigame(true); // Show the minigame
+    let stockDiv = document.getElementById('bankGood-3');
+    stockDiv.style.display = "inline-block"; // Force the good to be displayed
+    let heightWithDelta = stockDiv.clientHeight;
 
-        // Test we can disable the option
-        document.getElementById('prefsButton').click();
-        document.getElementById('SpiceButtondisplayStockDelta').click();
-        document.getElementById('prefsButton').click();
+    // Test we can disable the option
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtondisplayStockDelta').click();
+    document.getElementById('prefsButton').click();
 
-        let heightWithoutDelta = stockDiv.clientHeight;
-        console.assert(heightWithoutDelta < heightWithDelta);
+    let heightWithoutDelta = stockDiv.clientHeight;
+    console.assert(heightWithoutDelta < heightWithDelta);
 
-        // Test we can enable it again
-        document.getElementById('prefsButton').click();
-        document.getElementById('SpiceButtondisplayStockDelta').click();
-        document.getElementById('prefsButton').click();
-        console.assert(stockDiv.clientHeight === heightWithDelta);
+    // Test we can enable it again
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtondisplayStockDelta').click();
+    document.getElementById('prefsButton').click();
+    console.assert(stockDiv.clientHeight === heightWithDelta);
 
-        // Test that disabling the option stays on load
-        Spice.settings.displayStockDelta = false;
-        let save = Game.WriteSave(1);
-        Game.LoadSave(save);
-        console.assert(stockDiv.clientHeight === heightWithoutDelta);
+    // Test that disabling the option stays on load
+    Spice.settings.displayStockDelta = false;
+    let save = Game.WriteSave(1);
+    Game.LoadSave(save);
+    console.assert(stockDiv.clientHeight === heightWithoutDelta);
 
-        Spice.settings.displayStockDelta = true;
-        save = Game.WriteSave(1);
-        Game.LoadSave(save);
-        console.assert(stockDiv.clientHeight === heightWithDelta);
+    Spice.settings.displayStockDelta = true;
+    save = Game.WriteSave(1);
+    Game.LoadSave(save);
+    console.assert(stockDiv.clientHeight === heightWithDelta);
 
-        // Test debug upgrade
-        Game.Upgrades['Omniscient day traders'].buy();
-        let heightWithBoth = stockDiv.clientHeight;
-        console.assert(heightWithDelta < heightWithBoth);
+    // Test debug upgrade
+    Game.Upgrades['Omniscient day traders'].buy();
+    let heightWithBoth = stockDiv.clientHeight;
+    console.assert(heightWithDelta < heightWithBoth);
 
-        save = Game.WriteSave(1);
-        Game.Upgrades['Omniscient day traders'].toggle();
-        console.assert(stockDiv.clientHeight === heightWithDelta);
+    save = Game.WriteSave(1);
+    Game.Upgrades['Omniscient day traders'].toggle();
+    console.assert(stockDiv.clientHeight === heightWithDelta);
 
-        Game.LoadSave(save);
-        console.assert(stockDiv.clientHeight === heightWithBoth);
+    Game.LoadSave(save);
+    console.assert(stockDiv.clientHeight === heightWithBoth);
 
-        Util.Ascend(); Util.Reincarnate(); // Ascending removes the upgrade
-        console.assert(!Game.Has('Omniscient day traders'));
-        Game.Objects.Bank.getFree(1); Game.Objects.Bank.switchMinigame(true);
-        stockDiv.style.display = "inline-block"; // Force the good to be displayed
-        console.assert(stockDiv.clientHeight === heightWithDelta);
+    Util.Ascend(); Util.Reincarnate(); // Ascending removes the upgrade
+    console.assert(!Game.Has('Omniscient day traders'));
+    Game.Objects.Bank.getFree(1); Game.Objects.Bank.switchMinigame(true);
+    stockDiv.style.display = "inline-block"; // Force the good to be displayed
+    console.assert(stockDiv.clientHeight === heightWithDelta);
 
-        console.log('Finished testStockMarketRows()');
-    }, 'Bank');
+    console.log('Finished testStockMarketRows()');
 }
 
-function testStockMarketHistory() {
+async function testStockMarketHistory() {
     Util.wipeSave("with minigames");
+    await Util.waitMinigame('Bank');
 
-    let ranOnce = false;
-    // Continue the test after the minigame is loaded
-    CCSE.MinigameReplacer(function() {
-        if(ranOnce) return;
-        ranOnce = true; // Work around Cookie Clicker calling launch() again on wipe save
+    // Right now, the stock market has 16 minutes of history
+    let saveGame = Game.WriteSave(1);
 
-        // Right now, the stock market has 16 minutes of history
-        let saveGame = Game.WriteSave(1);
+    Game.Objects.Bank.minigame.tick();
+    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 18);
+    Util.wipeSave("with minigames");
+    Game.LoadSave(saveGame);
+    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
 
-        Game.Objects.Bank.minigame.tick();
-        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 18);
-        Util.wipeSave("with minigames");
-        Game.LoadSave(saveGame);
-        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
+    Game.Objects.Bank.minigame.tick();
+    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 18);
+    Game.LoadSave(saveGame);
+    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
 
-        Game.Objects.Bank.minigame.tick();
-        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 18);
-        Game.LoadSave(saveGame);
-        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
+    // Test disabling the function
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtonsaveStockMarketHistory').click();
+    saveGame = Game.WriteSave(1);
+    Game.LoadSave(saveGame);
+    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 2);
 
-        // Test disabling the function
-        document.getElementById('prefsButton').click();
-        document.getElementById('SpiceButtonsaveStockMarketHistory').click();
-        saveGame = Game.WriteSave(1);
-        Game.LoadSave(saveGame);
-        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 2);
-
-        // Enable it again
-        document.getElementById('SpiceButtonsaveStockMarketHistory').click();
+    // Enable it again
+    document.getElementById('SpiceButtonsaveStockMarketHistory').click();
 
 
-        // Tick a few times, we want to make sure it resets on ascension
-        for(let i = 0; i < 15; i++) Game.Objects.Bank.minigame.tick();
-        Util.Ascend(); Util.Reincarnate();
+    // Tick a few times, we want to make sure it resets on ascension
+    for(let i = 0; i < 15; i++) Game.Objects.Bank.minigame.tick();
+    Util.Ascend(); Util.Reincarnate();
 
-        Game.Objects.Bank.getFree(1); // Unlock the minigame
-        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
+    Game.Objects.Bank.getFree(1); // Unlock the minigame
+    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
 
-        // Make sure loading the mod with an existing save does not break it
-        Spice.saveGame = Spice.defaultSaveGame();
-        Spice.loadStockMarketHistory(); // Pretend we just ran Game.LoadMod('Spice.js')
-        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
-        Game.Objects.Bank.minigame.tick();
-        console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 18);
+    // Make sure loading the mod with an existing save does not break it
+    Spice.saveGame = Spice.defaultSaveGame();
+    Spice.loadStockMarketHistory(); // Pretend we just ran Game.LoadMod('Spice.js')
+    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
+    Game.Objects.Bank.minigame.tick();
+    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 18);
 
-        // Make sure loading the mod with an old version does not break it
-        Util.wipeSave('with minigames');
-        let original = Spice.stockMarketGoodsCount;
-        Spice.stockMarketGoodsCount = () => 15; // fool saveStockMarketHistory
-        save = Game.WriteSave(1);
-        Spice.stockMarketGoodsCount = original;
-        Game.LoadSave(save);
-        Game.Objects.Bank.minigame.tick(); // Should not throw any exceptions
-        console.log('Finished testStockMarketHistory()');
-    }, 'Bank');
+    // Make sure loading the mod with an old version does not break it
+    Util.wipeSave('with minigames');
+    let original = Spice.stockMarketGoodsCount;
+    Spice.stockMarketGoodsCount = () => 15; // fool saveStockMarketHistory
+    save = Game.WriteSave(1);
+    Spice.stockMarketGoodsCount = original;
+    Game.LoadSave(save);
+    Game.Objects.Bank.minigame.tick(); // Should not throw any exceptions
+    console.log('Finished testStockMarketHistory()');
 }
 
 function testAcrossAscensionsStatistics() {
@@ -175,87 +167,84 @@ function testAcrossAscensionsStatistics() {
     console.assert(document.getElementById('menu').textContent.indexOf("Wrinklers popped : 3,000 (all time : 3,007)") !== -1);
     console.assert(document.getElementById('menu').textContent.indexOf("Reindeer found : 1,700 (all time : 1,713)") !== -1);
     console.assert(document.getElementById('menu').textContent.indexOf("Hand-made cookies : 2,300 (all time : 2,319)") !== -1);
+
+    console.log("Finished testAcrossAscensionsStatistics()");
 }
 
-function testStockMarketTallying() {
+async function testStockMarketTallying() {
     Util.wipeSave("with minigames");
 
-    let ranOnce = false;
-    // Continue the test after the minigame is loaded
-    CCSE.MinigameReplacer(function() {
-        if(ranOnce) return;
-        ranOnce = true; // Work around Cookie Clicker calling launch() again on wipe save
+    await Util.waitMinigame('Bank');
 
-        Game.Objects.Bank.switchMinigame(true); // Show the minigame
-        let profitRow = document.getElementById('bankTally').parentNode;
+    Game.Objects.Bank.switchMinigame(true); // Show the minigame
+    let profitRow = document.getElementById('bankTally').parentNode;
 
-        Game.Objects.Bank.minigame.profit = -10;
-        Spice.updateProfitTallyDisplay();
-        console.assert(profitRow.textContent.indexOf("all time : $0") !== -1);
-        document.getElementById('prefsButton').click();
-        document.getElementById('SpiceButtontallyOnlyStockMarketProfits').click();
-        document.getElementById('prefsButton').click();
-        console.assert(profitRow.textContent.indexOf("all time : -$10") !== -1);
+    Game.Objects.Bank.minigame.profit = -10;
+    Spice.updateProfitTallyDisplay();
+    console.assert(profitRow.textContent.indexOf("all time : $0") !== -1);
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtontallyOnlyStockMarketProfits').click();
+    document.getElementById('prefsButton').click();
+    console.assert(profitRow.textContent.indexOf("all time : -$10") !== -1);
 
-        Game.Objects.Bank.minigame.profit = 50;
-        Spice.updateProfitTallyDisplay();
-        console.assert(profitRow.textContent.indexOf("all time : $50") !== -1);
-        document.getElementById('prefsButton').click();
-        document.getElementById('SpiceButtontallyOnlyStockMarketProfits').click();
-        document.getElementById('prefsButton').click();
-        console.assert(profitRow.textContent.indexOf("all time : $50") !== -1);
+    Game.Objects.Bank.minigame.profit = 50;
+    Spice.updateProfitTallyDisplay();
+    console.assert(profitRow.textContent.indexOf("all time : $50") !== -1);
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtontallyOnlyStockMarketProfits').click();
+    document.getElementById('prefsButton').click();
+    console.assert(profitRow.textContent.indexOf("all time : $50") !== -1);
 
-        Util.Ascend();
-        console.assert(Spice.saveGame.stockMarketProfitsPreviousAscensions === 50);
-        Util.Reincarnate();
+    Util.Ascend();
+    console.assert(Spice.saveGame.stockMarketProfitsPreviousAscensions === 50);
+    Util.Reincarnate();
 
-        Game.Objects.Bank.getFree(1);
-        Game.Objects.Bank.minigame.profit = -15;
-        Spice.settings.tallyOnlyStockMarketProfits = true; // no need to check toggles anymore
-        Spice.updateProfitTallyDisplay();
-        console.assert(profitRow.textContent.indexOf("all time : $50") !== -1);
-        Spice.settings.tallyOnlyStockMarketProfits = false;
-        Spice.updateProfitTallyDisplay();
-        console.assert(profitRow.textContent.indexOf("all time : $35") !== -1);
+    Game.Objects.Bank.getFree(1);
+    Game.Objects.Bank.minigame.profit = -15;
+    Spice.settings.tallyOnlyStockMarketProfits = true; // no need to check toggles anymore
+    Spice.updateProfitTallyDisplay();
+    console.assert(profitRow.textContent.indexOf("all time : $50") !== -1);
+    Spice.settings.tallyOnlyStockMarketProfits = false;
+    Spice.updateProfitTallyDisplay();
+    console.assert(profitRow.textContent.indexOf("all time : $35") !== -1);
 
-        Util.Ascend();
-        console.assert(Spice.saveGame.stockMarketProfitsPreviousAscensions === 35);
-        Util.Reincarnate();
+    Util.Ascend();
+    console.assert(Spice.saveGame.stockMarketProfitsPreviousAscensions === 35);
+    Util.Reincarnate();
 
-        Game.Objects.Bank.minigame.profit = -10;
-        Spice.settings.tallyOnlyStockMarketProfits = true;
-        Spice.updateProfitTallyDisplay();
-        console.assert(profitRow.textContent.indexOf("all time : $35") !== -1);
+    Game.Objects.Bank.minigame.profit = -10;
+    Spice.settings.tallyOnlyStockMarketProfits = true;
+    Spice.updateProfitTallyDisplay();
+    console.assert(profitRow.textContent.indexOf("all time : $35") !== -1);
 
-        Util.Ascend();
-        console.assert(Spice.saveGame.stockMarketProfitsPreviousAscensions === 35);
-        Util.Reincarnate();
+    Util.Ascend();
+    console.assert(Spice.saveGame.stockMarketProfitsPreviousAscensions === 35);
+    Util.Reincarnate();
 
-        let saveGame = Game.WriteSave(1);
-        Util.wipeSave();
+    let saveGame = Game.WriteSave(1);
+    Util.wipeSave();
 
-        /* Wiping the save re-runs Game.Objects.Bank.minigame.launch,
-         * which repopulates the bank minigame div.
-         * So we have to run the line below again. */
-        profitRow = document.getElementById('bankTally').parentNode;
-        console.assert(profitRow.textContent.indexOf("all time : $0") !== -1);
-        Game.LoadSave(saveGame);
-        console.assert(profitRow.textContent.indexOf("all time : $35") !== -1);
+    /* Wiping the save re-runs Game.Objects.Bank.minigame.launch,
+     * which repopulates the bank minigame div.
+     * So we have to run the line below again. */
+    profitRow = document.getElementById('bankTally').parentNode;
+    console.assert(profitRow.textContent.indexOf("all time : $0") !== -1);
+    Game.LoadSave(saveGame);
+    console.assert(profitRow.textContent.indexOf("all time : $35") !== -1);
 
-        /* I don't think the situation below will ever happen,
-         * because Spice.updateProfitTallyDisplay should be called every time the profit changes,
-         * but just in case.
-         */
-        Game.Objects.Bank.minigame.profit = 30;
-        Util.Ascend(); Util.Reincarnate();
-        console.assert(Spice.saveGame.stockMarketProfitsPreviousAscensions === 65);
-        console.assert(profitRow.textContent.indexOf("all time : $65") !== -1);
+    /* I don't think the situation below will ever happen,
+     * because Spice.updateProfitTallyDisplay should be called every time the profit changes,
+     * but just in case.
+     */
+    Game.Objects.Bank.minigame.profit = 30;
+    Util.Ascend(); Util.Reincarnate();
+    console.assert(Spice.saveGame.stockMarketProfitsPreviousAscensions === 65);
+    console.assert(profitRow.textContent.indexOf("all time : $65") !== -1);
 
-        console.log("Finished testStockMarketTallying()");
-    }, 'Bank');
+    console.log("Finished testStockMarketTallying()");
 }
 
-function testAcrossAscensionsAchievements() {
+async function testAcrossAscensionsAchievements() {
     Util.wipeSave('with minigames'); Util.startGrandmapocalypse();
     Spice.settings.awardAchievementsAcrossAscensions = false;
 
@@ -264,64 +253,60 @@ function testAcrossAscensionsAchievements() {
     Spice.saveGame.handmadeCookiesPreviousAscensions = 999;
     Spice.saveGame.stockMarketProfitsPreviousAscensions = 16e6;
 
-    let ranOnce = false;
-    CCSE.MinigameReplacer(function() { // Needs banks
-        if(ranOnce) return;
-        ranOnce = true;
+    Util.spawnAndPopWrinkler();
+    console.assert(!Game.HasAchiev('Wrinklesquisher'));
 
-        Util.spawnAndPopWrinkler();
-        console.assert(!Game.HasAchiev('Wrinklesquisher'));
+    Util.spawnReindeer().pop();
+    console.assert(!Game.HasAchiev('Sleigh of hand'));
 
-        Util.spawnReindeer().pop();
-        console.assert(!Game.HasAchiev('Sleigh of hand'));
+    Util.clickBigCookie();
+    console.assert(!Game.HasAchiev('Clicktastic'));
 
-        Util.clickBigCookie();
-        console.assert(!Game.HasAchiev('Clicktastic'));
+    await Util.waitMinigame('Bank');
 
-        Game.Objects['Bank'].minigame.goodsById[3].stock = 1;
-        Game.Objects['Bank'].minigame.goodsById[3].val = 16e6;
-        Game.Objects['Bank'].minigame.sellGood(3, 1)
-        console.assert(!Game.HasAchiev('Gaseous assets'));
+    Game.Objects['Bank'].minigame.goodsById[3].stock = 1;
+    Game.Objects['Bank'].minigame.goodsById[3].val = 16e6;
+    Game.Objects['Bank'].minigame.sellGood(3, 1)
+    console.assert(!Game.HasAchiev('Gaseous assets'));
 
-        document.getElementById('prefsButton').click();
-        document.getElementById('SpiceButtonawardAchievementsAcrossAscensions').click();
-        document.getElementById('prefsButton').click();
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtonawardAchievementsAcrossAscensions').click();
+    document.getElementById('prefsButton').click();
 
-        console.assert(Game.HasAchiev('Wrinklesquisher'));
-        console.assert(Game.HasAchiev('Sleigh of hand'));
-        console.assert(Game.HasAchiev('Clicktastic'));
-        console.assert(Game.HasAchiev('Liquid assets'));
+    console.assert(Game.HasAchiev('Wrinklesquisher'));
+    console.assert(Game.HasAchiev('Sleigh of hand'));
+    console.assert(Game.HasAchiev('Clicktastic'));
+    console.assert(Game.HasAchiev('Liquid assets'));
 
-        // Now try again, but with the setting being true
-        Util.wipeSave('with minigames'); Util.startGrandmapocalypse();
-        Spice.settings.awardAchievementsAcrossAscensions = true;
+    // Now try again, but with the setting being true
+    Util.wipeSave('with minigames'); Util.startGrandmapocalypse();
+    Spice.settings.awardAchievementsAcrossAscensions = true;
 
-        Spice.saveGame.wrinklersPoppedPreviousAscensions = 49;
-        Spice.saveGame.reindeerClickedPreviousAscensions = 49;
-        Spice.saveGame.handmadeCookiesPreviousAscensions = 999;
-        Spice.saveGame.stockMarketProfitsPreviousAscensions = 16e6;
+    Spice.saveGame.wrinklersPoppedPreviousAscensions = 49;
+    Spice.saveGame.reindeerClickedPreviousAscensions = 49;
+    Spice.saveGame.handmadeCookiesPreviousAscensions = 999;
+    Spice.saveGame.stockMarketProfitsPreviousAscensions = 16e6;
 
-        console.assert(!Game.HasAchiev('Wrinklesquisher'));
-        console.assert(!Game.HasAchiev('Sleigh of hand'));
-        console.assert(!Game.HasAchiev('Clicktastic'));
-        console.assert(!Game.HasAchiev('Liquid assets'));
+    console.assert(!Game.HasAchiev('Wrinklesquisher'));
+    console.assert(!Game.HasAchiev('Sleigh of hand'));
+    console.assert(!Game.HasAchiev('Clicktastic'));
+    console.assert(!Game.HasAchiev('Liquid assets'));
 
-        Util.spawnAndPopWrinkler();
-        console.assert(Game.HasAchiev('Wrinklesquisher'));
+    Util.spawnAndPopWrinkler();
+    console.assert(Game.HasAchiev('Wrinklesquisher'));
 
-        Util.spawnReindeer().pop();
-        console.assert(Game.HasAchiev('Sleigh of hand'));
+    Util.spawnReindeer().pop();
+    console.assert(Game.HasAchiev('Sleigh of hand'));
 
-        Util.clickBigCookie();
-        console.assert(Game.HasAchiev('Clicktastic'));
+    Util.clickBigCookie();
+    console.assert(Game.HasAchiev('Clicktastic'));
 
-        Game.Objects['Bank'].minigame.goodsById[3].stock = 1;
-        Game.Objects['Bank'].minigame.goodsById[3].val = 16e6;
-        Game.Objects['Bank'].minigame.sellGood(3, 1)
-        console.assert(Game.HasAchiev('Liquid assets'));
+    Game.Objects['Bank'].minigame.goodsById[3].stock = 1;
+    Game.Objects['Bank'].minigame.goodsById[3].val = 16e6;
+    Game.Objects['Bank'].minigame.sellGood(3, 1)
+    console.assert(Game.HasAchiev('Liquid assets'));
 
-        console.log("Finished testAcrossAscensionsAchievements()");
-    }, 'Bank');
+    console.log("Finished testAcrossAscensionsAchievements()");
 }
 
 function testAcrossAscensionsExtraAchievements() {
@@ -359,51 +344,47 @@ function testAcrossAscensionsExtraAchievements() {
 
     Util.spawnReindeer().pop();
     console.assert(Game.HasAchiev('A sleightly longer grind'));
+
+    console.log("Finished testAcrossAscensionsExtraAchievements()");
 }
 
-function testStockMarketAchievements() {
+async function testStockMarketAchievements() {
     Util.wipeSave("with minigames");
+    await Util.waitMinigame('Bank');
 
-    let ranOnce = false;
-    // Continue the test after the minigame is loaded
-    CCSE.MinigameReplacer(function() {
-        if(ranOnce) return;
-        ranOnce = true;
+    Game.Objects['Bank'].minigame.profit = 1e6 + 1;
+    Game.Objects['Bank'].minigame.goodsById[3].stock = 1;
+    Game.Objects['Bank'].minigame.sellGood(3, 1)
+    console.assert(!Game.HasAchiev('Who wants to be a millionaire?'));
 
-        Game.Objects['Bank'].minigame.profit = 1e6 + 1;
-        Game.Objects['Bank'].minigame.goodsById[3].stock = 1;
-        Game.Objects['Bank'].minigame.sellGood(3, 1)
-        console.assert(!Game.HasAchiev('Who wants to be a millionaire?'));
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtonextraStockMarketAchievements').click();
+    document.getElementById('prefsButton').click();
+    console.assert(Game.HasAchiev('Who wants to be a millionaire?'));
 
-        document.getElementById('prefsButton').click();
-        document.getElementById('SpiceButtonextraStockMarketAchievements').click();
-        document.getElementById('prefsButton').click();
-        console.assert(Game.HasAchiev('Who wants to be a millionaire?'));
+    Util.wipeSave('with minigames');
+    console.assert(!Game.HasAchiev('Who wants to be a millionaire?'));
+    Game.Objects['Bank'].minigame.profit = 1e6 + 1;
+    Game.Objects['Bank'].minigame.goodsById[3].stock = 1;
+    Game.Objects['Bank'].minigame.sellGood(3, 1);
+    console.assert(Game.HasAchiev('Who wants to be a millionaire?'));
 
-        Util.wipeSave('with minigames');
-        console.assert(!Game.HasAchiev('Who wants to be a millionaire?'));
-        Game.Objects['Bank'].minigame.profit = 1e6 + 1;
-        Game.Objects['Bank'].minigame.goodsById[3].stock = 1;
-        Game.Objects['Bank'].minigame.sellGood(3, 1);
-        console.assert(Game.HasAchiev('Who wants to be a millionaire?'));
+    Game.Objects['Bank'].minigame.goodsById[3].stock = 3;
+    Game.Objects['Bank'].minigame.sellGood(3, 1);
+    console.assert(!Game.HasAchiev('Failing on purpose'));
+    Game.Objects['Bank'].minigame.goodsById[3].val = 50; // for definiteness
+    Game.Objects['Bank'].minigame.profit = -2e6;
+    Game.Objects['Bank'].minigame.sellGood(3, 1);
+    console.assert(!Game.HasAchiev('Failing on purpose'));
+    Game.Objects['Bank'].minigame.sellGood(3, 1);
+    console.assert(Game.HasAchiev('Failing on purpose'));
 
-        Game.Objects['Bank'].minigame.goodsById[3].stock = 3;
-        Game.Objects['Bank'].minigame.sellGood(3, 1);
-        console.assert(!Game.HasAchiev('Failing on purpose'));
-        Game.Objects['Bank'].minigame.goodsById[3].val = 50; // for definiteness
-        Game.Objects['Bank'].minigame.profit = -2e6;
-        Game.Objects['Bank'].minigame.sellGood(3, 1);
-        console.assert(!Game.HasAchiev('Failing on purpose'));
-        Game.Objects['Bank'].minigame.sellGood(3, 1);
-        console.assert(Game.HasAchiev('Failing on purpose'));
+    console.assert(!Game.HasAchiev('Solid assets'));
+    Game.Objects['Bank'].minigame.profit = -32e6;
+    Game.Objects['Bank'].minigame.buyGood(4, 1);
+    console.assert(Game.HasAchiev('Solid assets')); // even while having stock
 
-        console.assert(!Game.HasAchiev('Solid assets'));
-        Game.Objects['Bank'].minigame.profit = -32e6;
-        Game.Objects['Bank'].minigame.buyGood(4, 1);
-        console.assert(Game.HasAchiev('Solid assets')); // even while having stock
-
-        console.log("Finished testStockMarketAchievements()");
-    }, 'Bank');
+    console.log("Finished testStockMarketAchievements()");
 }
 
 function testAchievementCreation() {
@@ -424,6 +405,8 @@ function testAchievementCreation() {
     console.assert('Parasitesmasher' in Game.Achievements);
     console.assert('Who wants to be a millionaire?' in Game.Achievements);
     console.assert('Archivist' in Game.Achievements);
+
+    console.log("Finished testAchievementCreation()");
 }
 
 function testHeavenlyChipsNumericalPrecision() {
@@ -455,6 +438,8 @@ function testHeavenlyChipsNumericalPrecision() {
     Game.Earn(6.9e12); // Not enough for another chip
     Util.Ascend(); Util.Reincarnate();
     console.assert(Game.resets == 1);
+
+    console.log("Finished testHeavenlyChipsNumericalPrecision()");
 }
 
 function testSeasonalCookieTooltips() {
@@ -509,6 +494,8 @@ function testSeasonalCookieTooltips() {
     Spice.settings.autohideSeasonalBiscuitsTooltip = false;
     desc = Game.Upgrades['Bunny biscuit'].descFunc();
     console.assert(Array.from(desc.matchAll(text)).length == 2);
+
+    console.log("Finished testSeasonalCookieTooltips()");
 }
 
 function testTranscendentDebugging() {
@@ -522,6 +509,8 @@ function testTranscendentDebugging() {
     Util.Ascend(); Util.Reincarnate();
     console.assert(Game.Has('Perfect idling'));
     console.assert(Game.Has('Transcendent debugging'));
+
+    console.log("Finished testTranscendentDebugging()");
 }
 
 function testDiscrepancyPatch() {
@@ -554,40 +543,37 @@ function testDiscrepancyPatch() {
     Game.clickLump();
     console.assert(Game.lumpT < Util.defaultMockedDate + 3*24*3600*1000);
     console.assert(Game.lumpT > Util.mockedDate);
+
+    console.log("Finished testDiscrepancyPatch()");
 }
 
-function testPantheonSlotSwapFix() {
+async function testPantheonSlotSwapFix() {
     Util.wipeSave('with minigames');
 
-    let ranOnce = false;
-    // Continue the test after the minigame is loaded
-    CCSE.MinigameReplacer(function() {
-        if(ranOnce) return;
-        ranOnce = true;
-        document.getElementById('prefsButton').click();
-        document.getElementById('SpiceButtonpatchPantheonSwaps').click();
-        document.getElementById('prefsButton').click();
+    await Util.waitMinigame('Temple');
+    document.getElementById('prefsButton').click();
+    document.getElementById('SpiceButtonpatchPantheonSwaps').click();
+    document.getElementById('prefsButton').click();
 
-        let M = Game.Objects['Temple'].minigame;
-        M.slotGod(M.godsById[0], 0);
-        M.slotGod(M.godsById[1], 1);
-        M.slotGod(M.godsById[2], 2);
-        M.swaps = 3;
-        console.assert(M.slotGod(M.godsById[3], 0) != false);
-        console.assert(M.slotGod(M.godsById[4], 0) != false);
-        console.assert(M.slotGod(M.godsById[2], 1) != false);
-        console.assert(!(-1 in M.slot));
-        console.assert(M.slot[0] === 4);
-        console.assert(M.slot[1] === 2);
-        console.assert(M.slot[2] === 1);
-        console.assert(M.godsById[0].slot === -1);
-        console.assert(M.godsById[1].slot === 2);
-        console.assert(M.godsById[2].slot === 1);
-        console.assert(M.godsById[3].slot === -1);
-        console.assert(M.godsById[4].slot === 0);
+    let M = Game.Objects['Temple'].minigame;
+    M.slotGod(M.godsById[0], 0);
+    M.slotGod(M.godsById[1], 1);
+    M.slotGod(M.godsById[2], 2);
+    M.swaps = 3;
+    console.assert(M.slotGod(M.godsById[3], 0) != false);
+    console.assert(M.slotGod(M.godsById[4], 0) != false);
+    console.assert(M.slotGod(M.godsById[2], 1) != false);
+    console.assert(!(-1 in M.slot));
+    console.assert(M.slot[0] === 4);
+    console.assert(M.slot[1] === 2);
+    console.assert(M.slot[2] === 1);
+    console.assert(M.godsById[0].slot === -1);
+    console.assert(M.godsById[1].slot === 2);
+    console.assert(M.godsById[2].slot === 1);
+    console.assert(M.godsById[3].slot === -1);
+    console.assert(M.godsById[4].slot === 0);
 
-        console.log('Finished testPantheonSlotSwapFix()');
-    }, 'Temple');
+    console.log('Finished testPantheonSlotSwapFix()');
 }
 
 function testAchievementsForBackingUp() {
@@ -676,6 +662,8 @@ function testAchievementsForBackingUp() {
     Util.wipeSave();
     save = exportSave();
     console.assert(Game.HasAchiev('Paranoid archivist'));
+
+    console.log("Finished testAchievementsForBackingUp()");
 }
 
 function testSugarFrenzyPatch() {
@@ -692,6 +680,8 @@ function testSugarFrenzyPatch() {
     document.getElementById('SpiceButtonpatchSugarFrenzyPersistence').click();
     Game.Upgrades['Sugar frenzy'].click();
     console.assert(Game.Upgrades['Sugar frenzy'].bought == 1); // Check the patch works
+
+    console.log("Finished testSugarFrenzyPatch()");
 }
 
 function test777buffs() {
@@ -739,6 +729,8 @@ function test777buffs() {
 
     Spice.settings.buff777upgrades = false;
     console.assert(approx(Game.GetHeavenlyMultiplier(), 1.01**5));
+
+    console.log("Finished test777buffs()");
 }
 
 function test777acquisition() {
@@ -810,6 +802,8 @@ function test777acquisition() {
     Util.Ascend();
     console.assert(document.getElementById(luckyTallyDivId) != null); // It still unlocks
     Util.Reincarnate();
+
+    console.log("Finished test777acquisition()");
 }
 
 function testHeavenlyBackdoor() {
@@ -821,6 +815,8 @@ function testHeavenlyBackdoor() {
     Util.Ascend();
     console.assert(document.getElementById('heavenlyUpgrade181') == null); // lost the upgrade
     Util.Reincarnate();
+
+    console.log("Finished testHeavenlyBackdoor()");
 }
 
 async function testGFDDelayPatch() {
