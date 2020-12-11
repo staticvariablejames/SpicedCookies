@@ -425,6 +425,20 @@ or type the following command in the console:
 ```
 
 
+Patch the delay in Gambler's Fever Dream (disabled by default)
+--------------------------------------------------------------
+
+There is a 1-second delay between casting Gambler's Fever Dream
+and seeing the effects of the chosen spell.
+This delay opens door to [several exploits](doc/GFD.md).
+
+This option removes that delay.
+
+**NOTE**: You must refresh your browser page after disabling this feature
+for the change to take place.
+
+
+
 Changelog
 =========
 
