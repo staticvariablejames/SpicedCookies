@@ -89,10 +89,10 @@ Spice.defaultSaveGame = function() {
 }
 Spice.saveGame = Spice.defaultSaveGame();
 
-/* Scratchpad used to store data that needs to persist beyond a function call,
+/* Used to store data that needs to persist beyond a function call,
  * but does not need to be put in the save game data.
  */
-Spice.tmp = {};
+Spice.sessionData = {};
 
 
 /************************************************
@@ -653,7 +653,7 @@ Spice.createPermanentDebugUpgradesUpgrade = function() {
 
 Spice.saveCurrentDebugUpgrades = function() {
     // Executed on ascension
-    Spice.tmp.ownedDebugUpgrades = [];
+    Spice.sessionData.ownedDebugUpgrades = [];
     /* There is no need to save this permanently
      * because games can't be saved while in the ascension menu.
      */
@@ -662,13 +662,13 @@ Spice.saveCurrentDebugUpgrades = function() {
 
     for(i in Game.Upgrades) {
         if(Game.Upgrades[i].pool == 'debug' && Game.Upgrades[i].bought)
-            Spice.tmp.ownedDebugUpgrades.push(i);
+            Spice.sessionData.ownedDebugUpgrades.push(i);
     }
 }
 
 Spice.restoreDebugUpgrades = function() {
     // Executed on reincarnate
-    for(i of Spice.tmp.ownedDebugUpgrades) {
+    for(i of Spice.sessionData.ownedDebugUpgrades) {
         Game.Upgrades[i].earn();
     }
 }
@@ -793,8 +793,8 @@ Spice.patchPantheonSwaps = function() {
     // This function is run on save game load, minigame load, and settings toggle
     if(!Spice.settings.patchPantheonSwaps) return;
     if(!Game.Objects['Temple'].minigame) return; // It will be run again on minigame load
-    if(Spice.tmp.pantheonSwapsPatched) return;
-    Spice.tmp.pantheonSwapsPatched = true;
+    if(Spice.sessionData.pantheonSwapsPatched) return;
+    Spice.sessionData.pantheonSwapsPatched = true;
 
     Game.Objects['Temple'].minigame.slotGod = Spice.rewriteMinigameCode('Temple',
         Game.Objects['Temple'].minigame.slotGod,
@@ -866,8 +866,8 @@ Spice.exportSaveCallback = function() {
 
         if(Spice.saveGame.numberOfValidBackups >= 30) Game.Win('Diligent archivist');
 
-        Spice.tmp.backupsThisSession = (Spice.tmp.backupsThisSession ?? 0) + 1;
-        if(Spice.tmp.backupsThisSession >= 30) Game.Win('Paranoid archivist');
+        Spice.sessionData.backupsThisSession = (Spice.sessionData.backupsThisSession ?? 0) + 1;
+        if(Spice.sessionData.backupsThisSession >= 30) Game.Win('Paranoid archivist');
     }
 }
 
@@ -1165,8 +1165,8 @@ Spice.patchSeasonsAffectingFtHoF = function() {
     // This function is run on save load, minigame load, and settings toggle
     if(!Spice.settings.patchSeasonsAffectingFtHoF) return;
     if(!Game.Objects['Wizard tower'].minigame) return;
-    if(Spice.tmp.seasonsFtHoFpatched) return;
-    Spice.tmp.seasonsFtHoFpatched = true;
+    if(Spice.sessionData.seasonsFtHoFpatched) return;
+    Spice.sessionData.seasonsFtHoFpatched = true;
     let spell = Game.Objects['Wizard tower'].minigame.spells['hand of fate'];
 
     spell.win = Spice.rewriteMinigameCode('Wizard tower', spell.win,
