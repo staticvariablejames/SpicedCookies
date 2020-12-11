@@ -92,7 +92,12 @@ Spice.saveGame = Spice.defaultSaveGame();
 /* Used to store data that needs to persist beyond a function call,
  * but does not need to be put in the save game data.
  */
-Spice.sessionData = {};
+Spice.sessionData = {
+    ownedDebugUpgrades: [],
+    pantheonSwapsPatched: false,
+    backupsThisSession: 0,
+    seasonsFtHoFpatched: false,
+};
 
 
 /************************************************
@@ -866,7 +871,7 @@ Spice.exportSaveCallback = function() {
 
         if(Spice.saveGame.numberOfValidBackups >= 30) Game.Win('Diligent archivist');
 
-        Spice.sessionData.backupsThisSession = (Spice.sessionData.backupsThisSession ?? 0) + 1;
+        Spice.sessionData.backupsThisSession++;
         if(Spice.sessionData.backupsThisSession >= 30) Game.Win('Paranoid archivist');
     }
 }
