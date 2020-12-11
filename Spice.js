@@ -57,6 +57,7 @@ Spice.settings = { // default settings
     buff777upgrades: false,
     simplify777upgradeAquisition: false,
     extra777seriesUpgrades: false,
+    patchGFDDelay: false,
 };
 
 Spice.defaultSaveGame = function() {
@@ -775,7 +776,7 @@ Spice.injectWarningIntoLumpConfirmationTooltip = function() {
  ********************************/
 
 Spice.patchPantheonSwaps = function() {
-    // This function is run on init, load and minigame load.
+    // This function is run on save game load, minigame load, and settings toggle
     if(!Spice.settings.patchPantheonSwaps) return;
     if(!Game.Objects['Temple'].minigame) return; // It will be run again on minigame load
     if(Spice.tmp.pantheonSwapsPatched) return;
@@ -1111,6 +1112,35 @@ Spice.createHeavenlyBackdoorDebugUpgrade = function() {
 
 
 
+/*************************************
+ * Module: Patch GFD's casting delay *
+ *************************************/
+
+Spice.patchGFDDelay = function() {
+    // This function is run on save game load, minigame load, and settings toggle
+    if(!Spice.settings.patchGFDDelay) return;
+    if(!Game.Objects['Wizard tower'].minigame) return; // Run again on minigame load
+
+    let spell = Game.Objects['Wizard tower'].minigame.spells['gambler\'s fever dream'];
+    spell.win = Spice.rewriteMinigameCode('Wizard tower',
+        spell.win,
+        'setTimeout(function(spell,cost,seed)',
+        /* There are two calls to setTimeout, we only want to overwrite the first.
+         * We could rely on the substitution order,
+         * but this also makes this function idempotent without extra work. */
+        `let callRightAway = function(f, ignored) {f();}; // Spiced cookies patch
+        callRightAway(function(spell,cost,seed)`
+    );
+    spell.win = Spice.rewriteMinigameCode('Wizard tower',
+        spell.win,
+        "' magic...</div>',Game.mouseX,Game.mouseY",
+        "' magic...</div>',Game.mouseX,Game.mouseY-50"
+        // Both GFD and the chosen spell have popup messages; this makes sure they don't overlap
+    );
+}
+
+
+
 /******************
  * User Interface *
  ******************/
@@ -1137,6 +1167,7 @@ Spice.copySettings = function(settings) {
         'patchSugarFrenzyPersistence',
         'buff777upgrades',
         'simplify777upgradeAcquisition',
+        'patchGFDDelay',
     ];
 
     for(key of numericSettings) {
@@ -1341,6 +1372,13 @@ Spice.customOptionsMenu = function() {
             'Spice.createExtra777seriesUpgrades'
         ) + '</div>';
 
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('patchGFDDelay',
+            'Patch the delay from Gambler\'s Fever Dream',
+            'Don\'t patch the delay in Gambler\'s Fever Dream',
+            'Spice.patchGFDDelay'
+        ) + '</div>';
+
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
 
@@ -1472,6 +1510,7 @@ Spice.loadObject = function(obj) {
     Spice.patchDiscrepancy();
     Spice.patchPantheonSwaps();
     Spice.patchSugarFrenzyUnwantedPersistence();
+    Spice.patchGFDDelay();
 }
 
 Spice.init = function() {
@@ -1543,6 +1582,11 @@ Spice.init = function() {
         Spice.patchPantheonSwaps();
         Spice.mentionWrathCookiesInHolobore();
     }, 'Temple');
+
+    // Grimoire
+    CCSE.MinigameReplacer(function() {
+        Spice.patchGFDDelay();
+    }, 'Wizard tower');
 
     // Effect multipliers
     Game.customHeavenlyMultiplier.push(Spice.multiplierBuff777UpgradeSeries);
