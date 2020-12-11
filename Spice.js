@@ -1135,6 +1135,8 @@ Spice.patchGFDDelay = function() {
     if(!Spice.settings.patchGFDDelay) return;
     if(!Game.Objects['Wizard tower'].minigame) return; // Run again on minigame load
 
+    // Replacements make this function inherently idempotent
+
     let spell = Game.Objects['Wizard tower'].minigame.spells['gambler\'s fever dream'];
     spell.win = Spice.rewriteMinigameCode('Wizard tower',
         spell.win,
@@ -1446,7 +1448,9 @@ Spice.customOptionsMenu = function() {
             'Patch the delay from Gambler\'s Fever Dream',
             'Don\'t patch the delay in Gambler\'s Fever Dream',
             'Spice.patchGFDDelay'
-        ) + '</div>';
+        ) +
+        '<label>(NOTE: you must refresh your page after disabling this option)' +
+        '</label></div>';
 
     menuStr += '<div class="listing">' +
         Spice.makeButton('patchSeasonsAffectingFtHoF',
