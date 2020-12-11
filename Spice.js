@@ -8,28 +8,41 @@ Spice.version = "0.4.0"; // Semantic versioning
 Spice.GameVersion = "2.031";
 Spice.CCSEVersion = "2.021";
 
-/* Injects or modifies the given function.
+/* rewriteCode(targetFunction, pattern1, replacement1, pattern2, replacement2, ...)
+ *
+ * Rewrites the source code of the target function,
+ * according to the provided list of pattern and replacements.
  * `pattern` and `replacement` are the first and second arguments to String.prototype.replace.
  * The altered function is returned.
  */
-Spice.rewriteCode = function(targetFunction, pattern, replacement) {
+Spice.rewriteCode = function(targetFunction, ...args) {
     let code = targetFunction.toString();
-    let newCode = code.replace(pattern, replacement);
-    return (new Function('return ' + newCode))();
+    let patterns =     args.filter( (_, i) => i % 2 == 0 );
+    let replacements = args.filter( (_, i) => i % 2 == 1 );
+    for(let i = 0; i < replacements.length; i++) {
+        code = code.replace(patterns[i], replacements[i]);
+    }
+    return (new Function('return ' + code))();
 }
 
-/* Same as above, but tailored to replacing code in a minigame function.
+/* rewriteMinigameCode(buildingName, targetFunction, pattern1, replacement1, ...)
+ *
+ * Same as above, but tailored to replacing code in a minigame function.
  *
  * Each minigame lives inside an object that has an attribute named 'M' pointing to 'this'.
  * Minigame functions use that variable instead of 'this',
  * so if we rewrite code we have to supply that variable again.
  * That's why we need a separate function.
  */
-Spice.rewriteMinigameCode = function(buildingName, targetFunction, pattern, replacement) {
+Spice.rewriteMinigameCode = function(buildingName, targetFunction, ...args) {
     let code = targetFunction.toString();
-    let newCode = code.replace(pattern, replacement);
+    let patterns =     args.filter( (_, i) => i % 2 == 0 );
+    let replacements = args.filter( (_, i) => i % 2 == 1 );
+    for(let i = 0; i < replacements.length; i++) {
+        code = code.replace(patterns[i], replacements[i]);
+    }
     let M = Game.Objects[buildingName].minigame;
-    return (new Function('M', 'return ' + newCode))(M);
+    return (new Function('M', 'return ' + code))(M);
 }
 
 // Icons
