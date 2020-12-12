@@ -72,6 +72,7 @@ Spice.settings = { // default settings
     extra777seriesUpgrades: false,
     patchGFDDelay: false,
     patchSeasonsAffectingFtHoF: false,
+    grimoireSpellCastAnimations: false,
 };
 
 Spice.defaultSaveGame = function() {
@@ -1296,6 +1297,60 @@ Spice.animateShrinkingCircle = function(centerX, centerY, radius) {
     });
 }
 
+Spice.animateGFD = function(targetId) {
+    let gfdId = Game.Objects['Wizard tower'].minigame.spells['gambler\'s fever dream'].id;
+    let arc = 6;
+    let decay = 30;
+    let direction = Math.random() < 0.5; // Above or below the spell buttons
+    let sourceRect = document.getElementById('grimoireSpell' + gfdId).getBoundingClientRect();
+    let targetRect = document.getElementById('grimoireSpell' + targetId).getBoundingClientRect();
+    let sourceX = (sourceRect.left + sourceRect.right)/2;
+    let sourceY = (direction ^ (targetId > gfdId)) ? sourceRect.bottom : sourceRect.top;
+    let targetX = (targetRect.left + targetRect.right)/2;
+    let targetY = (direction ^ (targetId > gfdId)) ? targetRect.bottom : targetRect.top;
+    let centerX = (sourceX + targetX)/2;
+    let centerY = (sourceY + targetY)/2;
+
+    let startT = Game.T;
+    let radius = Math.hypot(sourceX - targetX, sourceY - targetY)/2;
+    let startAngle = Math.atan2(sourceY - targetY, sourceX - targetX);
+
+    Spice.sessionData.drawingCallbacks.push(() => {
+        let t = Game.T - startT;
+        let endAngle = startAngle + (direction ? Math.PI : -Math.PI);
+        if(t < arc) {
+            endAngle = startAngle + t/arc * (direction ? Math.PI : -Math.PI);
+        }
+        let alpha = t < arc ? 1 : 1 - (t-arc)/decay;
+        Spice.sessionData.ctx.strokeStyle = `rgba(0, 200, 0, ${alpha})`;
+        Spice.sessionData.ctx.lineWidth = 5;
+        Spice.sessionData.ctx.beginPath();
+        Spice.sessionData.ctx.arc(centerX, centerY, radius, startAngle, endAngle, !direction);
+        Spice.sessionData.ctx.stroke();
+
+        return t <= arc + decay;
+    });
+}
+
+Spice.injectGrimoireAnimations = function() {
+    // Called on minigame load
+    let M = Game.Objects['Wizard tower'].minigame;
+    if(!M) return; // safeguard; should never happen
+    M.castSpell = Spice.rewriteMinigameCode('Wizard tower', M.castSpell,
+        'Game.SparkleAt',
+        `if(! Spice.settings.grimoireSpellCastAnimations) Game.SparkleAt`
+    );
+
+    M.spells['gambler\'s fever dream'].win = Spice.rewriteMinigameCode('Wizard tower',
+        M.spells['gambler\'s fever dream'].win,
+        'var out=M.castSpell',
+        `if(Spice.settings.grimoireSpellCastAnimations) { // Spiced cookies injection
+            Spice.animateGFD(spell.id);
+        }
+        $&`
+    );
+}
+
 
 
 /******************
@@ -1326,6 +1381,7 @@ Spice.copySettings = function(settings) {
         'simplify777upgradeAcquisition',
         'patchGFDDelay',
         'patchSeasonsAffectingFtHoF',
+        'grimoireSpellCastAnimations',
     ];
 
     for(key of numericSettings) {
@@ -1548,6 +1604,12 @@ Spice.customOptionsMenu = function() {
         '<label>(NOTE: you must refresh your page after disabling this option)' +
         '</label></div>';
 
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('grimoireSpellCastAnimations',
+            'Spice up the Grimoire spell casting animations',
+            'Use Vanilla Grimoire spell casting animations',
+        ) + '</div>';
+
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
 
@@ -1761,6 +1823,7 @@ Spice.init = function() {
     // Grimoire
     CCSE.MinigameReplacer(function() {
         Spice.patchGFDDelay();
+        Spice.injectGrimoireAnimations();
     }, 'Wizard tower');
 
     // Effect multipliers
