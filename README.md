@@ -438,6 +438,16 @@ This option removes that delay.
 for the change to take place.
 
 
+Alternative animations for the Grimoire (experimental, disabled by default)
+---------------------------------------------------------------------------
+
+![Gambler's Fever Dream](doc/gfd-animation.gif)
+
+Displays different animations when casting spells in the Grimoire.
+
+Currently,
+only the above animation for Gambler's Fever Dream is implemented.
+
 
 Changelog
 =========
