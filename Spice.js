@@ -97,6 +97,9 @@ Spice.sessionData = {
     pantheonSwapsPatched: false,
     backupsThisSession: 0,
     seasonsFtHoFpatched: false,
+    canvas: null,
+    ctx: null, // Context of the canvas above
+    drawingCallbacks: [], // See the Grimoire animations module
 };
 
 
@@ -1216,6 +1219,85 @@ Spice.patchSeasonsAffectingFtHoF = function() {
 
 
 
+/*******************************
+ * Module: grimoire animations *
+ *******************************
+ *
+ * Architecture of this module:
+ *
+ * When the mod loads, it runs Spice.createCanvas,
+ * which creates a canvas covering the entire game area.
+ * This canvas sits in front of the game area,
+ * but let any pointer events pass through.
+ *
+ * The main drawing loop is coordinated by Spice.sessionData.drawingCallbacks.
+ * Each function in that array is executed once per "drawing tick",
+ * and removed from the array once it returns a falsy value.
+ * This allows short-lived animations to be created by pushing a closure to that array,
+ * and the closure is automatically removed once it returns false.
+ *
+ * The convenience functions below
+ * generate and push closures to Spice.sessionData.drawingCallbacks
+ * for doing several tasks.
+ *
+ * Spice.sessionData.drawingCallbacks is automatically erased on load and ascension.
+ */
+
+Spice.createCanvas = function() {
+    // This function is run on mod load
+    Spice.sessionData.canvas = document.createElement('canvas');
+    document.body.prepend(Spice.sessionData.canvas);
+
+    let setDimensions = function() {
+        Spice.sessionData.canvas.width = window.innerWidth;
+        Spice.sessionData.canvas.height = window.innerHeight - 2; // FIXME
+    };
+    setDimensions();
+    window.addEventListener('resize', setDimensions);
+
+    Spice.sessionData.canvas.style.position = 'absolute';
+    Spice.sessionData.canvas.style.zIndex = 100000000000000000000; // FIXME
+    Spice.sessionData.canvas.style.pointerEvents = 'none';
+
+    Spice.sessionData.ctx = Spice.sessionData.canvas.getContext('2d');
+}
+
+Spice.clearCanvas = function() {
+    Spice.sessionData.ctx.clearRect(0, 0,
+        Spice.sessionData.canvas.width, Spice.sessionData.canvas.height
+    );
+}
+
+Spice.clearCanvasCallbacks = function() {
+    // Ran on ascension
+    Spice.sessionData.drawingCallbacks = [];
+}
+
+Spice.drawCanvas = function() {
+    // This is pushed to the game's "logic" hook
+    Spice.clearCanvas();
+
+    Spice.sessionData.drawingCallbacks = Spice.sessionData.drawingCallbacks.filter(
+        callback => callback()
+    );
+}
+
+/* Example of an animation callback generator:
+ * it draws a circle with the given a center and a radius,
+ * shrinking the radius one unit per game tick.
+ */
+Spice.animateShrinkingCircle = function(centerX, centerY, radius) {
+    let startT = Game.T;
+    Spice.sessionData.drawingCallbacks.push(() => {
+        Spice.sessionData.ctx.beginPath();
+        Spice.sessionData.ctx.arc(centerX, centerY, radius + startT - Game.T, 0, 2*Math.PI);
+        Spice.sessionData.ctx.fill();
+        return Game.T <= startT + radius - 1;
+    });
+}
+
+
+
 /******************
  * User Interface *
  ******************/
@@ -1622,10 +1704,15 @@ Spice.init = function() {
         }
     });
 
+    // Generate the canvas
+    Spice.createCanvas();
+    Game.registerHook('logic', Spice.drawCanvas);
+
     // Ascension
     Game.customAscend.push(Spice.updateAcrossAscensionsStatistics);
     Game.customAscend.push(Spice.updateAcrossAscensionsStockMarketTallying);
     Game.customAscend.push(Spice.saveCurrentDebugUpgrades);
+    Game.customAscend.push(Spice.clearCanvasCallbacks);
 
     // Reincarnate
     Game.registerHook('reincarnate', Spice.updateProfitTallyDisplay)
