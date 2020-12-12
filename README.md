@@ -505,3 +505,19 @@ Changelog
 - Record the number of times the game was backed up.
 - Three new achievements for backing up the save game.
 - Bug fix: opted-in achievements were not being created after loading a save game.
+
+0.5.0
+-----
+
+- Patch vanilla bug: Cookie Clicker sometimes display a slightly wrong buff for building specials.
+- Patch vanilla bug: Sugar frenzy can sometimes be used several times in an ascension.
+- Patch vanilla bug: remove the delay in Gambler's Fever Dream.
+- Patch vanilla bug: Easter/Valentine's affect outcome of Force the Hand of Fate.
+- New animation for Gambler's Fever Dream!
+- The numerically stable formula for heavenly chip gains is now "smoother".
+- New debug upgrade: Heavenly Backdoor (bypass requirements for unlocking heavenly upgrades).
+- The 777-series of upgrades can optionally be unlocked based on prestige gain,
+    rather than current prestige level.
+- The 777-series of upgrades can optionally be buffed to +1%, +2%, +4% instead of +1%, +1%, +1%.
+- Two new heavenly upgrades for the 777-series.
+- Bug fix: Changing permanent upgrade slots used to take a few seconds to update visually.

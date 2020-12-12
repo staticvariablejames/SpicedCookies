@@ -4,7 +4,7 @@ let Spice = {};
 if(typeof CCSE == 'undefined') Game.LoadMod('https://klattmose.github.io/CookieClicker/CCSE.js');
 
 Spice.name = "Spiced Cookies";
-Spice.version = "0.4.0"; // Semantic versioning
+Spice.version = "0.5.0"; // Semantic versioning
 Spice.GameVersion = "2.031";
 Spice.CCSEVersion = "2.021";
 
@@ -1625,6 +1625,30 @@ Spice.addVersionHistory = function() {
     <div class="listing">
         Every single feature can be either ignored or disabled in the settings,
         and most of them start disabled by default.
+    </div>
+
+    <div class="subsection update small"><div class="title">2020-12-11 - Bugfixes galore</div>
+        <div class="listing">&bull; Patch vanilla bug:
+            Cookie Clicker sometimes display a slightly wrong buff for building specials.</div>
+        <div class="listing">&bull; Patch vanilla bug:
+            Sugar frenzy can sometimes be used several times in an ascension.</div>
+        <div class="listing">&bull; Patch vanilla bug:
+            remove the delay in Gambler's Fever Dream.</div>
+        <div class="listing">&bull; Patch vanilla bug:
+            Easter/Valentine's affect outcome of Force the Hand of Fate.</div>
+        <div class="listing">&bull; New animation for Gambler's Fever Dream!</div>
+        <div class="listing">&bull; The numerically stable formula for heavenly chip gains
+            is now "smoother".</div>
+        <div class="listing">&bull; New debug upgrade:
+            Heavenly backdoor (bypass requirements for unlocking heavenly upgrades).</div>
+        <div class="listing">&bull; The 777-series of upgrades
+            can optionally be unlocked based on prestige gain,
+            rather than current prestige level.</div>
+        <div class="listing">&bull; The 777-series of upgrades
+            can optionally be buffed to +1%, +2%, +4% instead of +1%, +1%, +1%.</div>
+        <div class="listing">&bull; Two new heavenly upgrades for the 777-series.</div>
+        <div class="listing">&bull; Bug fix:
+            Changing permanent upgrade slots used to take a few seconds to update visually.</div>
     </div>
 
     <div class="subsection update small"><div class="title">2020-12-03 - Memory aids</div>
