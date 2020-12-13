@@ -449,6 +449,20 @@ Currently,
 only the above animation for Gambler's Fever Dream is implemented.
 
 
+Patch being able to double-pop shimmers (disabled by default)
+-------------------------------------------------------------
+
+If two clicks events land in the same golden cookie
+(for example, during a lag spike),
+the second click will actually work,
+triggering a random golden cookie effect.
+Spiced Cookies patches this.
+
+This bug is what makes some golden cookie autoclickers
+(notably, Uncanny Cookie Clicker)
+ruin the save game when hitting a cookie storm.
+
+
 Changelog
 =========
 
