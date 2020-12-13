@@ -4,7 +4,7 @@ let Spice = {};
 if(typeof CCSE == 'undefined') Game.LoadMod('https://klattmose.github.io/CookieClicker/CCSE.js');
 
 Spice.name = "Spiced Cookies";
-Spice.version = "0.5.0"; // Semantic versioning
+Spice.version = "0.5.1"; // Semantic versioning
 Spice.GameVersion = "2.031";
 Spice.CCSEVersion = "2.021";
 
@@ -1653,6 +1653,11 @@ Spice.addVersionHistory = function() {
     <div class="listing">
         Every single feature can be either ignored or disabled in the settings,
         and most of them start disabled by default.
+    </div>
+
+    <div class="subsection update small"><div class="title">2020-12-12 - Pop a Patch</div>
+        <div class="listing">&bull; Patch vanilla bug:
+            Shimmers may be popped twice.</div>
     </div>
 
     <div class="subsection update"><div class="title">2020-12-11 - Bugfixes galore</div>

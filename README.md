@@ -535,3 +535,8 @@ Changelog
 - The 777-series of upgrades can optionally be buffed to +1%, +2%, +4% instead of +1%, +1%, +1%.
 - Two new heavenly upgrades for the 777-series.
 - Bug fix: Changing permanent upgrade slots used to take a few seconds to update visually.
+
+0.5.1
+-----
+
+- Patch vanilla bug: Shimmers may be popped twice.
