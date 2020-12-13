@@ -1655,7 +1655,7 @@ Spice.addVersionHistory = function() {
         and most of them start disabled by default.
     </div>
 
-    <div class="subsection update small"><div class="title">2020-12-11 - Bugfixes galore</div>
+    <div class="subsection update"><div class="title">2020-12-11 - Bugfixes galore</div>
         <div class="listing">&bull; Patch vanilla bug:
             Cookie Clicker sometimes display a slightly wrong buff for building specials.</div>
         <div class="listing">&bull; Patch vanilla bug:
@@ -1679,7 +1679,7 @@ Spice.addVersionHistory = function() {
             Changing permanent upgrade slots used to take a few seconds to update visually.</div>
     </div>
 
-    <div class="subsection update small"><div class="title">2020-12-03 - Memory aids</div>
+    <div class="subsection update"><div class="title">2020-12-03 - Memory aids</div>
         <div class="listing">&bull; Lump count is colored red if smaller than 100
             and Sugar baking is present (enabled by default)</div>
         <div class="listing">&bull; Patch vanilla bug in the pantheon (disabled by default)</div>
@@ -1693,7 +1693,7 @@ Spice.addVersionHistory = function() {
             after loading a save game.</div>
     </div>
 
-    <div class="subsection update small"><div class="title">2020-11-06 - Debugging discrepancies</div>
+    <div class="subsection update"><div class="title">2020-11-06 - Debugging discrepancies</div>
         <div class="listing">&bull; Display the mode of stock market goods (debug upgrade)</div>
         <div class="listing">&bull; Preserve debug upgrades across ascensions (debug upgrade)</div>
         <div class="listing">&bull; Discrepancy Patch (disabled by default)</div>
@@ -1707,13 +1707,13 @@ Spice.addVersionHistory = function() {
         <div class="listing">&bull; Update to Cookie Clicker v2.031</div>
     </div>
 
-    <div class="subsection update small"><div class="title">2020-10-31 - UI niceties</div>
+    <div class="subsection update"><div class="title">2020-10-31 - UI niceties</div>
         <div class="listing">&bull; Numerically stable formula for heavenly chip gains (disabled by default)</div>
         <div class="listing">&bull; Permanent upgrade slots can be chosen during an ascension (non-disableable)</div>
         <div class="listing">&bull; Season switcher tooltips says how many seasonal upgrades were unlocked (non-disableable)</div>
     </div>
 
-    <div class="subsection update small"><div class="title">2020-10-23 - alpha release</div>
+    <div class="subsection update"><div class="title">2020-10-23 - alpha release</div>
         <div class="listing">&bull; Save the history of stock market prices (enabled by default)</div>
         <div class="listing">&bull; Display the delta of stock market goods (enabled by default)</div>
         <div class="listing">&bull; Track more statistics across ascensions (non-disableable)</div>
