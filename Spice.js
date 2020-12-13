@@ -73,6 +73,7 @@ Spice.settings = { // default settings
     patchGFDDelay: false,
     patchSeasonsAffectingFtHoF: false,
     grimoireSpellCastAnimations: false,
+    patchDoublePop: false,
 };
 
 Spice.defaultSaveGame = function() {
@@ -101,6 +102,7 @@ Spice.sessionData = {
     canvas: null,
     ctx: null, // Context of the canvas above
     drawingCallbacks: [], // See the Grimoire animations module
+    doublePopPatched: false,
 };
 
 
@@ -1353,6 +1355,22 @@ Spice.injectGrimoireAnimations = function() {
 
 
 
+/****************************
+ * Module: double-pop patch *
+ ****************************/
+
+Spice.patchDoublePop = function() {
+    // This function is run on save game load and settings toggle
+    if(!Spice.settings.patchDoublePop) return;
+    if(Spice.sessionData.doublePopPatched) return;
+    Game.shimmer.prototype.pop = Spice.rewriteCode(Game.shimmer.prototype.pop,
+        '{',
+        '{if (this.l.parentNode == null) return; // Spiced cookies patch\n'
+    );
+}
+
+
+
 /******************
  * User Interface *
  ******************/
@@ -1382,6 +1400,7 @@ Spice.copySettings = function(settings) {
         'patchGFDDelay',
         'patchSeasonsAffectingFtHoF',
         'grimoireSpellCastAnimations',
+        'patchDoublePop',
     ];
 
     for(key of numericSettings) {
@@ -1610,6 +1629,15 @@ Spice.customOptionsMenu = function() {
             'Use Vanilla Grimoire spell casting animations',
         ) + '</div>';
 
+    menuStr += '<div class="listing">' +
+        Spice.makeButton('patchDoublePop',
+            'Patch double-popping shimmers',
+            'Don\'t patch shimmer double-popping',
+            'Spice.patchDoublePop'
+        ) +
+        '<label>(NOTE: you must refresh your page after disabling this option)' +
+        '</label></div>';
+
     CCSE.AppendCollapsibleOptionsMenu(Spice.name, menuStr);
 }
 
@@ -1767,6 +1795,7 @@ Spice.loadObject = function(obj) {
     Spice.patchSugarFrenzyUnwantedPersistence();
     Spice.patchGFDDelay();
     Spice.patchSeasonsAffectingFtHoF();
+    Spice.patchDoublePop();
 }
 
 Spice.init = function() {
