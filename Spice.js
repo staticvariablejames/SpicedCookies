@@ -106,6 +106,15 @@ Spice.sessionData = {
 };
 
 
+/* A "safe version" of Game.Has,
+ * that fails gracefully if `what` is not a member Game.Upgrades.
+ */
+Spice.Has = function(what) {
+    return what in Game.Upgrades && Game.Has(what);
+}
+
+
+
 /************************************************
  * Module: display deltas of stock market goods *
  ************************************************/
@@ -201,7 +210,7 @@ Spice.updateStockMarketRowsVisibility = function() {
         let modeDiv = Spice.stockMarketModeRow(i).parentNode;
         if(Spice.settings.displayStockDelta) deltaDiv.style.display = "block";
         else deltaDiv.style.display = "none";
-        if(Game.Has('Omniscient day traders')) modeDiv.style.display = "block";
+        if(Spice.Has('Omniscient day traders')) modeDiv.style.display = "block";
         else modeDiv.style.display = "none";
     }
 }
@@ -669,7 +678,7 @@ Spice.saveCurrentDebugUpgrades = function() {
      * because games can't be saved while in the ascension menu.
      */
 
-    if(!Game.Has('Transcendent debugging')) return;
+    if(!Spice.Has('Transcendent debugging')) return;
 
     for(i in Game.Upgrades) {
         if(Game.Upgrades[i].pool == 'debug' && Game.Upgrades[i].bought)
@@ -732,7 +741,7 @@ Spice.patchDiscrepancy = function() {
  *********************************************/
 
 Spice.shouldWarnAboutTooFewLumps = function(lumps = Game.lumps) {
-    return Spice.settings.warnLessThan100Lumps && Game.Has('Sugar baking') && lumps < 100;
+    return Spice.settings.warnLessThan100Lumps && Spice.Has('Sugar baking') && lumps < 100;
 }
 
 // Colors the lump number red if there are too few lumps
@@ -998,13 +1007,13 @@ Spice.multiplierBuff777UpgradeSeries = function() {
      */
     let mult = 1;
     if(Spice.settings.buff777upgrades) {
-        if(Game.Has('Lucky number')) mult *= 1.02/1.01;
-        if(Game.Has('Lucky payout')) mult *= 1.04/1.01;
-        if(Game.Has('Lucky tally')) mult *= 1.08;
-        if(Game.Has('Lucky value')) mult *= 1.16;
+        if(Spice.Has('Lucky number')) mult *= 1.02/1.01;
+        if(Spice.Has('Lucky payout')) mult *= 1.04/1.01;
+        if(Spice.Has('Lucky tally')) mult *= 1.08;
+        if(Spice.Has('Lucky value')) mult *= 1.16;
     } else {
-        if(Game.Has('Lucky tally')) mult *= 1.01;
-        if(Game.Has('Lucky value')) mult *= 1.01;
+        if(Spice.Has('Lucky tally')) mult *= 1.01;
+        if(Spice.Has('Lucky value')) mult *= 1.01;
     }
     return mult;
 }
@@ -1131,7 +1140,7 @@ Spice.createHeavenlyBackdoorDebugUpgrade = function() {
 
     Game.BuildAscendTree = Spice.rewriteCode(Game.BuildAscendTree,
         'me.canBePurchased=1',
-        "$&;\nif(Game.Has('Heavenly backdoor')) continue; // Spiced Cookies injection\n"
+        "$&;\nif(Spice.Has('Heavenly backdoor')) continue; // Spiced Cookies injection\n"
     );
 }
 
