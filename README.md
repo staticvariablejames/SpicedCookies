@@ -540,3 +540,8 @@ Changelog
 -----
 
 - Patch vanilla bug: Shimmers may be popped twice.
+
+0.5.2
+-----
+
+- Bugfix: Spiced Cookies could crash the game during challenge runs.
