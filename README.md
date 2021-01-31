@@ -438,6 +438,34 @@ This option removes that delay.
 for the change to take place.
 
 
+Patch seasons affecting Force the Hand of Fate (disabled by default)
+--------------------------------------------------------------------
+
+Summoning a golden/wrath cookie during Easter/Valentine's season
+requires one extra RNG call to determine the appearance of the cookie.
+Since FtHoF does _not_ compensate for this,
+when using planners or savescumming,
+toggling seasons on and off effectively gives players the choice between two FtHoF outcomes.
+This makes FtHoF planners particularly powerful,
+because each step of a combo can choose between these two outcomes.
+
+This setting rewrites FtHoF to remove seasonal interference from the outcome.
+
+**Mod/tool compatibility**:
+since the intent is to specifically nerf FtHoF,
+rather than disable them completely,
+this feature specifically mimics the outcome that would happen outside any seasons
+in Vanilla Cookie Clicker.
+This means that the forecast of Klattmose's
+[Fortune Cookie](https://klattmose.github.io/CookieClicker/FortuneCookie.js),
+for example,
+is still accurate,
+as long as you ignore the seasonal column.
+
+**NOTE**: You must refresh your browser page after disabling this feature
+for the change to take place.
+
+
 Alternative animations for the Grimoire (experimental, disabled by default)
 ---------------------------------------------------------------------------
 
