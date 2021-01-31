@@ -573,3 +573,8 @@ Changelog
 -----
 
 - Bugfix: Spiced Cookies could crash the game during challenge runs.
+
+0.5.3
+-----
+
+- Bugfix: The setting for adding two new 777-series of upgrades was not being saved.
