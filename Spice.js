@@ -1406,6 +1406,7 @@ Spice.copySettings = function(settings) {
         'patchSugarFrenzyPersistence',
         'buff777upgrades',
         'simplify777upgradeAcquisition',
+        'extra777seriesUpgrades',
         'patchGFDDelay',
         'patchSeasonsAffectingFtHoF',
         'grimoireSpellCastAnimations',
