@@ -6,7 +6,7 @@ if(typeof CCSE == 'undefined') Game.LoadMod('https://klattmose.github.io/CookieC
 Spice.name = "Spiced Cookies";
 Spice.version = "0.5.3"; // Semantic versioning
 Spice.GameVersion = "2.031";
-Spice.CCSEVersion = "2.021";
+Spice.CCSEVersion = "2.023";
 
 /* rewriteCode(targetFunction, pattern1, replacement1, pattern2, replacement2, ...)
  *
