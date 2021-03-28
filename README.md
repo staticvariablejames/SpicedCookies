@@ -578,3 +578,8 @@ Changelog
 -----
 
 - Bugfix: The setting for adding two new 777-series of upgrades was not being saved.
+
+0.5.4
+-----
+
+- Update to CCSE 2.023.
