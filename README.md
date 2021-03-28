@@ -536,7 +536,7 @@ Changelog
 0.3.1
 -----
 
-- Update to CCSE 2.031.
+- Update to CCSE 2.021.
 
 0.4.0
 -----
