@@ -1828,6 +1828,8 @@ Spice.loadObject = function(obj) {
 }
 
 Spice.init = function() {
+    Spice.isLoaded = true;
+
     // Options menu
     Game.customOptionsMenu.push(Spice.customOptionsMenu);
 
