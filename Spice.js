@@ -4,7 +4,7 @@ let Spice = {};
 if(typeof CCSE == 'undefined') Game.LoadMod('https://klattmose.github.io/CookieClicker/CCSE.js');
 
 Spice.name = "Spiced Cookies";
-Spice.version = "0.5.5"; // Semantic versioning
+Spice.version = "0.5.6"; // Semantic versioning
 Spice.GameVersion = "2.031";
 Spice.CCSEVersion = "2.025";
 
@@ -1663,6 +1663,10 @@ Spice.addVersionHistory = function() {
     <div class="listing">
         Every single feature can be either ignored or disabled in the settings,
         and most of them start disabled by default.
+    </div>
+
+    <div class="subsection update small"><div class="title">2021-09-02 - Yet another changeless upgrade</div>
+        <div class="listing">&bull; Update to use CCSE 2.023.</div>
     </div>
 
     <div class="subsection update small"><div class="title">2021-07-14 - Still no changes</div>

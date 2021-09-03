@@ -589,3 +589,8 @@ Changelog
 
 - Internal change: set the flag `Spice.isLoaded` to true when the mod is loaded.
     This does not affect gameplay but makes testing a bit easier.
+
+0.5.6
+-----
+
+- Update to CCSE 2.025.
