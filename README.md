@@ -336,8 +336,8 @@ Spiced Cookies patches that.
 The same happens with building rusts.
 
 
-Patch Sugar frenzy not disaappearing when activated with a single lump (disabled by default)
---------------------------------------------------------------------------------------------
+Patch Sugar frenzy not disappearing when activated with a single lump (disabled by default)
+-------------------------------------------------------------------------------------------
 
 If Sugar frenzy is purchased when the player has a single lump available,
 the Sugar frenzy switch does not disappear;
@@ -480,7 +480,7 @@ only the above animation for Gambler's Fever Dream is implemented.
 Patch being able to double-pop shimmers (disabled by default)
 -------------------------------------------------------------
 
-If two clicks events land in the same golden cookie
+If two click events land in the same golden cookie
 (for example, during a lag spike),
 the second click will actually work,
 triggering a random golden cookie effect.
