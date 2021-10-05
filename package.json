@@ -1,0 +1,25 @@
+{
+  "name": "spiced-cookies",
+  "version": "0.5.7",
+  "description": "Mod for Cookie Clicker featuring several small gameplay changes",
+  "main": "Spice.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/staticvariablejames/SpicedCookies.git"
+  },
+  "keywords": [
+    "cookie-clicker"
+  ],
+  "author": "Static Variable James",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/staticvariablejames/SpicedCookies/issues"
+  },
+  "homepage": "https://github.com/staticvariablejames/SpicedCookies#readme"
+}
