@@ -21,5 +21,12 @@
   "bugs": {
     "url": "https://github.com/staticvariablejames/SpicedCookies/issues"
   },
-  "homepage": "https://github.com/staticvariablejames/SpicedCookies#readme"
+  "homepage": "https://github.com/staticvariablejames/SpicedCookies#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.17.1",
+    "@types/cookieclicker": "^2.31.5",
+    "cookie-connoisseur": "^0.2.1",
+    "playwright": "^1.17.1",
+    "typescript": "^4.4.3"
+  }
 }
