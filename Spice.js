@@ -4,7 +4,7 @@ let Spice = {};
 if(typeof CCSE == 'undefined') Game.LoadMod('https://klattmose.github.io/CookieClicker/CCSE.js');
 
 Spice.name = "Spiced Cookies";
-Spice.version = "0.5.6"; // Semantic versioning
+Spice.version = "0.5.7"; // Semantic versioning
 Spice.GameVersion = "2.031";
 Spice.CCSEVersion = "2.031";
 
@@ -1664,6 +1664,14 @@ Spice.addVersionHistory = function() {
         Every single feature can be either ignored or disabled in the settings,
         and most of them start disabled by default.
     </div>
+
+    <div class="subsection update small"><div class="title">2021-10-04 - The Last Changeless Update</div>
+        <div class="listing">&bull; Update to use CCSE 2.031.</div>
+        <div class="listing">&bull; The mod won't check the CCSE version anymore.
+            Reasoning: currently CCSE updates far more frequently that Choose Your Own Lump,
+            and usually in a backwards-compatible manner.
+            Not asking CCSE version every time makes the mod a bit more future-proof.
+        </div>
 
     <div class="subsection update small"><div class="title">2021-09-02 - Yet another changeless upgrade</div>
         <div class="listing">&bull; Update to use CCSE 2.025.</div>
