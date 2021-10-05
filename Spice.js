@@ -797,7 +797,7 @@ Spice.injectWarningIntoLumpConfirmationTooltip = function() {
      * (which would be terrible for compatibility with other mods)
      * we simply cannot modify that function.
      *
-     * Since this is a helper feature,
+     * Since this is a confirmation prompt,
      * I expect most players to know what they are doing when they activate Sugar frenzy,
      * so it should not be a huge loss.
      */
@@ -1666,7 +1666,7 @@ Spice.addVersionHistory = function() {
     </div>
 
     <div class="subsection update small"><div class="title">2021-09-02 - Yet another changeless upgrade</div>
-        <div class="listing">&bull; Update to use CCSE 2.023.</div>
+        <div class="listing">&bull; Update to use CCSE 2.025.</div>
     </div>
 
     <div class="subsection update small"><div class="title">2021-07-14 - Still no changes</div>
