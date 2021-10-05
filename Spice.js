@@ -1981,7 +1981,7 @@ if(!Spice.isLoaded){
         if(!CCSE) var CCSE = {};
         if(!CCSE.postLoadHooks) CCSE.postLoadHooks = [];
         CCSE.postLoadHooks.push(function() {
-            if(CCSE.ConfirmGameCCSEVersion(Spice.name, Spice.version, Spice.GameVersion, Spice.CCSEVersion)) {
+            if(CCSE.ConfirmGameVersion(Spice.name, Spice.version, Spice.GameVersion)) {
                 Game.registerMod('Spiced cookies', Spice);
             }
         });
