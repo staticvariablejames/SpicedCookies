@@ -604,3 +604,10 @@ Changelog
     Reasoning: currently CCSE updates far more frequently that Choose Your Own Lump,
     and usually in a backwards-compatible manner.
     Not asking CCSE version every time makes the mod a bit more future-proof.
+
+Unreleased
+----------
+
+- Fixed: Sometimes,
+    the displayed stock market delta would be wrong
+    during the first tick after loading a save game.

@@ -178,7 +178,13 @@ Spice.stockMarketModeRow = function(stockId) {
 Spice.stockMarketModeNames = ['stable','slow rise','slow fall','fast rise','fast fall','chaotic'];
 
 /* Updates the text inside the delta and mode rows created by the functions above.
- * This is pushed to Game.customMinigame.Bank.tick.
+ * This is pushed to Game.customMinigame.Bank.tick,
+ * and run on Spice.load.
+ *
+ * We have to run this on load because Cookie Clicker first resets the minigame,
+ * making it simulate 15 ticks of a brand new market (for no apparent reason),
+ * then loads the minigame save on top of it, without ticking again.
+ * Without this we'd display the delta of that "phantom" market.
  */
 Spice.updateStockMarketRows = function() {
     for(let i = 0; i < Spice.stockMarketGoodsCount(); i++) {
@@ -1811,6 +1817,7 @@ Spice.loadObject = function(obj) {
         document.getElementById('logButton').classList.add('hasUpdate');
     }
 
+    Spice.updateStockMarketRows();
     Spice.updateStockMarketRowsVisibility();
     Spice.loadStockMarketHistory();
     Spice.updateProfitTallyDisplay();
