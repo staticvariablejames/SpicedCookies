@@ -8,39 +8,6 @@ function testImplicitAssumptions() {
 testImplicitAssumptions();
 
 async function testStockMarketRows() {
-    Util.wipeSave("with minigames");
-    await Util.waitMinigame('Bank');
-
-    Game.Objects.Bank.switchMinigame(true); // Show the minigame
-    let stockDiv = document.getElementById('bankGood-3');
-    stockDiv.style.display = "inline-block"; // Force the good to be displayed
-    let heightWithDelta = stockDiv.clientHeight;
-
-    // Test we can disable the option
-    document.getElementById('prefsButton').click();
-    document.getElementById('SpiceButtondisplayStockDelta').click();
-    document.getElementById('prefsButton').click();
-
-    let heightWithoutDelta = stockDiv.clientHeight;
-    console.assert(heightWithoutDelta < heightWithDelta);
-
-    // Test we can enable it again
-    document.getElementById('prefsButton').click();
-    document.getElementById('SpiceButtondisplayStockDelta').click();
-    document.getElementById('prefsButton').click();
-    console.assert(stockDiv.clientHeight === heightWithDelta);
-
-    // Test that disabling the option stays on load
-    Spice.settings.displayStockDelta = false;
-    let save = Game.WriteSave(1);
-    Game.LoadSave(save);
-    console.assert(stockDiv.clientHeight === heightWithoutDelta);
-
-    Spice.settings.displayStockDelta = true;
-    save = Game.WriteSave(1);
-    Game.LoadSave(save);
-    console.assert(stockDiv.clientHeight === heightWithDelta);
-
     // Test debug upgrade
     Game.Upgrades['Omniscient day traders'].buy();
     let heightWithBoth = stockDiv.clientHeight;
