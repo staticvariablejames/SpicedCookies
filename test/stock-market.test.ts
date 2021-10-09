@@ -3,11 +3,14 @@
 
 import { test, expect } from '@playwright/test';
 import { Page } from 'playwright';
-import { setupCookieClickerPage, CCPageOptions, CCSave } from 'cookie-connoisseur';
+import { setupCookieClickerPage, CCMarketStock, CCPageOptions, CCSave } from 'cookie-connoisseur';
 
 test.describe('Stock market panel,', () => {
     test.beforeEach(async ({ page }) => {
         let saveGame = {
+            prefs: {
+                showBackupWarning: false,
+            },
             buildings: {
                 'Bank': {
                     amount: 685,
@@ -17,7 +20,8 @@ test.describe('Stock market panel,', () => {
                             'SUG': {
                                 val: 21.72,
                                 d: -0.75,
-                                mode: 'stable',
+                                mode: 'slow rise',
+                                dur: 389,
                             },
                         },
                     },
@@ -67,6 +71,58 @@ test.describe('Stock market panel,', () => {
 
         await page.evaluate(s => Game.LoadSave(s), nativeSaveWithDelta);
         await page.evaluate(() => Game.CloseNotes());
+        expect(await bankGoodPanel!.screenshot()).toMatchSnapshot('bankGoodPanelWithDelta.png');
+    });
+
+    test('mode row is toggled with Qmniscient day traders', async ({ page }) => {
+        expect(await page.evaluate(() => Game.Upgrades['Omniscient day traders'].toggle()));
+        expect(
+            await page.evaluate(() => Game.Upgrades['Omniscient day traders'].bought)
+        ).toBeTruthy();
+
+        let bankGoodPanel = await page.$('#bankGood-3');
+        expect(await bankGoodPanel!.screenshot()).toMatchSnapshot('bankGoodPanelWithMode.png');
+
+        expect(await page.evaluate(() => Game.Upgrades['Omniscient day traders'].toggle()));
+        expect(
+            await page.evaluate(() => Game.Upgrades['Omniscient day traders'].bought)
+        ).toBeFalsy();
+        expect(await bankGoodPanel!.screenshot()).toMatchSnapshot('bankGoodPanelWithDelta.png');
+    });
+
+    test('mode row visibility is saved and restored correctly', async ({ page }) => {
+        let bankGoodPanel = await page.$('#bankGood-3');
+        let nativeSaveWithDeltaOnly = await page.evaluate(() => Game.WriteSave(1));
+
+        expect(await page.evaluate(() => Game.Upgrades['Omniscient day traders'].toggle()));
+        let nativeSaveWithMode = await page.evaluate(() => Game.WriteSave(1));
+
+        await page.evaluate(s => Game.LoadSave(s), nativeSaveWithDeltaOnly);
+        expect(await bankGoodPanel!.screenshot()).toMatchSnapshot('bankGoodPanelWithDelta.png');
+
+        await page.evaluate(s => Game.LoadSave(s), nativeSaveWithMode);
+        expect(await bankGoodPanel!.screenshot()).toMatchSnapshot('bankGoodPanelWithMode.png');
+    });
+
+    test('mode row deactivates itself when ascending', async ({ page }) => {
+        await page.evaluate(() => {CConnoisseur.ascend(); CConnoisseur.reincarnate()});
+
+        // Reassign the SUG data so it is the same as before
+        await page.evaluate(mode => {
+            Game.Objects['Bank'].getFree(685);
+            Game.Objects['Bank'].minigame.goods['Bank'].val = 21.72;
+            Game.Objects['Bank'].minigame.goods['Bank'].vals[0] = 21.72;
+            Game.Objects['Bank'].minigame.goods['Bank'].vals[1] = 21.72+0.75;
+            Game.Objects['Bank'].minigame.goods['Bank'].d = -0.75;
+            Game.Objects['Bank'].minigame.goods['Bank'].mode = mode;
+            Game.Objects['Bank'].minigame.goods['Bank'].dur = 389;
+            Game.Objects['Bank'].switchMinigame(1);
+        }, CCMarketStock.ModesByName['slow rise']);
+        await page.evaluate(() => CConnoisseur.redrawMarketMinigame());
+        // We have to call this one manually because it is not tied to M.draw()
+        await page.evaluate('Spice.updateStockMarketRows()');
+
+        let bankGoodPanel = await page.$('#bankGood-3');
         expect(await bankGoodPanel!.screenshot()).toMatchSnapshot('bankGoodPanelWithDelta.png');
     });
 });

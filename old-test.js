@@ -7,28 +7,6 @@ function testImplicitAssumptions() {
 }
 testImplicitAssumptions();
 
-async function testStockMarketRows() {
-    // Test debug upgrade
-    Game.Upgrades['Omniscient day traders'].buy();
-    let heightWithBoth = stockDiv.clientHeight;
-    console.assert(heightWithDelta < heightWithBoth);
-
-    save = Game.WriteSave(1);
-    Game.Upgrades['Omniscient day traders'].toggle();
-    console.assert(stockDiv.clientHeight === heightWithDelta);
-
-    Game.LoadSave(save);
-    console.assert(stockDiv.clientHeight === heightWithBoth);
-
-    Util.Ascend(); Util.Reincarnate(); // Ascending removes the upgrade
-    console.assert(!Game.Has('Omniscient day traders'));
-    Game.Objects.Bank.getFree(1); Game.Objects.Bank.switchMinigame(true);
-    stockDiv.style.display = "inline-block"; // Force the good to be displayed
-    console.assert(stockDiv.clientHeight === heightWithDelta);
-
-    console.log('Finished testStockMarketRows()');
-}
-
 async function testStockMarketHistory() {
     Util.wipeSave("with minigames");
     await Util.waitMinigame('Bank');
