@@ -7,60 +7,6 @@ function testImplicitAssumptions() {
 }
 testImplicitAssumptions();
 
-async function testStockMarketHistory() {
-    Util.wipeSave("with minigames");
-    await Util.waitMinigame('Bank');
-
-    // Right now, the stock market has 16 minutes of history
-    let saveGame = Game.WriteSave(1);
-
-    Game.Objects.Bank.minigame.tick();
-    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 18);
-    Util.wipeSave("with minigames");
-    Game.LoadSave(saveGame);
-    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
-
-    Game.Objects.Bank.minigame.tick();
-    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 18);
-    Game.LoadSave(saveGame);
-    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
-
-    // Test disabling the function
-    document.getElementById('prefsButton').click();
-    document.getElementById('SpiceButtonsaveStockMarketHistory').click();
-    saveGame = Game.WriteSave(1);
-    Game.LoadSave(saveGame);
-    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 2);
-
-    // Enable it again
-    document.getElementById('SpiceButtonsaveStockMarketHistory').click();
-
-
-    // Tick a few times, we want to make sure it resets on ascension
-    for(let i = 0; i < 15; i++) Game.Objects.Bank.minigame.tick();
-    Util.Ascend(); Util.Reincarnate();
-
-    Game.Objects.Bank.getFree(1); // Unlock the minigame
-    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
-
-    // Make sure loading the mod with an existing save does not break it
-    Spice.saveGame = Spice.defaultSaveGame();
-    Spice.loadStockMarketHistory(); // Pretend we just ran Game.LoadMod('Spice.js')
-    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 17);
-    Game.Objects.Bank.minigame.tick();
-    console.assert(Game.Objects.Bank.minigame.goodsById[0].vals.length === 18);
-
-    // Make sure loading the mod with an old version does not break it
-    Util.wipeSave('with minigames');
-    let original = Spice.stockMarketGoodsCount;
-    Spice.stockMarketGoodsCount = () => 15; // fool saveStockMarketHistory
-    save = Game.WriteSave(1);
-    Spice.stockMarketGoodsCount = original;
-    Game.LoadSave(save);
-    Game.Objects.Bank.minigame.tick(); // Should not throw any exceptions
-    console.log('Finished testStockMarketHistory()');
-}
-
 function testAcrossAscensionsStatistics() {
     Util.wipeSave();
     Game.Earn(1e9); // Unlock sugar lumps, which unlocks the 'Special' section of the stats menu
