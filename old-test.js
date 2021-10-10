@@ -7,61 +7,6 @@ function testImplicitAssumptions() {
 }
 testImplicitAssumptions();
 
-function testAcrossAscensionsStatistics() {
-    Util.wipeSave();
-    Game.Earn(1e9); // Unlock sugar lumps, which unlocks the 'Special' section of the stats menu
-    document.getElementById('statsButton').click();
-    console.assert(document.getElementById('menu').textContent.indexOf("Special") !== -1);
-
-    Game.cookieClicks = 5;
-    Game.wrinklersPopped = 7;
-    Game.reindeerClicked = 13;
-    Game.handmadeCookies = 19;
-    Game.UpdateMenu();
-
-    console.assert(document.getElementById('menu').textContent.indexOf("Cookie clicks : 5 (all time : 5)") !== -1);
-    console.assert(document.getElementById('menu').textContent.indexOf("Wrinklers popped : 7 (all time : 7)") !== -1);
-    console.assert(document.getElementById('menu').textContent.indexOf("Reindeer found : 13 (all time : 13)") !== -1);
-    console.assert(document.getElementById('menu').textContent.indexOf("Hand-made cookies : 19 (all time : 19)") !== -1);
-
-    Util.Ascend(); Util.Reincarnate();
-
-    console.assert(Spice.saveGame.bigCookieClicksPreviousAscensions === 5);
-    console.assert(Spice.saveGame.wrinklersPoppedPreviousAscensions === 7);
-    console.assert(Spice.saveGame.reindeerClickedPreviousAscensions === 13);
-    console.assert(Spice.saveGame.handmadeCookiesPreviousAscensions === 19);
-
-    Game.cookieClicks = 1000;
-    Game.wrinklersPopped = 3000;
-    Game.reindeerClicked = 1700;
-    Game.handmadeCookies = 2300;
-    Game.UpdateMenu();
-    console.assert(document.getElementById('menu').textContent.indexOf("Cookie clicks : 1,000 (all time : 1,005)") !== -1);
-    console.assert(document.getElementById('menu').textContent.indexOf("Wrinklers popped : 3,000 (all time : 3,007)") !== -1);
-    console.assert(document.getElementById('menu').textContent.indexOf("Reindeer found : 1,700 (all time : 1,713)") !== -1);
-    console.assert(document.getElementById('menu').textContent.indexOf("Hand-made cookies : 2,300 (all time : 2,319)") !== -1);
-
-    let saveGame = Game.WriteSave(1);
-    Spice.saveGame = Spice.defaultSaveGame(); // Wipe save data
-    Spice.saveGame.bigCookieClicksPreviousAscensions = 55;
-    Spice.saveGame.wrinklersPoppedPreviousAscensions = 77;
-    Spice.saveGame.reindeerClickedPreviousAscensions = 133;
-    Spice.saveGame.handmadeCookiesPreviousAscensions = 199;
-    Util.wipeSave();
-    console.assert(Spice.saveGame.bigCookieClicksPreviousAscensions === 0);
-    console.assert(Spice.saveGame.wrinklersPoppedPreviousAscensions === 0);
-    console.assert(Spice.saveGame.reindeerClickedPreviousAscensions === 0);
-    console.assert(Spice.saveGame.handmadeCookiesPreviousAscensions === 0);
-    Game.LoadSave(saveGame);
-    Game.UpdateMenu();
-    console.assert(document.getElementById('menu').textContent.indexOf("Cookie clicks : 1,000 (all time : 1,005)") !== -1);
-    console.assert(document.getElementById('menu').textContent.indexOf("Wrinklers popped : 3,000 (all time : 3,007)") !== -1);
-    console.assert(document.getElementById('menu').textContent.indexOf("Reindeer found : 1,700 (all time : 1,713)") !== -1);
-    console.assert(document.getElementById('menu').textContent.indexOf("Hand-made cookies : 2,300 (all time : 2,319)") !== -1);
-
-    console.log("Finished testAcrossAscensionsStatistics()");
-}
-
 async function testStockMarketTallying() {
     Util.wipeSave("with minigames");
 
