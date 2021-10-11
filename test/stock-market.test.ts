@@ -1,4 +1,6 @@
-/* Stock Market-related features
+/* Stock Market-related features.
+ *
+ * The test for tracking stock market profits across ascensions is in statistics.test.ts.
  */
 
 import { test, expect } from '@playwright/test';
