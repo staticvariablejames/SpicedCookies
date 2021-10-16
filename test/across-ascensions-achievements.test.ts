@@ -98,3 +98,52 @@ test.describe('Across-ascensions achievements', () => {
         expect(await page.evaluate(() => Game.HasAchiev('Gaseous assets'))).toBeTruthy();
     });
 });
+
+test.describe('New across-ascensions achievements', () => {
+    test.beforeEach(async ({ page }) => {
+        await setupCookieClickerPage(page);
+        await page.evaluate(() => Game.LoadMod('https://staticvariablejames.github.io/SpicedCookies/Spice.js'));
+        await page.waitForFunction(() => 'Spiced cookies' in Game.mods);
+    });
+
+    test('are created when the button is toggled', async ({ page }) => {
+        expect(await page.evaluate(() => 'Parasitesmasher' in Game.Achievements)).toBe(false);
+        expect(await page.evaluate(() => 'A sleightly longer grind' in Game.Achievements)).toBe(false);
+        await page.click('text=Options');
+        await page.click('#SpiceButtonextraAchievementsAcrossAscensions');
+        expect(await page.evaluate(() => 'Parasitesmasher' in Game.Achievements)).toBe(true);
+        expect(await page.evaluate(() => 'A sleightly longer grind' in Game.Achievements)).toBe(true);
+        await page.close();
+    });
+
+    test('are awarded when the button is toggled', async ({ page }) => {
+        await page.evaluate('Spice.saveGame.wrinklersPoppedPreviousAscensions = 1000');
+        await page.evaluate('Spice.saveGame.reindeerClickedPreviousAscensions = 1000');
+        await page.click('text=Options');
+        await page.click('#SpiceButtonextraAchievementsAcrossAscensions');
+        expect(await page.evaluate(() => Game.HasAchiev('Parasitesmasher'))).toBeTruthy();
+        expect(await page.evaluate(() => Game.HasAchiev('A sleightly longer grind'))).toBeTruthy();
+        await page.close();
+    });
+
+    test('are awarded when the threshold is reached', async ({ page }) => {
+        let setting = await page.evaluate('Spice.settings.awardAchievementsAcrossAscensions');
+        expect(setting).toBe(false); // Things should work even with the setting above being false
+
+        await page.evaluate(() => CConnoisseur.startGrandmapocalypse());
+        await page.evaluate('Spice.saveGame.wrinklersPoppedPreviousAscensions = 999');
+        await page.evaluate('Spice.saveGame.reindeerClickedPreviousAscensions = 999');
+        await page.click('text=Options');
+        await page.click('#SpiceButtonextraAchievementsAcrossAscensions');
+        expect(await page.evaluate(() => Game.HasAchiev('Parasitesmasher'))).toBeFalsy();
+        expect(await page.evaluate(() => Game.HasAchiev('A sleightly longer grind'))).toBeFalsy();
+        await page.evaluate(() => CConnoisseur.popWrinkler(CConnoisseur.spawnWrinkler()));
+        await page.evaluate(() => CConnoisseur.spawnReindeer().pop(null as any));
+        expect(await page.evaluate(() => Game.HasAchiev('Parasitesmasher'))).toBeTruthy();
+        expect(await page.evaluate(() => Game.HasAchiev('A sleightly longer grind'))).toBeTruthy();
+
+        setting = await page.evaluate('Spice.settings.awardAchievementsAcrossAscensions');
+        expect(setting).toBe(false); // This setting should not have been changed
+        await page.close();
+    });
+});

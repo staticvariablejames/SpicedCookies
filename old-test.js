@@ -7,45 +7,6 @@ function testImplicitAssumptions() {
 }
 testImplicitAssumptions();
 
-function testAcrossAscensionsExtraAchievements() {
-    Util.wipeSave(); Util.startGrandmapocalypse();
-    Spice.settings.awardAchievementsAcrossAscensions = false; // Things should work even in this case
-
-    Spice.saveGame.wrinklersPoppedPreviousAscensions = 999;
-    Spice.saveGame.reindeerClickedPreviousAscensions = 999;
-
-    Util.spawnAndPopWrinkler();
-    console.assert(!Game.HasAchiev('Parasitesmasher'));
-
-    Util.spawnReindeer().pop();
-    console.assert(!Game.HasAchiev('A sleightly longer grind'));
-
-    document.getElementById('prefsButton').click();
-    document.getElementById('SpiceButtonextraAchievementsAcrossAscensions').click();
-    document.getElementById('prefsButton').click();
-
-    console.assert(Game.HasAchiev('Parasitesmasher'));
-    console.assert(Game.HasAchiev('A sleightly longer grind'));
-
-    // Now try again, but with the setting being true
-    Util.wipeSave('with minigames'); Util.startGrandmapocalypse();
-    Spice.settings.awardAchievementsAcrossAscensions = true;
-
-    Spice.saveGame.wrinklersPoppedPreviousAscensions = 999;
-    Spice.saveGame.reindeerClickedPreviousAscensions = 999;
-
-    console.assert(!Game.HasAchiev('Parasitesmasher'));
-    console.assert(!Game.HasAchiev('A sleightly longer grind'));
-
-    Util.spawnAndPopWrinkler();
-    console.assert(Game.HasAchiev('Parasitesmasher'));
-
-    Util.spawnReindeer().pop();
-    console.assert(Game.HasAchiev('A sleightly longer grind'));
-
-    console.log("Finished testAcrossAscensionsExtraAchievements()");
-}
-
 async function testStockMarketAchievements() {
     Util.wipeSave("with minigames");
     await Util.waitMinigame('Bank');
