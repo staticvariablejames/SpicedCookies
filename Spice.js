@@ -57,7 +57,7 @@ Spice.settings = { // default settings
     displayStockDelta: true,
     saveStockMarketHistory: true,
     tallyOnlyStockMarketProfits: true,
-    awardAchievementsAcrossAscensions: true,
+    awardAchievementsAcrossAscensions: false,
     extraAchievementsAcrossAscensions: false,
     extraStockMarketAchievements: false,
     numericallyStableHeavenlyChipGains: false,

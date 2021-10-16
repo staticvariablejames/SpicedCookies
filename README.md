@@ -87,7 +87,7 @@ the mod only adds the stock market profits to the across-ascensions tally
 if the profits are positive.
 
 
-Across-ascensions progress unlocks achievements (enabled by default)
+Across-ascensions progress unlocks achievements (disabled by default)
 --------------------------------------------------------------------
 
 Achievements for popping wrinklers,
@@ -611,3 +611,6 @@ Unreleased
 - Fixed: Sometimes,
     the displayed stock market delta would be wrong
     during the first tick after loading a save game.
+
+- Change: Awarding achievements based on across-ascensions progress
+    is now disabled by default.
