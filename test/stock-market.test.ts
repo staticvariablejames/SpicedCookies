@@ -345,3 +345,114 @@ test.describe('Stock market profits', () => {
         await expect(profitsRow).toContainText('all time : $0');
     });
 });
+
+test.describe('Stock market extra achievements', () => {
+    test('are not created by default', async ({ page }) => {
+        page = await setupCookieClickerPage(page);
+        await loadSpicedCookies(page);
+        expect(await page.evaluate(() => 'Who wants to be a millionaire?' in Game.Achievements)).toBeFalsy();
+        expect(await page.evaluate(() => 'Failing on purpose' in Game.Achievements)).toBeFalsy();
+        expect(await page.evaluate(() => 'Solid assets' in Game.Achievements)).toBeFalsy();
+    });
+
+    test('are created on initialization if the setting is set', async ({ page }) => {
+        page = await setupCookieClickerPage(page, {saveGame: {
+            modSaveData: {
+                'Spiced cookies': {
+                    settings: {
+                        extraStockMarketAchievements: true,
+                    },
+                },
+            },
+        }});
+        await loadSpicedCookies(page);
+        expect(await page.evaluate(() => 'Who wants to be a millionaire?' in Game.Achievements)).toBeTruthy();
+        expect(await page.evaluate(() => 'Failing on purpose' in Game.Achievements)).toBeTruthy();
+        expect(await page.evaluate(() => 'Solid assets' in Game.Achievements)).toBeTruthy();
+    });
+
+    test('are created when the button is toggled', async ({ page }) => {
+        page = await setupCookieClickerPage(page);
+        await loadSpicedCookies(page);
+        await page.click('text=Options');
+        await page.click('#SpiceButtonextraStockMarketAchievements');
+        expect(await page.evaluate(() => 'Who wants to be a millionaire?' in Game.Achievements)).toBeTruthy();
+        expect(await page.evaluate(() => 'Failing on purpose' in Game.Achievements)).toBeTruthy();
+        expect(await page.evaluate(() => 'Solid assets' in Game.Achievements)).toBeTruthy();
+    });
+
+    test('are properly awarded', async ({ page }) => {
+        page = await setupCookieClickerPage(page, {saveGame: {
+            cookies: 1e12, // Enough to buy anything
+            buildings: {
+                'Bank': {
+                    amount: 1,
+                    level: 1,
+                },
+            },
+            modSaveData: {
+                'Spiced cookies': {
+                    settings: {
+                        extraStockMarketAchievements: true,
+                    },
+                },
+            },
+        }});
+        await loadSpicedCookies(page);
+
+        await page.evaluate(() => {
+            Game.Objects['Bank'].minigame.profit = 1e6 - 1;
+            Game.Objects['Bank'].minigame.goodsById[3].stock = 1;
+            Game.Objects['Bank'].minigame.sellGood(3, 1);
+        });
+        expect(await page.evaluate(() => Game.HasAchiev('Who wants to be a millionaire?'))).toBeTruthy();
+
+        expect(await page.evaluate(() => Game.HasAchiev('Failing on purpose'))).toBeFalsy();
+        await page.evaluate(() => {
+            Game.Objects['Bank'].minigame.goodsById[3].stock = 2;
+            Game.Objects['Bank'].minigame.goodsById[3].val = 40;
+            Game.Objects['Bank'].minigame.profit = -2e6;
+            Game.Objects['Bank'].minigame.sellGood(3, 1); // Still have one stock
+        });
+        expect(await page.evaluate(() => Game.HasAchiev('Failing on purpose'))).toBeFalsy();
+        await page.evaluate(() => Game.Objects['Bank'].minigame.sellGood(3, 1)); // no stock left
+        expect(await page.evaluate(() => Game.HasAchiev('Failing on purpose'))).toBeTruthy();
+
+        expect(await page.evaluate(() => Game.HasAchiev('Solid assets'))).toBeFalsy();
+        await page.evaluate(() => {
+            Game.Objects['Bank'].minigame.tick(); // Allow selling stock again
+            Game.Objects['Bank'].minigame.goodsById[3].val = 30e6;
+            Game.Objects['Bank'].minigame.buyGood(3, 1); // Get to -$38m in profit (20% markup)
+        });
+        expect(await page.evaluate(() => Game.HasAchiev('Solid assets'))).toBeTruthy();
+    });
+
+    test('are not awarded across ascensions', async ({ page }) => {
+        page = await setupCookieClickerPage(page, {saveGame: {
+            buildings: {
+                'Bank': {
+                    amount: 1,
+                    level: 1,
+                },
+            },
+            modSaveData: {
+                'Spiced cookies': {
+                    settings: {
+                        extraStockMarketAchievements: true,
+                        awardAchievementsAcrossAscensions: true,
+                    },
+                    saveGame: {
+                        stockMarketProfitsPreviousAscensions: 999999,
+                    },
+                },
+            },
+        }});
+        await loadSpicedCookies(page);
+
+        await page.evaluate(() => {
+            Game.Objects['Bank'].minigame.goodsById[3].stock = 1;
+            Game.Objects['Bank'].minigame.sellGood(3, 1);
+        });
+        expect(await page.evaluate(() => Game.HasAchiev('Who wants to be a millionaire?'))).toBeFalsy();
+    });
+});

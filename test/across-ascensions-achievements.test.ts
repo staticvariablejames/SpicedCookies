@@ -1,6 +1,8 @@
 /* Spiced Cookies modifies a few achievements to be awarded with across-ascension progress,
  * and adds a few related achievements as well.
  * This file tests these achievements.
+ *
+ * The additional achievements for the stock market are tested in stock-market.test.ts.
  */
 
 import { test, expect } from '@playwright/test';
