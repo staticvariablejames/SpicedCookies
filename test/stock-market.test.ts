@@ -1,6 +1,4 @@
 /* Stock Market-related features.
- *
- * The test for tracking stock market profits across ascensions is in statistics.test.ts.
  */
 
 import { test, expect } from '@playwright/test';
@@ -238,5 +236,112 @@ test.describe('Stock market history', () => {
         expect(await page.evaluate(() => {
             return Game.Objects['Bank'].minigame.goods['Idleverse'].vals.length;
         })).toEqual(2);
+    });
+});
+
+test.describe('Stock market profits', () => {
+    async function setup(page: Page, profit: number = 50) {
+        page = await setupCookieClickerPage(page, {saveGame: {
+            prefs: {
+                showBackupWarning: false,
+            },
+            buildings: {
+                'Bank': {
+                    level: 1,
+                    amount: 1,
+                    minigame: {
+                        profit,
+                    },
+                },
+            },
+        }});
+        await page.evaluate(() => Game.LoadMod('https://staticvariablejames.github.io/SpicedCookies/Spice.js'));
+        await page.waitForFunction(() => 'Spiced cookies' in Game.mods);
+        await page.waitForFunction(() => Game.isMinigameReady(Game.Objects['Bank']));
+    };
+
+    test('are tracked across ascensions', async ({ page }) => {
+        await setup(page, 50);
+        /* Due to the way that the profits row is constructed,
+         * the code below captures the entire row.
+         */
+        let profitsRow = await page.locator('text=Profits');
+
+        await expect(profitsRow).toContainText('all time : $50');
+
+        await page.evaluate(() => {CConnoisseur.ascend(); CConnoisseur.reincarnate();});
+        // Prepare a stock sell
+        await page.evaluate(() => {
+            Game.Objects['Bank'].getFree(1);
+            Game.Objects['Bank'].minigame.goods['Bank'].val = 10;
+            Game.Objects['Bank'].minigame.goods['Bank'].stock = 1;
+            Game.Objects['Bank'].switchMinigame(1);
+            Game.CloseNotes();
+        });
+        await page.click('#bankGood-3 >> text="All"');
+        await expect(profitsRow).toContainText('all time : $60');
+    });
+
+    test('by default are not deducted when negative', async ({ page }) => {
+        await setup(page, -15);
+        let profitsRow = await page.locator('text=Profits');
+        await expect(profitsRow).toContainText('all time : $0');
+
+        await page.evaluate(() => {CConnoisseur.ascend(); CConnoisseur.reincarnate();});
+        await page.evaluate(() => {Game.Objects['Bank'].getFree(1);});
+        await expect(profitsRow).toContainText('all time : $0');
+
+        await page.evaluate(() => {
+            Game.Objects['Bank'].minigame.profit = 50;
+            CConnoisseur.ascend();
+            CConnoisseur.reincarnate();
+            Game.Objects['Bank'].getFree(1);
+            Game.Objects['Bank'].switchMinigame(1);
+            Game.Earn(1e30);
+            Game.CloseNotes();
+        });
+        await expect(profitsRow).toContainText('all time : $50');
+        await page.click('#bankGood-3 >> text="Max"');
+        expect(await page.evaluate(() => Game.Objects['Bank'].minigame.profit)).toBeLessThan(0);
+        await expect(profitsRow).toContainText('all time : $50');
+    });
+
+    test('can be set to deduct when negative', async ({ page }) => {
+        await setup(page, -15);
+        await page.click('text=Options');
+        await page.evaluate(() => Game.CloseNotes());
+        await page.click('#SpiceButtontallyOnlyStockMarketProfits');
+        await page.click('text=Options');
+
+        let profitsRow = await page.locator('text=Profits');
+        await expect(profitsRow).toContainText('all time : -$15');
+
+        await page.evaluate(() => {CConnoisseur.ascend(); CConnoisseur.reincarnate();});
+        await page.evaluate(() => {Game.Objects['Bank'].getFree(1);});
+        await expect(profitsRow).toContainText('all time : -$15');
+
+        await page.evaluate(() => {
+            Game.Objects['Bank'].minigame.profit = 50;
+            CConnoisseur.ascend();
+            CConnoisseur.reincarnate();
+            Game.Objects['Bank'].getFree(10);
+            Game.Objects['Bank'].switchMinigame(1);
+            Game.Objects['Bank'].minigame.goods['Bank'].val = 1;
+            Game.Earn(1e30);
+            Game.CloseNotes();
+        });
+        await expect(profitsRow).toContainText('all time : $35');
+        await page.click('#bankGood-3 >> text="Max"'); // Purchase 20 stocks, at 20% markup
+        expect(await page.evaluate(() => Game.Objects['Bank'].minigame.profit)).toBeLessThan(0);
+        await expect(profitsRow).toContainText('all time : $11');
+    });
+
+    test('is erased with a wipe save', async ({ page }) => {
+        await setup(page, 35);
+        await page.evaluate(() => {CConnoisseur.ascend(); CConnoisseur.reincarnate();});
+        let profitsRow = await page.locator('text=Profits');
+        await expect(profitsRow).toContainText('all time : $35');
+        await page.evaluate(() => Game.HardReset(2));
+        await expect(profitsRow).toContainText('all time : $0');
     });
 });
