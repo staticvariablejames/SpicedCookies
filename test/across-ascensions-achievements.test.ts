@@ -6,6 +6,7 @@
  */
 
 import { test, expect } from '@playwright/test';
+import { Page } from 'playwright';
 import { setupCookieClickerPage } from 'cookie-connoisseur';
 
 test.describe('Across-ascensions achievements', () => {
@@ -102,33 +103,50 @@ test.describe('Across-ascensions achievements', () => {
 });
 
 test.describe('New across-ascensions achievements', () => {
-    test.beforeEach(async ({ page }) => {
+    async function loadSpicedCookies(page: Page) {
         await setupCookieClickerPage(page);
         await page.evaluate(() => Game.LoadMod('https://staticvariablejames.github.io/SpicedCookies/Spice.js'));
         await page.waitForFunction(() => 'Spiced cookies' in Game.mods);
-    });
+    }
 
     test('are created when the button is toggled', async ({ page }) => {
+        await loadSpicedCookies(page);
         expect(await page.evaluate(() => 'Parasitesmasher' in Game.Achievements)).toBe(false);
         expect(await page.evaluate(() => 'A sleightly longer grind' in Game.Achievements)).toBe(false);
         await page.click('text=Options');
         await page.click('#SpiceButtonextraAchievementsAcrossAscensions');
         expect(await page.evaluate(() => 'Parasitesmasher' in Game.Achievements)).toBe(true);
         expect(await page.evaluate(() => 'A sleightly longer grind' in Game.Achievements)).toBe(true);
-        await page.close();
+    });
+
+    test('are created on initialization if set', async ({ page }) => {
+        await setupCookieClickerPage(page, {saveGame: {
+            modSaveData: {
+                'Spiced cookies': {
+                    settings: {
+                        extraAchievementsAcrossAscensions: true,
+                    },
+                },
+            },
+        }});
+        await page.evaluate(() => Game.LoadMod('https://staticvariablejames.github.io/SpicedCookies/Spice.js'));
+        await page.waitForFunction(() => 'Spiced cookies' in Game.mods);
+        expect(await page.evaluate(() => 'Parasitesmasher' in Game.Achievements)).toBe(true);
+        expect(await page.evaluate(() => 'A sleightly longer grind' in Game.Achievements)).toBe(true);
     });
 
     test('are awarded when the button is toggled', async ({ page }) => {
+        await loadSpicedCookies(page);
         await page.evaluate('Spice.saveGame.wrinklersPoppedPreviousAscensions = 1000');
         await page.evaluate('Spice.saveGame.reindeerClickedPreviousAscensions = 1000');
         await page.click('text=Options');
         await page.click('#SpiceButtonextraAchievementsAcrossAscensions');
         expect(await page.evaluate(() => Game.HasAchiev('Parasitesmasher'))).toBeTruthy();
         expect(await page.evaluate(() => Game.HasAchiev('A sleightly longer grind'))).toBeTruthy();
-        await page.close();
     });
 
     test('are awarded when the threshold is reached', async ({ page }) => {
+        await loadSpicedCookies(page);
         let setting = await page.evaluate('Spice.settings.awardAchievementsAcrossAscensions');
         expect(setting).toBe(false); // Things should work even with the setting above being false
 
@@ -146,6 +164,5 @@ test.describe('New across-ascensions achievements', () => {
 
         setting = await page.evaluate('Spice.settings.awardAchievementsAcrossAscensions');
         expect(setting).toBe(false); // This setting should not have been changed
-        await page.close();
     });
 });
