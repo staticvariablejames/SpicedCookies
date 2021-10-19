@@ -881,6 +881,7 @@ Spice.createAchievementsForBackingUp = function() {
 Spice.exportSaveCallback = function() {
     // Calls to this function are injected by Spice.injectCallbackOnExportSave
     Spice.saveGame.numberOfBackups++;
+    Spice.sessionData.backupsThisSession++;
 
     if(Date.now() > Spice.saveGame.lastValidBackupDate + 18*3600*1000) {
         Spice.saveGame.lastValidBackupDate = Date.now();
@@ -889,10 +890,7 @@ Spice.exportSaveCallback = function() {
 
     if(Spice.settings.achievementsForBackingUp) {
         Game.Win('Archivist');
-
         if(Spice.saveGame.numberOfValidBackups >= 30) Game.Win('Diligent archivist');
-
-        Spice.sessionData.backupsThisSession++;
         if(Spice.sessionData.backupsThisSession >= 30) Game.Win('Paranoid archivist');
     }
 }

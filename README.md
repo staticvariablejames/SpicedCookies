@@ -612,5 +612,8 @@ Unreleased
     the displayed stock market delta would be wrong
     during the first tick after loading a save game.
 
+- Fixed: backup counter for this session wasn't being incremented
+    if the backup achievements were disabled.
+
 - Change: Awarding achievements based on across-ascensions progress
     is now disabled by default.
