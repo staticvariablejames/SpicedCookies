@@ -7,28 +7,6 @@ function testImplicitAssumptions() {
 }
 testImplicitAssumptions();
 
-function testAchievementCreation() {
-    // This test must be run in isolation
-    console.assert(!('Parasitesmasher' in Game.Achievements));
-    console.assert(!('Who wants to be a millionaire?' in Game.Achievements));
-
-    // Pretend we are loading a complete save
-    Spice.loadObject({
-        version: Spice.version,
-        settings: {
-            extraAchievementsAcrossAscensions: true,
-            extraStockMarketAchievements: true,
-            achievementsForBackingUp: true,
-        }
-    });
-
-    console.assert('Parasitesmasher' in Game.Achievements);
-    console.assert('Who wants to be a millionaire?' in Game.Achievements);
-    console.assert('Archivist' in Game.Achievements);
-
-    console.log("Finished testAchievementCreation()");
-}
-
 function testHeavenlyChipsNumericalPrecision() {
     // First show the vanilla formula is bad
     Util.wipeSave();
@@ -194,96 +172,6 @@ async function testPantheonSlotSwapFix() {
     console.assert(M.godsById[4].slot === 0);
 
     console.log('Finished testPantheonSlotSwapFix()');
-}
-
-function testAchievementsForBackingUp() {
-    Util.wipeSave();
-    document.getElementById('prefsButton').click();
-    document.getElementById('SpiceButtonachievementsForBackingUp').click();
-
-    let exportSave = function() {
-        Game.ExportSave();
-        let save = document.getElementById('textareaPrompt').textContent;
-        document.getElementById('promptOption0').click();
-        return save;
-    }
-
-    let save = exportSave();
-    console.assert(Game.HasAchiev('Archivist'));
-    console.assert(Spice.saveGame.numberOfBackups === 1);
-    Game.LoadSave(save);
-    console.assert(Game.HasAchiev('Archivist'));
-    console.assert(Spice.saveGame.numberOfBackups === 1);
-
-    console.assert(Spice.saveGame.numberOfValidBackups === 1);
-    save = exportSave();
-    console.assert(Spice.saveGame.numberOfBackups === 2);
-    console.assert(Spice.saveGame.numberOfValidBackups === 1);
-
-    Util.mockedDate += 3600*1000;
-    save = exportSave();
-    Util.mockedDate += 3600*1000;
-    save = exportSave();
-    console.assert(Spice.saveGame.numberOfValidBackups === 1);
-    console.assert(Spice.saveGame.numberOfBackups === 4);
-
-    Util.mockedDate += 18*3600*1000;
-    save = exportSave();
-    console.assert(Spice.saveGame.numberOfBackups === 5);
-    console.assert(Spice.saveGame.numberOfValidBackups === 2);
-    Game.LoadSave(save);
-    console.assert(Spice.saveGame.numberOfBackups === 5);
-    console.assert(Spice.saveGame.numberOfValidBackups === 2);
-
-    Util.mockedDate += 20*3600*1000;
-    exportSave(); // Discard this save
-    Game.LoadSave(save);
-    console.assert(Spice.saveGame.numberOfBackups === 5);
-    console.assert(Spice.saveGame.numberOfValidBackups === 2);
-    save = exportSave();
-    console.assert(Spice.saveGame.numberOfBackups === 6);
-    console.assert(Spice.saveGame.numberOfValidBackups === 3);
-
-    Spice.saveGame.numberOfValidBackups = 29; // Speeding things up
-    save = exportSave();
-    console.assert(Spice.saveGame.numberOfValidBackups === 29); // No time changes
-    console.assert(!Game.HasAchiev('Diligent archivist'));
-
-    Util.mockedDate += 20*3600*1000;
-    save = exportSave();
-    console.assert(Spice.saveGame.numberOfValidBackups === 30);
-    console.assert(Game.HasAchiev('Diligent archivist'));
-    Game.LoadSave(save);
-    console.assert(Game.HasAchiev('Diligent archivist'));
-
-    console.assert(Spice.sessionData.backupsThisSession === 9);
-    save = exportSave();
-    Game.LoadSave(save);
-    console.assert(Spice.sessionData.backupsThisSession === 10);
-    exportSave(); // Discard the save
-    Game.LoadSave(save);
-    console.assert(Spice.sessionData.backupsThisSession === 11);
-
-    Util.wipeSave(); // Wiping save does not change the settings
-    console.assert(Spice.saveGame.numberOfBackups === 0); // Properly wiped out
-    console.assert(Spice.sessionData.backupsThisSession === 11); // Survives even across wipe saves
-    exportSave(); // Discard the save
-    console.assert(Spice.sessionData.backupsThisSession === 12);
-    Game.LoadSave(save);
-    console.assert(Spice.sessionData.backupsThisSession === 12);
-
-    console.assert(!Game.HasAchiev('Paranoid archivist'));
-    Spice.sessionData.backupsThisSession = 29;
-    save = exportSave();
-    console.assert(Game.HasAchiev('Paranoid archivist'));
-    Game.LoadSave(save);
-    console.assert(Game.HasAchiev('Paranoid archivist'));
-
-    Util.wipeSave();
-    save = exportSave();
-    console.assert(Game.HasAchiev('Paranoid archivist'));
-
-    console.log("Finished testAchievementsForBackingUp()");
 }
 
 function testSugarFrenzyPatch() {
