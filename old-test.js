@@ -2,43 +2,9 @@
 // See https://github.com/staticvariablejames/CCtest
 
 function testImplicitAssumptions() {
-    console.assert(Game.HCfactor == 3); // Assumed by the numerically stable heavenly chips formula
     console.assert(!Game.prefs.popup); // Used to simplify message in Spice.init
 }
 testImplicitAssumptions();
-
-function testHeavenlyChipsNumericalPrecision() {
-    // First show the vanilla formula is bad
-    Util.wipeSave();
-    Game.Earn(1e75); // One sextillion (1e21) heavenly chips
-    Util.Ascend(); Util.Reincarnate();
-
-    // Next prestige level happens at (1e63 + 3e42 + 3e21 + 1)*1e12
-    Game.Earn(3.001e42*1e12); // Enough for a heavenly chip
-    let saveGame = Game.WriteSave(1);
-
-    Util.Ascend(); Util.Reincarnate();
-    console.assert(Game.resets == 1); // Precision loss
-
-    Game.LoadSave(saveGame);
-    document.getElementById('prefsButton').click();
-    document.getElementById('SpiceButtonnumericallyStableHeavenlyChipGains').click();
-    document.getElementById('prefsButton').click();
-    Util.Ascend(); Util.Reincarnate();
-    console.assert(Game.resets == 2); // No precision loss here
-
-    // Make sure we didn't mess up regular ascension
-    Util.wipeSave();
-    Game.Earn(1e12);
-    Util.Ascend(); Util.Reincarnate();
-    console.assert(Game.resets == 1);
-
-    Game.Earn(6.9e12); // Not enough for another chip
-    Util.Ascend(); Util.Reincarnate();
-    console.assert(Game.resets == 1);
-
-    console.log("Finished testHeavenlyChipsNumericalPrecision()");
-}
 
 function testSeasonalCookieTooltips() {
     Util.wipeSave();
