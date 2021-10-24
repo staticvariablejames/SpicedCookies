@@ -1,8 +1,15 @@
-/* Tests the changes to the  tooltip for the season switchers.
+/* Tests the changes to the tooltip for the season switchers.
  */
 
 import { test, expect } from '@playwright/test';
+import { Page } from 'playwright';
 import { setupCookieClickerPage } from 'cookie-connoisseur';
+
+async function loadSpicedCookies(page: Page) {
+    await setupCookieClickerPage(page);
+    await page.evaluate(() => Game.LoadMod('https://staticvariablejames.github.io/SpicedCookies/Spice.js'));
+    await page.waitForFunction(() => 'Spiced cookies' in Game.mods);
+}
 
 /* Constructs the fancy screenshot for the README.md.
  *
@@ -65,4 +72,73 @@ test('It reminds about the unpurchased Chocolate egg', async ({ page }) => {
     let height = Math.max(tooltipBB.height + tooltipBB.y - y, upgradesBB.height + upgradesBB.y - y);
 
     expect(await page.screenshot({clip:{x, y, width, height}})).toMatchSnapshot('unlocked-seasonal-upgrades-tooltip.png');
+});
+
+test.describe('Tooltips for season switches mention unlocked upgrades', () => {
+    test('during Christmas', async ({ page }) => {
+        await loadSpicedCookies(page);
+        await page.evaluate(() => {
+            Game.Upgrades[Game.santaDrops[0]].unlocked = 1;
+            Game.Upgrades[Game.santaDrops[1]].unlocked = 1;
+            Game.Upgrades[Game.santaDrops[2]].unlocked = 1;
+            Game.Upgrades[Game.santaDrops[3]].unlocked = 1;
+            Game.Upgrades[Game.santaDrops[4]].earn();
+            Game.Upgrades[Game.santaDrops[5]].earn();
+            Game.Upgrades[Game.santaDrops[6]].earn();
+            Game.Upgrades[Game.reindeerDrops[0]].unlocked = 1;
+            Game.Upgrades[Game.reindeerDrops[1]].unlocked = 1;
+            Game.Upgrades[Game.reindeerDrops[2]].earn();
+        });
+
+        let santaDropsCount = await page.evaluate(() => Game.santaDrops.length);
+        let reindeerDropsCount = await page.evaluate(() => Game.reindeerDrops.length);
+        expect(await page.evaluate(() => Game.Upgrades['Festive biscuit'].descFunc())).toEqual(
+            expect.stringContaining(`You've unlocked <b>7/${santaDropsCount}</b> of Santa's gifts`)
+        );
+        expect(await page.evaluate(() => Game.Upgrades['Festive biscuit'].descFunc())).toEqual(
+            expect.stringContaining(`You've unlocked <b>3/${reindeerDropsCount}</b> reindeer cookies`)
+        );
+    });
+
+    test('during Halloween', async ({ page }) => {
+        await loadSpicedCookies(page);
+        await page.evaluate(() => {
+            Game.Upgrades[Game.halloweenDrops[0]].unlocked = 1;
+            Game.Upgrades[Game.halloweenDrops[1]].earn();
+        });
+
+        let halloweenCookiesCount = await page.evaluate(() => Game.halloweenDrops.length);
+        expect(await page.evaluate(() => Game.Upgrades['Ghostly biscuit'].descFunc())).toEqual(
+            expect.stringContaining(`You've unlocked <b>2/${halloweenCookiesCount}</b> halloween cookies`)
+        );
+    });
+
+    test('during Easter', async ({ page }) => {
+        await loadSpicedCookies(page);
+        await page.evaluate(() => {
+            Game.Upgrades[Game.easterEggs[0]].unlocked = 1;
+            Game.Upgrades[Game.easterEggs[1]].unlocked = 1;
+            Game.Upgrades[Game.easterEggs[2]].unlocked = 1;
+            Game.Upgrades[Game.easterEggs[3]].earn();
+            Game.Upgrades[Game.easterEggs[4]].earn();
+        });
+        let eggCount = await page.evaluate(() => Game.easterEggs.length);
+        expect(await page.evaluate(() => Game.Upgrades['Bunny biscuit'].descFunc())).toEqual(
+            expect.stringContaining(`You've unlocked <b>5/${eggCount}</b> eggs`)
+        );
+    });
+
+    test('during Valentines', async ({ page }) => {
+        await loadSpicedCookies(page);
+        await page.evaluate(() => {
+            Game.Upgrades[Game.heartDrops[0]].unlocked = 1;
+            Game.Upgrades[Game.heartDrops[1]].unlocked = 1;
+            Game.Upgrades[Game.heartDrops[2]].earn();
+        });
+
+        let heartsCount = await page.evaluate(() => Game.heartDrops.length);
+        expect(await page.evaluate(() => Game.Upgrades['Lovesick biscuit'].descFunc())).toEqual(
+            expect.stringContaining(`You've unlocked <b>3/${heartsCount}</b> heart biscuits`)
+        );
+    });
 });
