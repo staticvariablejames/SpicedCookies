@@ -6,21 +6,6 @@ function testImplicitAssumptions() {
 }
 testImplicitAssumptions();
 
-function testTranscendentDebugging() {
-    Util.wipeSave();
-    Game.Upgrades['Perfect idling'].earn();
-    Util.Ascend(); Util.Reincarnate();
-    console.assert(!Game.Has('Perfect idling'));
-
-    Game.Upgrades['Perfect idling'].earn();
-    Game.Upgrades['Transcendent debugging'].earn();
-    Util.Ascend(); Util.Reincarnate();
-    console.assert(Game.Has('Perfect idling'));
-    console.assert(Game.Has('Transcendent debugging'));
-
-    console.log("Finished testTranscendentDebugging()");
-}
-
 function testDiscrepancyPatch() {
     /* One nasty effect of the lack of proper Date.now() mocking
      * is that this test only passes within an hour of loading page.
