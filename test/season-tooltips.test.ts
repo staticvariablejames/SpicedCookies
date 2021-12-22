@@ -48,12 +48,13 @@ test('It reminds about the unpurchased Chocolate egg', async ({ page }) => {
         // Unearn Chocolate egg
         Game.Upgrades['Chocolate egg'].toggle();
 
-        // Grab cookies, so that only the Chocolate egg shows up in the store
+        // Grab some cookies and kittens, so that only the Chocolate egg shows up in the store
         for(let upgrade of Game.cookieUpgrades) {
             if(upgrade.basePrice < 1e15) {
                 upgrade.toggle();
             }
         }
+        Game.Upgrades['Kitten helpers'].toggle(); // This is the only kitten that may unlock here
     });
     await page.evaluate(() => Game.LoadMod('https://staticvariablejames.github.io/SpicedCookies/Spice.js'));
     await page.waitForFunction(() => 'Spiced cookies' in Game.mods);
