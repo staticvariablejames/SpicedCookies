@@ -6,35 +6,6 @@ function testImplicitAssumptions() {
 }
 testImplicitAssumptions();
 
-async function testPantheonSlotSwapFix() {
-    Util.wipeSave('with minigames');
-
-    await Util.waitMinigame('Temple');
-    document.getElementById('prefsButton').click();
-    document.getElementById('SpiceButtonpatchPantheonSwaps').click();
-    document.getElementById('prefsButton').click();
-
-    let M = Game.Objects['Temple'].minigame;
-    M.slotGod(M.godsById[0], 0);
-    M.slotGod(M.godsById[1], 1);
-    M.slotGod(M.godsById[2], 2);
-    M.swaps = 3;
-    console.assert(M.slotGod(M.godsById[3], 0) != false);
-    console.assert(M.slotGod(M.godsById[4], 0) != false);
-    console.assert(M.slotGod(M.godsById[2], 1) != false);
-    console.assert(!(-1 in M.slot));
-    console.assert(M.slot[0] === 4);
-    console.assert(M.slot[1] === 2);
-    console.assert(M.slot[2] === 1);
-    console.assert(M.godsById[0].slot === -1);
-    console.assert(M.godsById[1].slot === 2);
-    console.assert(M.godsById[2].slot === 1);
-    console.assert(M.godsById[3].slot === -1);
-    console.assert(M.godsById[4].slot === 0);
-
-    console.log('Finished testPantheonSlotSwapFix()');
-}
-
 function testSugarFrenzyPatch() {
     Util.wipeSave();
     Game.Earn(1e9); // Unlock lumps
