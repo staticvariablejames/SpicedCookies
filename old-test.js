@@ -6,55 +6,6 @@ function testImplicitAssumptions() {
 }
 testImplicitAssumptions();
 
-function test777buffs() {
-    let unlockHC = function() {
-        Game.Upgrades['Heavenly chip secret'].earn();
-        Game.Upgrades['Heavenly cookie stand'].earn();
-        Game.Upgrades['Heavenly bakery'].earn();
-        Game.Upgrades['Heavenly confectionery'].earn();
-        Game.Upgrades['Heavenly key'].earn();
-    }
-    Util.wipeSave();
-
-    unlockHC();
-    Game.Upgrades['Lucky digit'].earn();
-    Game.Upgrades['Lucky number'].earn();
-
-    console.assert(approx(Game.GetHeavenlyMultiplier(), 1.01**2));
-    Spice.settings.buff777upgrades = true;
-    console.assert(approx(Game.GetHeavenlyMultiplier(), 1.01*1.02));
-
-    Game.Upgrades['Lucky payout'].earn();
-    console.assert(approx(Game.GetHeavenlyMultiplier(), 1.01*1.02*1.04));
-    Spice.settings.buff777upgrades = false;
-    console.assert(approx(Game.GetHeavenlyMultiplier(), 1.01**3));
-
-    let gc = new Game.shimmer('golden');
-    console.assert(approx(gc.dur, 13*1.01**3));
-    gc.force = 'multiply cookies'; gc.pop(); // Safely getting rid of the golden cookie
-
-    Spice.settings.buff777upgrades = true;
-    gc = new Game.shimmer('golden');
-    console.assert(approx(gc.dur, 13*1.01*1.02*1.04));
-
-    gc.force = 'frenzy'; gc.pop();
-    console.assert(Game.buffs.Frenzy.maxTime == Math.ceil(77*1.01*1.02*1.04)*Game.fps);
-
-    document.getElementById('prefsButton').click();
-    document.getElementById('SpiceButtonextra777seriesUpgrades').click();
-    document.getElementById('prefsButton').click();
-
-    Game.Upgrades['Lucky tally'].earn();
-    console.assert(approx(Game.GetHeavenlyMultiplier(), 1.01*1.02*1.04*1.08));
-    Game.Upgrades['Lucky value'].earn();
-    console.assert(approx(Game.GetHeavenlyMultiplier(), 1.01*1.02*1.04*1.08*1.16));
-
-    Spice.settings.buff777upgrades = false;
-    console.assert(approx(Game.GetHeavenlyMultiplier(), 1.01**5));
-
-    console.log("Finished test777buffs()");
-}
-
 function test777acquisition() {
     let earnHCUpgrades = function() {
         Game.Upgrades['Legacy'].earn();
