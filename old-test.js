@@ -6,37 +6,6 @@ function testImplicitAssumptions() {
 }
 testImplicitAssumptions();
 
-async function testGFDDelayPatch() {
-    Util.wipeSave('with minigames');
-    Game.seed = 'aaaaa';
-
-    await Util.waitMinigame('Wizard tower');
-
-    Game.Objects['Wizard tower'].minigame.magic = 50;
-    let save = Game.WriteSave(1);
-
-    document.getElementById('grimoireSpell6').click(); // cast GFD, get FtHoF
-    console.assert(Game.Objects['Wizard tower'].minigame.magic == 45);
-    await Util.waitPredicate(() => Math.floor(Game.Objects['Wizard tower'].minigame.magic) != 45);
-    console.assert(Math.floor(Game.Objects['Wizard tower'].minigame.magic) == 25);
-    console.assert(Game.shimmers.length == 1);
-    console.assert(Game.shimmers[0].force == 'clot');
-    // This is the same as backfiring FtHoF with one spell cast
-
-    // Patch, and check the patch works:
-    Game.LoadSave(save);
-    document.getElementById('prefsButton').click();
-    document.getElementById('SpiceButtonpatchGFDDelay').click();
-    document.getElementById('prefsButton').click();
-    document.getElementById('grimoireSpell6').click(); // cast GFD, get FtHoF
-    console.assert(Game.Objects['Wizard tower'].minigame.magic == 25); // Instantaneous
-    console.assert(Game.shimmers.length == 1);
-    console.assert(Game.shimmers[0].force == 'cookie storm drop');
-    // This is the same as succeeding FtHoF with zero spells cast
-
-    console.log("Finished testGFDDelayPatch()");
-}
-
 async function testSeasonsAffectingFtHoFPatch() {
     Util.wipeSave('with minigames');
     Game.seed = 'aaaaa';
