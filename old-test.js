@@ -6,19 +6,6 @@ function testImplicitAssumptions() {
 }
 testImplicitAssumptions();
 
-function testHeavenlyBackdoor() {
-    Util.wipeSave();
-    Game.Upgrades['Heavenly backdoor'].earn();
-    Util.Ascend();
-    console.assert(document.getElementById('heavenlyUpgrade181') != null);
-    Util.Reincarnate();
-    Util.Ascend();
-    console.assert(document.getElementById('heavenlyUpgrade181') == null); // lost the upgrade
-    Util.Reincarnate();
-
-    console.log("Finished testHeavenlyBackdoor()");
-}
-
 async function testGFDDelayPatch() {
     Util.wipeSave('with minigames');
     Game.seed = 'aaaaa';
