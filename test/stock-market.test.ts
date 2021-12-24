@@ -282,6 +282,22 @@ test.describe('Stock market profits', () => {
         await expect(profitsRow).toContainText('all time : $60');
     });
 
+    // Constructs the screenshot for README.md
+    test('are nicely displayed in the minigame itself', async ({ page }) => {
+        await setup(page, 654321);
+        await page.evaluate('Spice.saveGame.stockMarketProfitsPreviousAscensions = 2_222_222');
+        await page.evaluate('Spice.updateProfitTallyDisplay()');
+        let profitsRowBB = await (await page.locator('text=Profits')).boundingBox();
+        let x = profitsRowBB.x;
+        let y = profitsRowBB.y;
+        let bankTallyBB = await (await page.locator('#bankTally')).boundingBox();
+        let width = bankTallyBB.x + bankTallyBB.width - profitsRowBB.x;
+        width += 5; // add 5 pixels to grab the closing parentheses
+        let height = bankTallyBB.y + bankTallyBB.height - profitsRowBB.y;
+        let clip = {x: x-5, y: y-5, width: width+10, height: height+10}; // Add a border
+        expect(await page.screenshot({clip})).toMatchSnapshot('across-ascensions-profits.png');
+    });
+
     test('by default are not deducted when negative', async ({ page }) => {
         await setup(page, -15);
         let profitsRow = await page.locator('text=Profits');
