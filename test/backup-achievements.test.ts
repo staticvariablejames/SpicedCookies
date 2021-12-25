@@ -136,6 +136,17 @@ test.describe('Backup counter', () => {
         await page.click('text="All done!"');
         expect(await page.evaluate('Spice.sessionData.backupsThisSession')).toBe(4);
     });
+
+    test('is nicely displayed in the stats menu', async ({ page }) => {
+        await setupCookieClickerPage(page, {saveGame: makeSave(7, 3)});
+        await page.evaluate(() => Game.LoadMod('https://staticvariablejames.github.io/SpicedCookies/Spice.js'));
+        await page.waitForFunction(() => 'Spiced cookies' in Game.mods);
+
+        await page.click('text=Stats');
+        let specialSectionHandle = await page.locator('text=Special Number');
+        await page.evaluate(() => Game.CloseNotes());
+        expect(await specialSectionHandle.screenshot()).toMatchSnapshot('backup-statistics-display.png');
+    });
 });
 
 test.describe('Backup achievements', () => {
