@@ -1,4 +1,6 @@
 /* Tests the debug upgrade "Transcendent Debugging".
+ *
+ * The tooltip for the upgrade is tested in tooltips.test.ts.
  */
 
 import { test, expect } from '@playwright/test';
@@ -9,23 +11,6 @@ test.describe('Transcendent debugging', () => {
         await setupCookieClickerPage(page);
         await page.evaluate(() => Game.LoadMod('https://staticvariablejames.github.io/SpicedCookies/Spice.js'));
         await page.waitForFunction(() => 'Spiced cookies' in Game.mods);
-    });
-
-    test('is created by default', async ({ page }) => {
-        expect(await page.evaluate(() => 'Transcendent debugging' in Game.Upgrades)).toBeTruthy();
-
-        // Constructs the tooltip screenshot for README.md
-        let tooltip = await page.locator('#tooltip');
-
-        /* The interaction between Playwright and the stats menu is... frustrating.
-         * Playwright always scrolls the elements into view before clicking/hovering them.
-         * But for some reason Playwright is scrolling the entire Cookie Clicker game,
-         * rather than just the middle section.
-         * Since we can't rely on that, we simply show the tooltip manually.
-         */
-        await page.mouse.move(500, 500);
-        await page.evaluate(() => Game.tooltip.draw(null,Game.crateTooltip(Game.Upgrades['Transcendent debugging'],'stats'),'left'));
-        expect(await tooltip.screenshot()).toMatchSnapshot('transcendent-debugging-tooltip.png');
     });
 
     test('is not active by default', async ({ page }) => {
