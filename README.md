@@ -48,7 +48,7 @@ up to 65 data points
 Display the delta of stock market goods (enabled by default)
 ------------------------------------------------------------
 
-![Stock market deltas](doc/delta.png "The mod shows the stock market deltas")
+![Stock market deltas](test/stock-market.test.ts-snapshots/bankGoodPanelWithDelta-firefox-linux.png)
 
 Despite saving the current price for stock market goods,
 vanilla Cookie Clicker displays two values when loading a save file.
@@ -62,7 +62,7 @@ This mod shows the delta below the value of each stock.
 Track more statistics across ascensions (non-disableable)
 ---------------------------------------------------------
 
-![All-time profits](doc/profits.png "The mod tallies your profits across ascensions")
+![All-time profits](test/stock-market.test.ts-snapshots/across-ascensions-profits-firefox-linux.png)
 
 This mod records five statistics across all ascensions
 which the vanilla game only records for a single ascension:
@@ -168,13 +168,13 @@ During an ascension,
 you can click on the permanent upgrade slots in the statistics menu
 to change the permanent upgrades for the next ascension.
 
-![Permanent Upgrade Slots](doc/permanent-upgrade-slots.png "Changing slots during an ascension!")
+![Permanent Upgrade Slots](test/change-permanent-upgrade-slot.test.ts-snapshots/changing-permanent-upgrade-slot-chromium-linux.png)
 
 
 Season switcher tooltips says how many seasonal upgrades were unlocked (non-disableable)
 ----------------------------------------------------------------------------------------
 
-![Season switcher tooltip](doc/season-switcher-tooltip.png "Slightly better season swtcher tooltips")
+![Season switcher tooltip](test/season-tooltips.test.ts-snapshots/unlocked-seasonal-upgrades-tooltip-firefox-linux.png)
 
 The season switches now have a line saying how many upgrades from that season were unlocked.
 This is useful, for example, if you are saving Chocolate egg for a combo.
@@ -187,15 +187,15 @@ This can be disabled in the menu.
 Display the mode of stock market goods (debug upgrade)
 ------------------------------------------------------
 
-![Stock market modes](doc/stock-market-modes.png "Stock market modes")
-![Omniscient day traders](doc/omniscient-day-traders.png "Omniscient day traders")
+![Stock market modes](test/stock-market.test.ts-snapshots/bankGoodPanelWithMode-firefox-linux.png)
+![Omniscient day traders](test/tooltips.test.ts-snapshots/omniscient-day-traders-tooltip-firefox-linux.png)
 
 Adds a debug upgrade that displays the current mode of a stock,
 in a similar manner that the deltas are displayed.
 For example,
 in the picture above,
 Sugar is in slow rise,
-and it will stay this way for the next 716 ticks.
+and it will stay this way for the next 389 ticks.
 
 To get the upgrade,
 you need to either Open Sesame,
@@ -208,8 +208,8 @@ or type the following command in the console:
 Preserve debug upgrades across ascensions (debug upgrade)
 ---------------------------------------------------------
 
-![Persistent debug upgrades](doc/persistent-debug-upgrades.png "Persistent debug upgrades")
-![Transcendent debugging](doc/transcendent-debugging.png "Transcendent debugging")
+![Persistent debug upgrades](test/transcendent-debugging.test.ts-snapshots/transcendent-debugging-example-firefox-linux.png)
+![Transcendent debugging](test/tooltips.test.ts-snapshots/transcendent-debugging-tooltip-firefox-linux.png)
 
 Debug upgrades are mere upgrades,
 so they get wiped out after ascending.
@@ -255,10 +255,10 @@ for the change to take place.
 Red-colored lump count if under 100 and Sugar baking is present (enabled by default)
 ------------------------------------------------------------------------------------
 
-![100 lumps](doc/100-lumps.png "100 lumps is normal")
-![99 lumps](doc/99-lumps.png "99 lumps is suboptimal")
+![100 lumps](test/warn-sugar-baking-overspending.test.ts-snapshots/lump-number-blue-if-100-or-over-firefox-linux.png)
+![99 lumps](test/warn-sugar-baking-overspending.test.ts-snapshots/lump-number-red-if-under-100-firefox-linux.png)
 
-![Lump confirmation](doc/spend-lump-confirmation.png "Warn about going under 100 lumps")
+![Lump confirmation](test/warn-sugar-baking-overspending.test.ts-snapshots/sugar-baking-warning-on-lump-confirmation-firefox-linux.png)
 
 Sugar baking increases your CpS by 1% per unspent sugar lump,
 capped at 100 lumps.
@@ -298,7 +298,7 @@ this spirit is unslotted and all worship swaps will be used up."
 Backup Counter (non-disableable)
 --------------------------------
 
-![Backup statistics](doc/backup-statistics.png "Backup counter")
+![Backup statistics](test/backup-achievements.test.ts-snapshots/backup-statistics-display-firefox-linux.png)
 
 Spiced Cookies counts the number of times you hit the "Export save" or "Save to file" buttons!
 Autosaves and the "Save" button do not count.
@@ -314,7 +314,7 @@ so you have some leeway as to when back up your save.)
 Achievements for Backing Up (disabled by default)
 -------------------------------------------------
 
-![Archivist achievement](doc/archivist-achievement.png "Archivist achievement")
+![Archivist achievement](test/tooltips.test.ts-snapshots/archivist-tooltip-firefox-linux.png)
 
 Adds three achievements related to backing up save files:
 one for backing up for the first time,
