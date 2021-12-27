@@ -58,6 +58,7 @@ test.describe('Pantheon swap patch', () => {
 
     test('is not present in the vanilla game', async ({ page }) => {
         await setupCookieClickerPage(page, {saveGame});
+        await page.waitForFunction(() => Game.isMinigameReady(Game.Objects['Temple']));
         let minusOneIndex = await page.evaluate(() => {
             let M = Game.Objects['Temple'].minigame;
             M.slotGod(M.godsById[3], 0);
