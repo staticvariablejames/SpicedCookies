@@ -617,3 +617,9 @@ Unreleased
 
 - Change: Awarding achievements based on across-ascensions progress
     is now disabled by default.
+
+- Internal: ported the test suite to [Cokie Connoisseur](https://github.com/staticvariablejames/cookie-connoisseur),
+    which makes testing automated and more robust.
+    In fact, most of the pictures from `README.md` are automatically generated and tested against :)
+
+- Internal: ported the mod to TypeScript and split the source file in multiple files.
