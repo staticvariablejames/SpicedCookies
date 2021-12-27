@@ -2,6 +2,8 @@
     "localFiles": [
         {"url": "https://staticvariablejames.github.io/SpicedCookies/Spice.js",
          "path": "./Spice.js"},
+        {"url": "https://staticvariablejames.github.io/SpicedCookies/dist/main.js",
+         "path": "./dist/main.js"},
         {"url": "https://staticvariablejames.github.io/SpicedCookies/img/icons.png",
          "path": "./img/icons.png"}
     ],
