@@ -17,6 +17,30 @@ export function addVersionHistory() {
         and most of them start disabled by default.
     </div>
 
+    <div class="subsection update"><div class="title">Unreleased - TypeScript!</div>
+        <div class="listing">&bull; Fixed: Sometimes,
+            the displayed stock market delta would be wrong
+            during the first tick after loading a save game.
+        </div>
+        <div class="listing">&bull; Fixed:
+            backup counter for this session wasn't being incremented
+            if the backup achievements were disabled.
+        </div>
+        <div class="listing">&bull; Change:
+            Awarding achievements based on across-ascensions progress
+            is now disabled by default.
+        </div>
+        <div class="listing">&bull; Internal:
+            ported the test suite to Cokie Connoisseur,
+            which makes testing automated and more robust.
+            In fact, most of the pictures from README.md
+            are automatically generated and tested against :)
+        </div>
+        <div class="listing">&bull; Internal:
+            ported the mod to TypeScript and split the source file in multiple files.
+        </div>
+    </div>
+
     <div class="subsection update small"><div class="title">2021-10-04 - The Last Changeless Update</div>
         <div class="listing">&bull; Update to use CCSE 2.031.</div>
         <div class="listing">&bull; The mod won't check the CCSE version anymore.
