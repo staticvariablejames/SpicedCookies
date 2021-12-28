@@ -17,7 +17,7 @@ export function addVersionHistory() {
         and most of them start disabled by default.
     </div>
 
-    <div class="subsection update"><div class="title">Unreleased - TypeScript!</div>
+    <div class="subsection update"><div class="title">2021-12-27 - TypeScript!</div>
         <div class="listing">&bull; Fixed: Sometimes,
             the displayed stock market delta would be wrong
             during the first tick after loading a save game.

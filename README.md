@@ -605,8 +605,8 @@ Changelog
     and usually in a backwards-compatible manner.
     Not asking CCSE version every time makes the mod a bit more future-proof.
 
-Unreleased
-----------
+0.6.0
+-----
 
 - Fixed: Sometimes,
     the displayed stock market delta would be wrong

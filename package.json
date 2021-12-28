@@ -1,6 +1,6 @@
 {
   "name": "spiced-cookies",
-  "version": "0.5.7",
+  "version": "0.6.0",
   "description": "Mod for Cookie Clicker featuring several small gameplay changes",
   "main": "Spice.js",
   "directories": {
